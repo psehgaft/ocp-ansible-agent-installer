@@ -1,6 +1,6 @@
 # This will require trust and sudoers access
 os_director_ip: 10.150.23.9
-os_fabric_name: "openstack-llas1"
+os_fabric_name: "openstack-example"
 os_undercloud: "undercloud"
 
 # Imaging network information
@@ -19,7 +19,7 @@ assisted_api_url: "https://api.openshift.com/api/assisted-install/v2"
 assisted_auth_mode: "saas"        # saas | onprem
 
 # Cluster identity
-cluster_name: "openshift-llas1"
+cluster_name: "openshift-example"
 base_dns_domain: "ulti.io"
 openshift_version: "4.18"
 cpu_architecture: "x86_64"
@@ -133,15 +133,15 @@ rhoso_project_name: "openstack"
 # Worker nodes that will host RHOSO control plane pods (edit as needed).
 # TODO: Dry this up. Worker nodes are already set in the inventory
 rhoso_worker_nodes:
-  - llas1rh1ocs1000
-  - llas1rh1ocs1001
-  - llas1rh1ocs1002
-  - llas1rh1ocs2000
-  - llas1rh1ocs2001
-  - llas1rh1ocs2002
-  - llas1rh1ocs3000
-  - llas1rh1ocs3001
-  - llas1rh1ocs3002
+  - examplerh1ocs1000
+  - examplerh1ocs1001
+  - examplerh1ocs1002
+  - examplerh1ocs2000
+  - examplerh1ocs2001
+  - examplerh1ocs2002
+  - examplerh1ocs3000
+  - examplerh1ocs3001
+  - examplerh1ocs3002
 
 # Base interface used to create VLAN sub-interfaces for isolated networks.
 # IMPORTANT: Do NOT use a base interface managed by the cluster network (for example, br-ex)

@@ -1,5 +1,0 @@
-{
-    "cluster_id": "42a7742b-42d1-4226-97e4-5304b0621aba",
-    "discovery_iso_url": "https://api.openshift.com/api/assisted-images/bytoken/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NzE1NTQ2NDQsInN1YiI6Ijg3YzQzNzJmLWI4ODAtNGY0ZS1iMDkyLTg0NTJmMDMzMjc5NyJ9.kq1BRL4FQJIW7emFN7UaLLxRqk0GGsykJ-yjQiyfLA4/4.18/x86_64/minimal.iso",
-    "infra_env_id": "87c4372f-b880-4f4e-b092-8452f0332797"
-}

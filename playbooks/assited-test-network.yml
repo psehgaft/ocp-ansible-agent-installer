@@ -4,7 +4,7 @@
   gather_facts: false
 
   vars_files: 
-    - ../host_llas1.yml
+    - ../host_example.yml
 
   vars: 
     assisted_api_url: "{{ assisted_api_url }}"
