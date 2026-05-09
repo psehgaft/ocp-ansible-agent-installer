@@ -1,0 +1,12 @@
+# -----------------------------------------------------------------------------
+# Per-node IP addresses for the VLAN interfaces (host IPs).
+# Fill these values in before applying NNCPs.
+# TODO: Dry this up it should be in the inventory and assignment should come from the director
+# -----------------------------------------------------------------------------
+rhoso_worker_node_ips:
+{% for server in ansible_play_batch %}
+  {{ server }}:
+{% for entry in hostvars[server]['_ports']['results'] %}
+    {{ entry['port']['name']  | replace('_port', '') | replace(server + '_', '') }}: "{{ entry['port']['fixed_ips'][0]['ip_address'] }}"
+{% endfor %}
+{% endfor %}

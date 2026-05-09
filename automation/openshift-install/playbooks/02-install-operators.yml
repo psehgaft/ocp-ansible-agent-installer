@@ -1,0 +1,48 @@
+---
+- name: "Install Operators via OLM (NMState, MetalLB, cert-manager, OpenStack)"
+  hosts: all
+  gather_facts: false
+  connection: local
+
+  pre_tasks:
+    - name: "Assert kubeconfig exists"
+      ansible.builtin.stat:
+        path: "{{ kubeconfig_path }}"
+      register: _kc
+      delegate_to: localhost
+      run_once: true
+
+    - name: "Fail if kubeconfig missing"
+      ansible.builtin.fail:
+        msg: "kubeconfig not found at {{ kubeconfig_path }}. Provide kubeconfig_path in inventory."
+      when: not _kc.stat.exists
+      delegate_to: localhost
+      run_once: true
+
+    - name: "Verify oc client is available"
+      ansible.builtin.command: "{{ oc_bin }} version --client=true"
+      register: _oc
+      changed_when: false
+      delegate_to: localhost
+      run_once: true
+
+    - name: "Set common environment for oc"
+      ansible.builtin.set_fact:
+        oc_env:
+          KUBECONFIG: "{{ kubeconfig_path }}"
+      delegate_to: localhost
+      run_once: true
+
+  roles:
+    - role: nmstate_operator
+      delegate_to: localhost
+      run_once: true
+    - role: metallb_operator
+      delegate_to: localhost
+      run_once: true
+    - role: cert_manager_operator
+      delegate_to: localhost
+      run_once: true
+    - role: openstack_operator
+      delegate_to: localhost
+      run_once: true

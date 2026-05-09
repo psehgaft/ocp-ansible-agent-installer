@@ -1,0 +1,18 @@
+- name: "Create ports for OpenStack control plane nodes"
+  openstack.cloud.port:
+    cloud: "{{ os_undercloud }}"
+    state: present
+    name: "{{ inventory_hostname }}_{{ item.name }}_port"
+    network: "{{ item.name }}"
+    fixed_ips:
+      - subnet_id: "{{ item.os_subnet_id }}"
+  delegate_to: localhost
+  register: _ports
+  loop: "{{ rhoso_isolated_networks + rhoso_storage_networks }}"
+
+- name: "Render the networking template into the artifacts_dir"
+  ansible.builtin.template:
+    src: networking.yml.j2
+    dest: "{{ artifacts_dir }}/{{ cluster_name }}/raw/networking.yml"
+  run_once: true
+  delegate_to: localhost

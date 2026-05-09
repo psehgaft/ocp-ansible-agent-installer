@@ -1,0 +1,6 @@
+---
+# cert-manager Operator for Red Hat OpenShift
+cert_manager_operator_namespace: "cert-manager-operator"
+cert_manager_operatorgroup: "openshift-cert-manager-operator"
+cert_manager_subscription_name: "openshift-cert-manager-operator"
+cert_manager_package_name: "openshift-cert-manager-operator"

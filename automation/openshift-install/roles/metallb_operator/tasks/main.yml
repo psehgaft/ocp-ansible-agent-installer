@@ -1,0 +1,44 @@
+---
+# Installs MetalLB Operator via OLM:
+# Namespace -> OperatorGroup -> Subscription -> Wait for CSV Succeeded -> (Optional) create MetalLB CR
+# Note: This installs the Operator and the MetalLB custom resource only.
+#       You still must create IPAddressPool / L2Advertisement (or BGP) after this.
+
+- name: "Apply MetalLB namespace, OperatorGroup, and Subscription"
+  ansible.builtin.command: "{{ oc_bin }} apply -f -"
+  args:
+    stdin: |
+      {{ lookup('template', 'namespace.yaml.j2', template_vars={'namespace': metallb_namespace}) }}
+      ---
+      {{ lookup('template', 'operatorgroup.yaml.j2', template_vars={'name': metallb_operatorgroup, 'namespace': metallb_namespace}) }}
+      ---
+      {{ lookup('template', 'subscription.yaml.j2', template_vars={'subscription_name': metallb_subscription_name, 'namespace': metallb_namespace, 'channel': metallb_channel, 'package_name': metallb_package_name, 'source': operator_source, 'sourceNamespace': operator_source_namespace}) }}
+  environment: "{{ oc_env }}"
+  changed_when: false
+
+- name: "Wait for MetalLB Subscription to report installedCSV"
+  ansible.builtin.command: >
+    {{ oc_bin }} -n {{ metallb_namespace }} get subscription {{ metallb_subscription_name }}
+    -o jsonpath='{.status.installedCSV}'
+  environment: "{{ oc_env }}"
+  register: _mlb_csv
+  retries: 90
+  delay: 10
+  until: _mlb_csv.stdout | length > 0
+  changed_when: false
+
+- name: "Wait for MetalLB CSV to be Succeeded"
+  ansible.builtin.command: >
+    {{ oc_bin }} -n {{ metallb_namespace }} wait csv/{{ _mlb_csv.stdout }}
+    --for jsonpath='{.status.phase}'=Succeeded --timeout=20m
+  environment: "{{ oc_env }}"
+  changed_when: false
+
+- name: "Create MetalLB operand CR (optional)"
+  when: create_metallb_cr | bool
+  ansible.builtin.command: "{{ oc_bin }} apply -f -"
+  args:
+    stdin: |
+      {{ lookup('template', 'operand.yaml.j2', template_vars={'operand': {'apiVersion':'metallb.io/v1beta1','kind':'MetalLB','metadata':{'name':'metallb','namespace':metallb_namespace}} }) }}
+  environment: "{{ oc_env }}"
+  changed_when: false

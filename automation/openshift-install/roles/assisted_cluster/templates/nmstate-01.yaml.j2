@@ -1,0 +1,254 @@
+# nmstate host networking 
+# This definition configures the node's network following an Open vSwitch (OVS) model and VLAN segmentation to support a 
+# RHOSO/OpenStack environment on OpenShift. First, a management interface (mgmt0) with its own IP addressing is maintained for node administration. 
+# Then, an aggregated primary link (bond0) is created in LACP (802.3ad) mode by combining nic0 and nic1, without IP addresses, acting solely as a 
+# Layer 2 uplink. A primary OVS bridge (br-ex) is built on this bond, functioning as the integration point with the external or machine network, 
+# maintaining the separation between Layer 2 and Layer 3. The RHOSO networks (External, Tenant, InternalAPI, Storage, StorageMgmt, and additional storage VLANs)
+# are implemented as independent VLAN interfaces connected to bond0, where IP addressing resides directly in each VLAN and not in the bridge, 
+# enabling clear and controlled network segmentation. Finally, a second bond (bond-nfs) in active-backup mode is defined for storage/NFS traffic, 
+# with its own OVS bridge (ovs-nfs) and multiple dedicated VLANs, providing physical and logical isolation of storage traffic from the main uplink. 
+# Overall, this architecture separates functions (management, external traffic, internal networks, and storage), maintains compatibility with OVS/OVN, 
+# and ensures a scalable design aligned with virtualization and hybrid cloud environments.
+
+interfaces:
+
+  # -----------------------------
+  #  Management Interface 
+  # -----------------------------
+  - name: mgmt0
+    type: ethernet
+    state: up
+    mtu: 9000
+    ipv4:
+      enabled: true
+      address:
+        - ip: "{{ hostvars[target_host].node_ipv4_address }}"  
+          prefix-length: {{ hostvars[target_host].node_ipv4_prefix | int }}
+
+  # -----------------------------
+  # Primary uplink (LACP) 
+  # -----------------------------
+  - name: bond0
+    type: bond
+    state: up
+    mtu: 9000
+    ipv4:
+      enabled: false
+    link-aggregation:
+      mode: 802.3ad
+      options:
+        miimon: '100'
+        lacp-rate: fast
+      port:
+        - nic0
+        - nic1
+
+  # -----------------------------
+  # Primary OVS bridge (Machine / External Network)
+  # -----------------------------
+  - name: br-ex
+    type: ovs-bridge
+    state: up
+    mtu: 9000
+    ovs-bridge:
+      ports:
+        - name: bond0
+    ipv4:
+      enabled: false
+
+
+  # -----------------------------
+  # RHOSO / OpenStack VLAN Interfaces
+  # -----------------------------
+
+  - name: vlan-external
+    type: vlan
+    state: up
+    mtu: 9000
+    vlan:
+      base-iface: bond0
+      id: {{ vlan_external }}
+    ipv4:
+      enabled: true
+      dhcp: false
+      address: []
+    routes:
+      config:
+        - destination: 0.0.0.0/0
+          next-hop-address: "{{ hostvars[target_host].node_ipv4_gateway }}"
+          next-hop-interface: vlan-external
+
+  - name: vlan-tenant
+    type: vlan
+    state: up
+    mtu: 9000
+    vlan:
+      base-iface: bond0
+      id: {{ vlan_tenant }}
+    ipv4:
+      enabled: true
+      address: []  
+
+  - name: vlan-internalapi
+    type: vlan
+    state: up
+    mtu: 9000
+    vlan:
+      base-iface: bond0
+      id: {{ vlan_internalapi }}
+    ipv4:
+      enabled: true
+      address: []
+
+  - name: vlan-storagemgmt
+    type: vlan
+    state: up
+    mtu: 9000
+    vlan:
+      base-iface: bond0
+      id: {{ vlan_storagemgmt }}
+    ipv4:
+      enabled: true
+      address: []
+
+  - name: vlan-storage
+    type: vlan
+    state: up
+    mtu: 9000
+    vlan:
+      base-iface: bond0
+      id: {{ vlan_storage }}
+    ipv4:
+      enabled: true
+      address: []
+
+  # -----------------------------
+  # Extra Storage VLANs
+  # -----------------------------
+
+  - name: vlan-storage-1-1
+    type: vlan
+    state: up
+    mtu: 9000
+    vlan:
+      base-iface: bond0
+      id: {{ vlan_storage_1_1 }}
+    ipv4:
+      enabled: true
+      address: []
+
+  - name: vlan-storage-1-2
+    type: vlan
+    state: up
+    mtu: 9000
+    vlan:
+      base-iface: bond0
+      id: {{ vlan_storage_1_2 }}
+    ipv4:
+      enabled: true
+      address: []
+
+  - name: vlan-storage-2-1
+    type: vlan
+    state: up
+    mtu: 9000
+    vlan:
+      base-iface: bond0
+      id: {{ vlan_storage_2_1 }}
+    ipv4:
+      enabled: true
+      address: []
+
+  - name: vlan-storage-2-2
+    type: vlan
+    state: up
+    mtu: 9000
+    vlan:
+      base-iface: bond0
+      id: {{ vlan_storage_2_2 }}
+    ipv4:
+      enabled: true
+      address: []
+
+  - name: vlan-storage-3-1
+    type: vlan
+    state: up
+    mtu: 9000
+    vlan:
+      base-iface: bond0
+      id: {{ vlan_storage_3_1 }}
+    ipv4:
+      enabled: true
+      address: []
+
+  - name: vlan-storage-3-2
+    type: vlan
+    state: up
+    mtu: 9000
+    vlan:
+      base-iface: bond0
+      id: {{ vlan_storage_3_2 }}
+    ipv4:
+      enabled: true
+      address: []
+
+  # -----------------------------
+  # NFS Bond 
+  # -----------------------------
+
+  - name: bond-nfs
+    type: bond
+    state: up
+    mtu: 9000
+    ipv4:
+      enabled: false
+    link-aggregation:
+      mode: active-backup
+      port:
+        - nic2
+        - nic3
+
+  - name: ovs-nfs
+    type: ovs-bridge
+    state: up
+    mtu: 9000
+    ovs-bridge:
+      ports:
+        - name: bond-nfs
+    ipv4:
+      enabled: false
+
+  - name: vlan-nfs-1
+    type: vlan
+    state: up
+    mtu: 9000
+    vlan:
+      base-iface: bond-nfs
+      id: {{ vlan_nfs_1 }}
+    ipv4:
+      enabled: true
+      address: []
+
+  - name: vlan-nfs-2
+    type: vlan
+    state: up
+    mtu: 9000
+    vlan:
+      base-iface: bond-nfs
+      id: {{ vlan_nfs_2 }}
+    ipv4:
+      enabled: true
+      address: []
+
+  - name: vlan-nfs-3
+    type: vlan
+    state: up
+    mtu: 9000
+    vlan:
+      base-iface: bond-nfs
+      id: {{ vlan_nfs_3 }}
+    ipv4:
+      enabled: true
+      address: []
+
+

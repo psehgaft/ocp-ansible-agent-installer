@@ -1,0 +1,15 @@
+{% set h = hosts | default([]) %}
+{% set desired = desired_count | int %}
+{% set count_ok = (h | length) >= desired %}
+{% set statuses = h | map(attribute='status') | list %}
+{% set any_fatal = (statuses | select('in', fatal_host_statuses | default([])) | list | length) > 0 %}
+{% set all_acceptable = (statuses | reject('in', acceptable_host_statuses | default([])) | list | length) == 0 %}
+
+{% set hfail = [] %}
+{% for host in h %}
+  {% set hv = (host.validations_info | default('[]') | from_json) %}
+  {% set hf = hv | map(attribute='validations') | list | sum(start=[]) | selectattr('status','equalto','failure') | list %}
+  {% set _ = hfail.extend(hf) %}
+{% endfor %}
+
+ready: {{ (count_ok and (not any_fatal) and all_acceptable and (hfail | length == 0)) | bool }}

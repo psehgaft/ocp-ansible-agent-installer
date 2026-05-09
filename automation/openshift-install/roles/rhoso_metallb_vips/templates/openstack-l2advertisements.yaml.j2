@@ -1,0 +1,18 @@
+{% for net in rhoso_isolated_networks %}
+{% if net.vip_enabled | bool %}
+apiVersion: metallb.io/v1beta1
+kind: L2Advertisement
+metadata:
+  name: {{ net.name }}
+  namespace: {{ rhoso_metallb_namespace }}
+spec:
+  ipAddressPools:
+    - {{ net.name }}
+  interfaces:
+    - {{ net.metallb_advertise_interface }}
+  nodeSelectors:
+    - matchLabels:
+        {{ rhoso_worker_label_key }}: ""
+---
+{% endif %}
+{% endfor %}

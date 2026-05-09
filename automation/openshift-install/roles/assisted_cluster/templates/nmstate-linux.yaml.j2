@@ -1,0 +1,286 @@
+# nmstate host networking 
+# - bond0 carries the node IP (native/untagged) AND acts as a VLAN trunk
+# - Each RHOSO/OpenStack network is a VLAN subinterface on bond0, attached to a bridge
+# - Second bond (bond-nfs) provides NFS uplinks, also VLAN’d into br_nfs_{1,2,3}
+###############################################
+# Example
+###############################################
+# vlan_machine: 100
+# vlan_external: 110
+# vlan_tenant: 120
+# vlan_internalapi: 130
+# vlan_storagemgmt: 140
+# vlan_storage: 150
+# vlan_storage_1_1: 151
+# vlan_storage_1_2: 152
+# vlan_storage_2_2: 162
+# vlan_storage_3_1: 171
+# vlan_storage_3_2: 172
+# vlan_nfs_1: 201
+# vlan_nfs_2: 202
+# vlan_nfs_3: 203
+
+interfaces:
+  # -----------------------------
+  # Primary uplink: LACP trunk + node IP
+  # -----------------------------
+  - name: bond0
+    type: bond
+    state: up
+    mtu: 9000
+    ipv4:
+      enabled: true
+      dhcp: false
+      address:
+        - ip: "{{ hostvars[target_host].node_ipv4_address }}"
+          prefix-length: {{ hostvars[target_host].node_ipv4_prefix | int }}
+    link-aggregation:
+      mode: 802.3ad
+      options:
+        miimon: '100'
+      port:
+        - nic0
+        - nic1
+    ipv6:
+      enabled: false
+
+  # -----------------------------
+  # NFS uplink bond (active-backup)
+  # -----------------------------
+  - name: bond-nfs
+    type: bond
+    state: up
+    mtu: 9000
+    link-aggregation:
+      mode: active-backup
+      port:
+        - nic2
+        - nic3
+
+  # ============================================================================
+  # VLANs on bond0 (RHOSO/OpenStack + extra storage networks)
+  # Replace VLAN IDs with your real ones.
+  # ============================================================================
+
+  # External
+  - name: bond0.{{ vlan_external }}
+    type: vlan
+    state: up
+    vlan:
+      base-iface: bond0
+      id: {{ vlan_external }}
+
+  - name: br-external
+    type: linux-bridge
+    state: up
+    mtu: 9000
+    bridge:
+      port:
+        - name: bond0.{{ vlan_external }}
+
+  # Tenant
+  - name: bond0.{{ vlan_tenant }}
+    type: vlan
+    state: up
+    vlan:
+      base-iface: bond0
+      id: {{ vlan_tenant }}
+
+  - name: br-tenant
+    type: linux-bridge
+    state: up
+    mtu: 9000
+    bridge:
+      port:
+        - name: bond0.{{ vlan_tenant }}
+
+  # InternalAPI
+  - name: bond0.{{ vlan_internalapi }}
+    type: vlan
+    state: up
+    vlan:
+      base-iface: bond0
+      id: {{ vlan_internalapi }}
+
+  - name: br-internalapi
+    type: linux-bridge
+    state: up
+    mtu: 9000
+    bridge:
+      port:
+        - name: bond0.{{ vlan_internalapi }}
+
+  # StorageMgmt
+  - name: bond0.{{ vlan_storagemgmt }}
+    type: vlan
+    state: up
+    vlan:
+      base-iface: bond0
+      id: {{ vlan_storagemgmt }}
+
+  - name: br-storagemgmt
+    type: linux-bridge
+    state: up
+    mtu: 9000
+    bridge:
+      port:
+        - name: bond0.{{ vlan_storagemgmt }}
+
+  # Storage
+  - name: bond0.{{ vlan_storage }}
+    type: vlan
+    state: up
+    vlan:
+      base-iface: bond0
+      id: {{ vlan_storage }}
+
+  - name: br-storage
+    type: linux-bridge
+    state: up
+    mtu: 9000
+    bridge:
+      port:
+        - name: bond0.{{ vlan_storage }}
+
+  # -----------------------------
+  # Extra storage networks
+  # -----------------------------
+  - name: bond0.{{ vlan_storage_1_1 }}
+    type: vlan
+    state: up
+    vlan:
+      base-iface: bond0
+      id: {{ vlan_storage_1_1 }}
+
+  - name: br-storage-1-1
+    type: linux-bridge
+    state: up
+    mtu: 9000
+    bridge:
+      port:
+        - name: bond0.{{ vlan_storage_1_1 }}
+
+  - name: bond0.{{ vlan_storage_1_2 }}
+    type: vlan
+    state: up
+    vlan:
+      base-iface: bond0
+      id: {{ vlan_storage_1_2 }}
+
+  - name: br-storage-1-2
+    type: linux-bridge
+    state: up
+    mtu: 9000
+    bridge:
+      port:
+        - name: bond0.{{ vlan_storage_1_2 }}
+
+  - name: bond0.{{ vlan_storage_2_2 }}
+    type: vlan
+    state: up
+    vlan:
+      base-iface: bond0
+      id: {{ vlan_storage_2_2 }}
+
+  - name: br-storage-2-2
+    type: linux-bridge
+    state: up
+    mtu: 9000
+    bridge:
+      port:
+        - name: bond0.{{ vlan_storage_2_2 }}
+
+  - name: bond0.{{ vlan_storage_3_1 }}
+    type: vlan
+    state: up
+    vlan:
+      base-iface: bond0
+      id: {{ vlan_storage_3_1 }}
+
+  - name: br-storage-3-1
+    type: linux-bridge
+    state: up
+    mtu: 9000
+    bridge:
+      port:
+        - name: bond0.{{ vlan_storage_3_1 }}
+
+  - name: bond0.{{ vlan_storage_3_2 }}
+    type: vlan
+    state: up
+    vlan:
+      base-iface: bond0
+      id: {{ vlan_storage_3_2 }}
+
+  - name: br-storage-3-2
+    type: linux-bridge
+    state: up
+    mtu: 9000
+    bridge:
+      port:
+        - name: bond0.{{ vlan_storage_3_2 }}
+
+  # ============================================================================
+  # NFS bridges over bond-nfs (3 segments)
+  # Replace VLAN IDs with your real ones.
+  # ============================================================================
+
+  - name: bond-nfs.{{ vlan_nfs_1 }}
+    type: vlan
+    state: up
+    vlan:
+      base-iface: bond-nfs
+      id: {{ vlan_nfs_1 }}
+
+  - name: br-nfs-1
+    type: linux-bridge
+    state: up
+    mtu: 9000
+    bridge:
+      port:
+        - name: bond-nfs.{{ vlan_nfs_1 }}
+
+  - name: bond-nfs.{{ vlan_nfs_2 }}
+    type: vlan
+    state: up
+    vlan:
+      base-iface: bond-nfs
+      id: {{ vlan_nfs_2 }}
+
+  - name: br-nfs-2
+    type: linux-bridge
+    state: up
+    mtu: 9000
+    bridge:
+      port:
+        - name: bond-nfs.{{ vlan_nfs_2 }}
+
+  - name: bond-nfs.{{ vlan_nfs_3 }}
+    type: vlan
+    state: up
+    vlan:
+      base-iface: bond-nfs
+      id: {{ vlan_nfs_3 }}
+
+  - name: br-nfs-3
+    type: linux-bridge
+    state: up
+    mtu: 9000
+    bridge:
+      port:
+        - name: bond-nfs.{{ vlan_nfs_3 }}
+
+dns-resolver:
+  config:
+    server:
+{% for server in node_dns_servers %}
+      - "{{ server }}"
+{% endfor %}
+
+routes:
+  config:
+    - destination: 0.0.0.0/0
+      next-hop-address: "{{ hostvars[target_host].node_ipv4_gateway }}"
+      next-hop-interface: bond0
+
+

@@ -1,0 +1,96 @@
+{% for net in rhoso_isolated_networks %}
+apiVersion: k8s.cni.cncf.io/v1
+kind: NetworkAttachmentDefinition
+metadata:
+  name: {{ net.name }}
+  namespace: {{ rhoso_project_name }}
+spec:
+  config: |
+    {
+      "cniVersion": "0.3.1",
+      "name": "{{ net.name }}",
+      "type": "macvlan",
+      "master": "{{ net.name }}",
+      "ipam": {
+        "type": "whereabouts",
+        "range": "{{ net.subnet_cidr }}",
+        "range_start": "{{ net.pod_ipam_start }}",
+        "range_end": "{{ net.pod_ipam_end }}"
+      }
+    }
+---
+{% endfor %}
+
+{% if rhoso_optional_networks.octavia.enabled | default(false) %}
+apiVersion: k8s.cni.cncf.io/v1
+kind: NetworkAttachmentDefinition
+metadata:
+  labels:
+    osp/net: octavia
+  name: octavia
+  namespace: {{ rhoso_project_name }}
+spec:
+  config: |
+    {
+      "cniVersion": "0.3.1",
+      "name": "octavia",
+      "type": "bridge",
+      "bridge": "{{ rhoso_optional_networks.octavia.bridge_name }}",
+      "ipam": {
+        "type": "whereabouts",
+        "range": "{{ rhoso_optional_networks.octavia.subnet_cidr }}",
+        "range_start": "{{ rhoso_optional_networks.octavia.pod_ipam_start }}",
+        "range_end": "{{ rhoso_optional_networks.octavia.pod_ipam_end }}",
+        "routes": [
+          { "dst": "{{ rhoso_optional_networks.octavia.gateway_route_dst }}", "gw": "{{ rhoso_optional_networks.octavia.gateway_route_gw }}" }
+        ]
+      }
+    }
+---
+{% endif %}
+
+{% if rhoso_optional_networks.designate.enabled | default(false) %}
+apiVersion: k8s.cni.cncf.io/v1
+kind: NetworkAttachmentDefinition
+metadata:
+  name: designate
+  namespace: {{ rhoso_project_name }}
+spec:
+  config: |
+    {
+      "cniVersion": "0.3.1",
+      "name": "designate",
+      "type": "macvlan",
+      "master": "designate",
+      "ipam": {
+        "type": "whereabouts",
+        "range": "{{ rhoso_optional_networks.designate.subnet_cidr }}",
+        "range_start": "{{ rhoso_optional_networks.designate.pod_ipam_start }}",
+        "range_end": "{{ rhoso_optional_networks.designate.pod_ipam_end }}"
+      }
+    }
+---
+{% endif %}
+
+{% if rhoso_optional_networks.designateext.enabled | default(false) %}
+apiVersion: k8s.cni.cncf.io/v1
+kind: NetworkAttachmentDefinition
+metadata:
+  name: designateext
+  namespace: {{ rhoso_project_name }}
+spec:
+  config: |
+    {
+      "cniVersion": "0.3.1",
+      "name": "designateext",
+      "type": "macvlan",
+      "master": "designateext",
+      "ipam": {
+        "type": "whereabouts",
+        "range": "{{ rhoso_optional_networks.designateext.subnet_cidr }}",
+        "range_start": "{{ rhoso_optional_networks.designateext.pod_ipam_start }}",
+        "range_end": "{{ rhoso_optional_networks.designateext.pod_ipam_end }}"
+      }
+    }
+---
+{% endif %}

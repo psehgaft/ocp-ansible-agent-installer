@@ -1,0 +1,6 @@
+---
+# OpenStack Operator (RHOSO)
+openstack_operator_namespace: "openstack-operators"
+openstack_operatorgroup: "openstack"
+openstack_subscription_name: "openstack-operator"
+openstack_package_name: "openstack-operator"

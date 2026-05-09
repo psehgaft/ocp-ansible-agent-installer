@@ -1,0 +1,14 @@
+---
+# Static network parameters for this host (not discoverable from iDRAC)
+node_role: master
+node_hostname: master-2
+
+# Single-NIC example (use bond/bridge in nmstate if needed)
+node_ipv4_address: "192.168.10.22"
+node_ipv4_prefix: 24
+node_ipv4_gateway: "192.168.10.1"
+node_dns_servers:
+  - "192.168.10.53"
+
+# Optional: choose the installation disk by hint (if omitted, playbook auto-selects largest disk)
+# install_disk_hint: "NVMe"   # e.g., match Model or Name

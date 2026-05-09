@@ -1,0 +1,3694 @@
+[
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T21:46:54.230Z",
+        "message": "Successfully registered cluster",
+        "name": "cluster_registration_succeeded",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T21:46:56.139Z",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Updated image information (Image type is \"minimal-iso\", SSH public key is set)",
+        "name": "image_info_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T21:47:13.233Z",
+        "message": "Updated status of the cluster to pending-for-input",
+        "name": "cluster_status_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T21:54:38.978Z",
+        "host_id": "97da499e-45f7-c862-5f59-771eb7a7ef11",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host 97da499e-45f7-c862-5f59-771eb7a7ef11: Successfully registered",
+        "name": "host_registration_succeeded",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T21:54:43.260Z",
+        "message": "Cluster validation 'machine-cidr-defined' failed",
+        "name": "cluster_validation_failed",
+        "severity": "warning"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T21:54:43.263Z",
+        "message": "Cluster validation 'all-hosts-are-ready-to-install' that used to succeed is now failing",
+        "name": "cluster_validation_failed",
+        "severity": "warning"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T21:54:43.717Z",
+        "host_id": "97da499e-45f7-c862-5f59-771eb7a7ef11",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host 00-4e-01-50-a4-11: updated status from discovering to pending-for-input (Waiting for user input: Host couldn't synchronize with any NTP server ; Machine Network CIDR is undefined; the Machine Network CIDR can be defined by setting either the API or Ingress virtual IPs)",
+        "name": "host_status_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T21:54:43.733Z",
+        "host_id": "97da499e-45f7-c862-5f59-771eb7a7ef11",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host 00-4e-01-50-a4-11: calculated role is master",
+        "name": "host_role_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T21:54:46.593Z",
+        "host_id": "b7197597-e9a3-d022-20bf-71a13325aa8c",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host b7197597-e9a3-d022-20bf-71a13325aa8c: Successfully registered",
+        "name": "host_registration_succeeded",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T21:54:50.303Z",
+        "host_id": "d2afed59-767f-4efe-8057-ee4cdc3bb945",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host d2afed59-767f-4efe-8057-ee4cdc3bb945: Successfully registered",
+        "name": "host_registration_succeeded",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T21:54:51.955Z",
+        "host_id": "b7197597-e9a3-d022-20bf-71a13325aa8c",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host 00-4e-01-4f-03-9e: updated status from discovering to insufficient (Host cannot be installed due to following failing validation(s): Host couldn't synchronize with any NTP server ; No connectivity to the majority of hosts in the cluster)",
+        "name": "host_status_updated",
+        "severity": "warning"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T21:54:51.960Z",
+        "host_id": "97da499e-45f7-c862-5f59-771eb7a7ef11",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host 00-4e-01-50-a4-11: validation 'machine-cidr-defined' is now fixed",
+        "name": "host_validation_fixed",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T21:54:51.964Z",
+        "host_id": "97da499e-45f7-c862-5f59-771eb7a7ef11",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host 00-4e-01-50-a4-11: validation 'belongs-to-majority-group' failed",
+        "name": "host_validation_failed",
+        "severity": "warning"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T21:54:51.977Z",
+        "host_id": "97da499e-45f7-c862-5f59-771eb7a7ef11",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host 00-4e-01-50-a4-11: updated status from pending-for-input to insufficient (Host cannot be installed due to following failing validation(s): Host couldn't synchronize with any NTP server ; No connectivity to the majority of hosts in the cluster)",
+        "name": "host_status_updated",
+        "severity": "warning"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T21:54:53.253Z",
+        "message": "Cluster validation 'api-vips-valid' failed",
+        "name": "cluster_validation_failed",
+        "severity": "warning"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T21:54:53.256Z",
+        "message": "Cluster validation 'ingress-vips-valid' failed",
+        "name": "cluster_validation_failed",
+        "severity": "warning"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T21:54:53.260Z",
+        "message": "Cluster validation 'machine-cidr-defined' is now fixed",
+        "name": "cluster_validation_fixed",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T21:54:53.264Z",
+        "message": "Cluster validation 'sufficient-masters-count' is now fixed",
+        "name": "cluster_validation_fixed",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T21:54:53.291Z",
+        "message": "Updated status of the cluster to insufficient",
+        "name": "cluster_status_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T21:54:56.228Z",
+        "host_id": "b66641f4-b88a-dd84-edd0-88ee7cecfae9",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host b66641f4-b88a-dd84-edd0-88ee7cecfae9: Successfully registered",
+        "name": "host_registration_succeeded",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T21:54:59.990Z",
+        "host_id": "b7197597-e9a3-d022-20bf-71a13325aa8c",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host 00-4e-01-4f-03-9e: calculated role is master",
+        "name": "host_role_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T21:55:00.042Z",
+        "host_id": "97da499e-45f7-c862-5f59-771eb7a7ef11",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host 00-4e-01-50-a4-11: calculated role is master",
+        "name": "host_role_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T21:55:00.053Z",
+        "host_id": "d2afed59-767f-4efe-8057-ee4cdc3bb945",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host 00-4e-01-48-b2-94: validation 'has-inventory' is now fixed",
+        "name": "host_validation_fixed",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T21:55:00.059Z",
+        "host_id": "d2afed59-767f-4efe-8057-ee4cdc3bb945",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host 00-4e-01-48-b2-94: validation 'hostname-valid' is now fixed",
+        "name": "host_validation_fixed",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T21:55:00.073Z",
+        "host_id": "d2afed59-767f-4efe-8057-ee4cdc3bb945",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host 00-4e-01-48-b2-94: updated status from discovering to insufficient (Host cannot be installed due to following failing validation(s): Host couldn't synchronize with any NTP server ; No connectivity to the majority of hosts in the cluster)",
+        "name": "host_status_updated",
+        "severity": "warning"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T21:55:00.096Z",
+        "host_id": "d2afed59-767f-4efe-8057-ee4cdc3bb945",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host 00-4e-01-48-b2-94: calculated role is master",
+        "name": "host_role_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T21:55:00.115Z",
+        "host_id": "b66641f4-b88a-dd84-edd0-88ee7cecfae9",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host 00-4e-01-4f-03-ab: updated status from discovering to insufficient (Host cannot be installed due to following failing validation(s): Host couldn't synchronize with any NTP server ; No connectivity to the majority of hosts in the cluster)",
+        "name": "host_status_updated",
+        "severity": "warning"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T21:55:00.131Z",
+        "host_id": "b66641f4-b88a-dd84-edd0-88ee7cecfae9",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host 00-4e-01-4f-03-ab: calculated role is worker",
+        "name": "host_role_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T21:55:01.842Z",
+        "host_id": "42fd8fb6-3231-aeea-a21e-c7b34ad6f1ab",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host 42fd8fb6-3231-aeea-a21e-c7b34ad6f1ab: Successfully registered",
+        "name": "host_registration_succeeded",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T21:55:05.654Z",
+        "host_id": "81b899d5-fc55-e118-c8ab-3244c6acd6e6",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host 81b899d5-fc55-e118-c8ab-3244c6acd6e6: Successfully registered",
+        "name": "host_registration_succeeded",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T21:55:12.030Z",
+        "host_id": "522d43f3-ecce-03d8-6be9-a0653c28d1bd",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host 522d43f3-ecce-03d8-6be9-a0653c28d1bd: Successfully registered",
+        "name": "host_registration_succeeded",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T21:55:15.947Z",
+        "host_id": "7abf6946-782e-055a-e732-6f2a05eae35b",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host 7abf6946-782e-055a-e732-6f2a05eae35b: Successfully registered",
+        "name": "host_registration_succeeded",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T21:55:20.115Z",
+        "host_id": "42fd8fb6-3231-aeea-a21e-c7b34ad6f1ab",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host 00-4e-01-50-a4-1e: updated status from discovering to insufficient (Host cannot be installed due to following failing validation(s): Host couldn't synchronize with any NTP server ; No connectivity to the majority of hosts in the cluster)",
+        "name": "host_status_updated",
+        "severity": "warning"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T21:55:20.132Z",
+        "host_id": "81b899d5-fc55-e118-c8ab-3244c6acd6e6",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host 00-4e-01-4f-03-91: updated status from discovering to insufficient (Host cannot be installed due to following failing validation(s): Host couldn't synchronize with any NTP server ; No connectivity to the majority of hosts in the cluster)",
+        "name": "host_status_updated",
+        "severity": "warning"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T21:55:20.149Z",
+        "host_id": "522d43f3-ecce-03d8-6be9-a0653c28d1bd",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host 00-4e-01-48-b2-9e: updated status from discovering to insufficient (Host cannot be installed due to following failing validation(s): Host couldn't synchronize with any NTP server ; No connectivity to the majority of hosts in the cluster)",
+        "name": "host_status_updated",
+        "severity": "warning"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T21:55:22.903Z",
+        "host_id": "b7197597-e9a3-d022-20bf-71a13325aa8c",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host 00-4e-01-4f-03-9e: calculated role is master",
+        "name": "host_role_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T21:55:22.925Z",
+        "host_id": "97da499e-45f7-c862-5f59-771eb7a7ef11",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host 00-4e-01-50-a4-11: calculated role is master",
+        "name": "host_role_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T21:55:22.949Z",
+        "host_id": "d2afed59-767f-4efe-8057-ee4cdc3bb945",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host 00-4e-01-48-b2-94: calculated role is master",
+        "name": "host_role_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T21:55:22.967Z",
+        "host_id": "b66641f4-b88a-dd84-edd0-88ee7cecfae9",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host 00-4e-01-4f-03-ab: calculated role is worker",
+        "name": "host_role_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T21:55:22.985Z",
+        "host_id": "42fd8fb6-3231-aeea-a21e-c7b34ad6f1ab",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host 00-4e-01-50-a4-1e: calculated role is worker",
+        "name": "host_role_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T21:55:23.002Z",
+        "host_id": "81b899d5-fc55-e118-c8ab-3244c6acd6e6",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host 00-4e-01-4f-03-91: calculated role is worker",
+        "name": "host_role_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T21:55:23.010Z",
+        "host_id": "7abf6946-782e-055a-e732-6f2a05eae35b",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host 00-4e-01-48-b2-ab: validation 'has-inventory' is now fixed",
+        "name": "host_validation_fixed",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T21:55:23.014Z",
+        "host_id": "7abf6946-782e-055a-e732-6f2a05eae35b",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host 00-4e-01-48-b2-ab: validation 'hostname-valid' is now fixed",
+        "name": "host_validation_fixed",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T21:55:23.027Z",
+        "host_id": "7abf6946-782e-055a-e732-6f2a05eae35b",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host 00-4e-01-48-b2-ab: updated status from discovering to insufficient (Host cannot be installed due to following failing validation(s): Host couldn't synchronize with any NTP server ; No connectivity to the majority of hosts in the cluster)",
+        "name": "host_status_updated",
+        "severity": "warning"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T21:55:23.044Z",
+        "host_id": "7abf6946-782e-055a-e732-6f2a05eae35b",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host 00-4e-01-48-b2-ab: calculated role is worker",
+        "name": "host_role_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T21:55:23.061Z",
+        "host_id": "522d43f3-ecce-03d8-6be9-a0653c28d1bd",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host 00-4e-01-48-b2-9e: calculated role is worker",
+        "name": "host_role_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T21:55:43.317Z",
+        "message": "Cluster validation 'api-vips-valid' is now fixed",
+        "name": "cluster_validation_fixed",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T21:55:43.321Z",
+        "message": "Cluster validation 'ingress-vips-valid' is now fixed",
+        "name": "cluster_validation_fixed",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T21:56:04.070Z",
+        "host_id": "97da499e-45f7-c862-5f59-771eb7a7ef11",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host 00-4e-01-50-a4-11: validation 'ntp-synced' is now fixed",
+        "name": "host_validation_fixed",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T21:56:12.046Z",
+        "host_id": "97da499e-45f7-c862-5f59-771eb7a7ef11",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host 00-4e-01-50-a4-11: validation 'belongs-to-majority-group' is now fixed",
+        "name": "host_validation_fixed",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T21:56:12.059Z",
+        "host_id": "97da499e-45f7-c862-5f59-771eb7a7ef11",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host 00-4e-01-50-a4-11: updated status from insufficient to known (Host is ready to be installed)",
+        "name": "host_status_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T21:56:12.096Z",
+        "host_id": "d2afed59-767f-4efe-8057-ee4cdc3bb945",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host 00-4e-01-48-b2-94: validation 'belongs-to-majority-group' is now fixed",
+        "name": "host_validation_fixed",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T21:56:12.117Z",
+        "host_id": "d2afed59-767f-4efe-8057-ee4cdc3bb945",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host 00-4e-01-48-b2-94: updated status from insufficient to known (Host is ready to be installed)",
+        "name": "host_status_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T21:56:12.147Z",
+        "host_id": "b7197597-e9a3-d022-20bf-71a13325aa8c",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host 00-4e-01-4f-03-9e: validation 'belongs-to-majority-group' is now fixed",
+        "name": "host_validation_fixed",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T21:56:12.151Z",
+        "host_id": "b7197597-e9a3-d022-20bf-71a13325aa8c",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host 00-4e-01-4f-03-9e: validation 'ntp-synced' is now fixed",
+        "name": "host_validation_fixed",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T21:56:12.165Z",
+        "host_id": "b7197597-e9a3-d022-20bf-71a13325aa8c",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host 00-4e-01-4f-03-9e: updated status from insufficient to known (Host is ready to be installed)",
+        "name": "host_status_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T21:56:20.007Z",
+        "host_id": "b66641f4-b88a-dd84-edd0-88ee7cecfae9",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host 00-4e-01-4f-03-ab: validation 'belongs-to-majority-group' is now fixed",
+        "name": "host_validation_fixed",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T21:56:20.012Z",
+        "host_id": "b66641f4-b88a-dd84-edd0-88ee7cecfae9",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host 00-4e-01-4f-03-ab: validation 'ntp-synced' is now fixed",
+        "name": "host_validation_fixed",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T21:56:20.032Z",
+        "host_id": "b66641f4-b88a-dd84-edd0-88ee7cecfae9",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host 00-4e-01-4f-03-ab: updated status from insufficient to known (Host is ready to be installed)",
+        "name": "host_status_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T21:56:20.048Z",
+        "host_id": "d2afed59-767f-4efe-8057-ee4cdc3bb945",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host 00-4e-01-48-b2-94: validation 'ntp-synced' is now fixed",
+        "name": "host_validation_fixed",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T21:56:20.090Z",
+        "host_id": "42fd8fb6-3231-aeea-a21e-c7b34ad6f1ab",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host 00-4e-01-50-a4-1e: validation 'belongs-to-majority-group' is now fixed",
+        "name": "host_validation_fixed",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T21:56:20.118Z",
+        "host_id": "42fd8fb6-3231-aeea-a21e-c7b34ad6f1ab",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host 00-4e-01-50-a4-1e: updated status from insufficient to known (Host is ready to be installed)",
+        "name": "host_status_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T21:56:20.315Z",
+        "host_id": "a01038e3-07af-c486-229a-23243b163a0e",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host a01038e3-07af-c486-229a-23243b163a0e: Successfully registered",
+        "name": "host_registration_succeeded",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T21:56:27.980Z",
+        "host_id": "81b899d5-fc55-e118-c8ab-3244c6acd6e6",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host 00-4e-01-4f-03-91: validation 'belongs-to-majority-group' is now fixed",
+        "name": "host_validation_fixed",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T21:56:27.984Z",
+        "host_id": "81b899d5-fc55-e118-c8ab-3244c6acd6e6",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host 00-4e-01-4f-03-91: validation 'ntp-synced' is now fixed",
+        "name": "host_validation_fixed",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T21:56:27.997Z",
+        "host_id": "81b899d5-fc55-e118-c8ab-3244c6acd6e6",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host 00-4e-01-4f-03-91: updated status from insufficient to known (Host is ready to be installed)",
+        "name": "host_status_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T21:56:28.019Z",
+        "host_id": "81b899d5-fc55-e118-c8ab-3244c6acd6e6",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host 00-4e-01-4f-03-91: calculated role is master",
+        "name": "host_role_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T21:56:28.052Z",
+        "host_id": "97da499e-45f7-c862-5f59-771eb7a7ef11",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host 00-4e-01-50-a4-11: calculated role is master",
+        "name": "host_role_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T21:56:28.086Z",
+        "host_id": "b66641f4-b88a-dd84-edd0-88ee7cecfae9",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host 00-4e-01-4f-03-ab: calculated role is master",
+        "name": "host_role_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T21:56:28.093Z",
+        "host_id": "42fd8fb6-3231-aeea-a21e-c7b34ad6f1ab",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host 00-4e-01-50-a4-1e: validation 'ntp-synced' is now fixed",
+        "name": "host_validation_fixed",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T21:56:28.113Z",
+        "host_id": "42fd8fb6-3231-aeea-a21e-c7b34ad6f1ab",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host 00-4e-01-50-a4-1e: calculated role is worker",
+        "name": "host_role_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T21:56:28.128Z",
+        "host_id": "a01038e3-07af-c486-229a-23243b163a0e",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host 00-4e-01-50-a4-2e: updated status from discovering to insufficient (Host cannot be installed due to following failing validation(s): Host couldn't synchronize with any NTP server ; No connectivity to the majority of hosts in the cluster)",
+        "name": "host_status_updated",
+        "severity": "warning"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T21:56:28.143Z",
+        "host_id": "a01038e3-07af-c486-229a-23243b163a0e",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host 00-4e-01-50-a4-2e: calculated role is worker",
+        "name": "host_role_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T21:56:28.167Z",
+        "host_id": "b7197597-e9a3-d022-20bf-71a13325aa8c",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host 00-4e-01-4f-03-9e: calculated role is worker",
+        "name": "host_role_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T21:56:28.194Z",
+        "host_id": "d2afed59-767f-4efe-8057-ee4cdc3bb945",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host 00-4e-01-48-b2-94: calculated role is worker",
+        "name": "host_role_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T21:56:28.201Z",
+        "host_id": "522d43f3-ecce-03d8-6be9-a0653c28d1bd",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host 00-4e-01-48-b2-9e: validation 'belongs-to-majority-group' is now fixed",
+        "name": "host_validation_fixed",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T21:56:28.214Z",
+        "host_id": "522d43f3-ecce-03d8-6be9-a0653c28d1bd",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host 00-4e-01-48-b2-9e: updated status from insufficient to known (Host is ready to be installed)",
+        "name": "host_status_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T21:56:28.229Z",
+        "host_id": "522d43f3-ecce-03d8-6be9-a0653c28d1bd",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host 00-4e-01-48-b2-9e: calculated role is worker",
+        "name": "host_role_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T21:56:28.252Z",
+        "host_id": "7abf6946-782e-055a-e732-6f2a05eae35b",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host 00-4e-01-48-b2-ab: calculated role is worker",
+        "name": "host_role_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T21:56:31.470Z",
+        "message": "Cluster validation 'sufficient-masters-count' that used to succeed is now failing",
+        "name": "cluster_validation_failed",
+        "severity": "warning"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T21:56:34.643Z",
+        "host_id": "522d43f3-ecce-03d8-6be9-a0653c28d1bd",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host llas1ocs3001: validation 'ntp-synced' is now fixed",
+        "name": "host_validation_fixed",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T21:56:35.490Z",
+        "message": "Cluster validation 'sufficient-masters-count' is now fixed",
+        "name": "cluster_validation_fixed",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T21:56:36.028Z",
+        "host_id": "b66641f4-b88a-dd84-edd0-88ee7cecfae9",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host 00-4e-01-4f-03-ab: calculated role is worker",
+        "name": "host_role_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T21:56:36.049Z",
+        "host_id": "7abf6946-782e-055a-e732-6f2a05eae35b",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host 00-4e-01-48-b2-ab: validation 'belongs-to-majority-group' is now fixed",
+        "name": "host_validation_fixed",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T21:56:36.053Z",
+        "host_id": "7abf6946-782e-055a-e732-6f2a05eae35b",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host 00-4e-01-48-b2-ab: validation 'ntp-synced' is now fixed",
+        "name": "host_validation_fixed",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T21:56:36.066Z",
+        "host_id": "7abf6946-782e-055a-e732-6f2a05eae35b",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host 00-4e-01-48-b2-ab: updated status from insufficient to known (Host is ready to be installed)",
+        "name": "host_status_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T21:57:40.068Z",
+        "host_id": "a01038e3-07af-c486-229a-23243b163a0e",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host llas1ocs2002: validation 'belongs-to-majority-group' is now fixed",
+        "name": "host_validation_fixed",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T21:57:40.085Z",
+        "host_id": "a01038e3-07af-c486-229a-23243b163a0e",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host llas1ocs2002: updated status from insufficient to known (Host is ready to be installed)",
+        "name": "host_status_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T21:57:43.362Z",
+        "message": "Cluster validation 'all-hosts-are-ready-to-install' is now fixed",
+        "name": "cluster_validation_fixed",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T21:57:43.390Z",
+        "message": "Updated status of the cluster to ready",
+        "name": "cluster_status_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T21:57:48.080Z",
+        "host_id": "a01038e3-07af-c486-229a-23243b163a0e",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host llas1ocs2002: validation 'ntp-synced' is now fixed",
+        "name": "host_validation_fixed",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T21:58:53.332Z",
+        "message": "Updated status of the cluster to preparing-for-installation",
+        "name": "cluster_status_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T21:58:53.350Z",
+        "host_id": "d2afed59-767f-4efe-8057-ee4cdc3bb945",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host llas1ocs3000: set as bootstrap",
+        "name": "host_bootstrap_set",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T21:59:00.113Z",
+        "host_id": "522d43f3-ecce-03d8-6be9-a0653c28d1bd",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host llas1ocs3001: updated status from known to preparing-for-installation (Host finished successfully to prepare for installation)",
+        "name": "host_status_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T21:59:00.124Z",
+        "host_id": "81b899d5-fc55-e118-c8ab-3244c6acd6e6",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host llas1ocs1000: updated status from known to preparing-for-installation (Host finished successfully to prepare for installation)",
+        "name": "host_status_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T21:59:00.139Z",
+        "host_id": "97da499e-45f7-c862-5f59-771eb7a7ef11",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host llas1ocs2000: updated status from known to preparing-for-installation (Host finished successfully to prepare for installation)",
+        "name": "host_status_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T21:59:00.149Z",
+        "host_id": "42fd8fb6-3231-aeea-a21e-c7b34ad6f1ab",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host llas1ocs2001: updated status from known to preparing-for-installation (Host finished successfully to prepare for installation)",
+        "name": "host_status_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T21:59:00.160Z",
+        "host_id": "a01038e3-07af-c486-229a-23243b163a0e",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host llas1ocs2002: updated status from known to preparing-for-installation (Host finished successfully to prepare for installation)",
+        "name": "host_status_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T21:59:00.174Z",
+        "host_id": "7abf6946-782e-055a-e732-6f2a05eae35b",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host llas1ocs3002: updated status from known to preparing-for-installation (Host finished successfully to prepare for installation)",
+        "name": "host_status_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T21:59:00.187Z",
+        "host_id": "d2afed59-767f-4efe-8057-ee4cdc3bb945",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host llas1ocs3000: updated status from known to preparing-for-installation (Host finished successfully to prepare for installation)",
+        "name": "host_status_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T21:59:00.198Z",
+        "host_id": "b7197597-e9a3-d022-20bf-71a13325aa8c",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host llas1ocs1001: updated status from known to preparing-for-installation (Host finished successfully to prepare for installation)",
+        "name": "host_status_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T21:59:00.211Z",
+        "host_id": "b66641f4-b88a-dd84-edd0-88ee7cecfae9",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host llas1ocs1002: updated status from known to preparing-for-installation (Host finished successfully to prepare for installation)",
+        "name": "host_status_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T21:59:00.518Z",
+        "message": "Cluster starting to prepare for installation",
+        "name": "cluster_prepare_installation_started",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:00:18.674Z",
+        "host_id": "81b899d5-fc55-e118-c8ab-3244c6acd6e6",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host llas1ocs1000: New image status quay.io/openshift-release-dev/ocp-release:4.18.33-x86_64. result: success. time: 15.62 seconds; size: 493.90 Megabytes; download rate: 33.16 MBps",
+        "name": "image_status_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:00:18.682Z",
+        "host_id": "81b899d5-fc55-e118-c8ab-3244c6acd6e6",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host llas1ocs1000: New image status quay.io/openshift-release-dev/ocp-v4.0-art-dev@sha256:4775c6461221dafe3ddd67ff683ccb665bed6eb278fa047d9d744aab9af65dcf. result: success. time: 30.23 seconds; size: 946.48 Megabytes; download rate: 32.83 MBps",
+        "name": "image_status_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:00:18.689Z",
+        "host_id": "81b899d5-fc55-e118-c8ab-3244c6acd6e6",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host llas1ocs1000: New image status quay.io/openshift-release-dev/ocp-v4.0-art-dev@sha256:6874c245fd5d789ca82e7978cbbb1a74e8ff8fee198eb4bec9caabab4957cc4a. result: success. time: 15.15 seconds; size: 588.45 Megabytes; download rate: 40.73 MBps",
+        "name": "image_status_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:00:18.697Z",
+        "host_id": "81b899d5-fc55-e118-c8ab-3244c6acd6e6",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host llas1ocs1000: New image status registry.redhat.io/rhai/assisted-installer-rhel9:92a2597df343959572cd8f5dc746966ac8cc1f4d. result: success. time: 10.13 seconds; size: 282.15 Megabytes; download rate: 29.21 MBps",
+        "name": "image_status_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:00:18.937Z",
+        "host_id": "42fd8fb6-3231-aeea-a21e-c7b34ad6f1ab",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host llas1ocs2001: New image status quay.io/openshift-release-dev/ocp-release:4.18.33-x86_64. result: success. time: 16.10 seconds; size: 493.90 Megabytes; download rate: 32.17 MBps",
+        "name": "image_status_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:00:18.943Z",
+        "host_id": "42fd8fb6-3231-aeea-a21e-c7b34ad6f1ab",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host llas1ocs2001: New image status quay.io/openshift-release-dev/ocp-v4.0-art-dev@sha256:4775c6461221dafe3ddd67ff683ccb665bed6eb278fa047d9d744aab9af65dcf. result: success. time: 30.19 seconds; size: 946.48 Megabytes; download rate: 32.88 MBps",
+        "name": "image_status_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:00:18.948Z",
+        "host_id": "42fd8fb6-3231-aeea-a21e-c7b34ad6f1ab",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host llas1ocs2001: New image status quay.io/openshift-release-dev/ocp-v4.0-art-dev@sha256:6874c245fd5d789ca82e7978cbbb1a74e8ff8fee198eb4bec9caabab4957cc4a. result: success. time: 18.41 seconds; size: 588.45 Megabytes; download rate: 33.52 MBps",
+        "name": "image_status_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:00:18.953Z",
+        "host_id": "42fd8fb6-3231-aeea-a21e-c7b34ad6f1ab",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host llas1ocs2001: New image status registry.redhat.io/rhai/assisted-installer-rhel9:92a2597df343959572cd8f5dc746966ac8cc1f4d. result: success. time: 10.28 seconds; size: 282.15 Megabytes; download rate: 28.77 MBps",
+        "name": "image_status_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:00:20.311Z",
+        "host_id": "81b899d5-fc55-e118-c8ab-3244c6acd6e6",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host llas1ocs1000: updated status from preparing-for-installation to preparing-successful (Host finished successfully to prepare for installation)",
+        "name": "host_status_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:00:20.322Z",
+        "host_id": "42fd8fb6-3231-aeea-a21e-c7b34ad6f1ab",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host llas1ocs2001: updated status from preparing-for-installation to preparing-successful (Host finished successfully to prepare for installation)",
+        "name": "host_status_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:00:22.896Z",
+        "host_id": "522d43f3-ecce-03d8-6be9-a0653c28d1bd",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host llas1ocs3001: New image status quay.io/openshift-release-dev/ocp-release:4.18.33-x86_64. result: success. time: 15.63 seconds; size: 493.90 Megabytes; download rate: 33.13 MBps",
+        "name": "image_status_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:00:22.903Z",
+        "host_id": "522d43f3-ecce-03d8-6be9-a0653c28d1bd",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host llas1ocs3001: New image status quay.io/openshift-release-dev/ocp-v4.0-art-dev@sha256:4775c6461221dafe3ddd67ff683ccb665bed6eb278fa047d9d744aab9af65dcf. result: success. time: 30.35 seconds; size: 946.48 Megabytes; download rate: 32.70 MBps",
+        "name": "image_status_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:00:22.910Z",
+        "host_id": "522d43f3-ecce-03d8-6be9-a0653c28d1bd",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host llas1ocs3001: New image status quay.io/openshift-release-dev/ocp-v4.0-art-dev@sha256:64f40c6a6f120ca98c5e57d970a3030246c944ba68435f81896c11087994009b. result: success. time: 12.62 seconds; size: 579.66 Megabytes; download rate: 48.15 MBps",
+        "name": "image_status_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:00:22.916Z",
+        "host_id": "522d43f3-ecce-03d8-6be9-a0653c28d1bd",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host llas1ocs3001: New image status registry.redhat.io/rhai/assisted-installer-rhel9:92a2597df343959572cd8f5dc746966ac8cc1f4d. result: success. time: 10.25 seconds; size: 282.15 Megabytes; download rate: 28.86 MBps",
+        "name": "image_status_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:00:26.991Z",
+        "host_id": "7abf6946-782e-055a-e732-6f2a05eae35b",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host llas1ocs3002: New image status quay.io/openshift-release-dev/ocp-release:4.18.33-x86_64. result: success. time: 15.77 seconds; size: 493.90 Megabytes; download rate: 32.83 MBps",
+        "name": "image_status_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:00:26.997Z",
+        "host_id": "7abf6946-782e-055a-e732-6f2a05eae35b",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host llas1ocs3002: New image status quay.io/openshift-release-dev/ocp-v4.0-art-dev@sha256:4775c6461221dafe3ddd67ff683ccb665bed6eb278fa047d9d744aab9af65dcf. result: success. time: 30.52 seconds; size: 946.48 Megabytes; download rate: 32.52 MBps",
+        "name": "image_status_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:00:27.004Z",
+        "host_id": "7abf6946-782e-055a-e732-6f2a05eae35b",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host llas1ocs3002: New image status quay.io/openshift-release-dev/ocp-v4.0-art-dev@sha256:6874c245fd5d789ca82e7978cbbb1a74e8ff8fee198eb4bec9caabab4957cc4a. result: success. time: 12.69 seconds; size: 588.45 Megabytes; download rate: 48.63 MBps",
+        "name": "image_status_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:00:27.011Z",
+        "host_id": "7abf6946-782e-055a-e732-6f2a05eae35b",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host llas1ocs3002: New image status registry.redhat.io/rhai/assisted-installer-rhel9:92a2597df343959572cd8f5dc746966ac8cc1f4d. result: success. time: 10.18 seconds; size: 282.15 Megabytes; download rate: 29.07 MBps",
+        "name": "image_status_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:00:28.012Z",
+        "host_id": "522d43f3-ecce-03d8-6be9-a0653c28d1bd",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host llas1ocs3001: updated status from preparing-for-installation to preparing-successful (Host finished successfully to prepare for installation)",
+        "name": "host_status_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:00:28.026Z",
+        "host_id": "7abf6946-782e-055a-e732-6f2a05eae35b",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host llas1ocs3002: updated status from preparing-for-installation to preparing-successful (Host finished successfully to prepare for installation)",
+        "name": "host_status_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:00:30.257Z",
+        "host_id": "a01038e3-07af-c486-229a-23243b163a0e",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host llas1ocs2002: New image status quay.io/openshift-release-dev/ocp-release:4.18.33-x86_64. result: success. time: 15.92 seconds; size: 493.90 Megabytes; download rate: 32.52 MBps",
+        "name": "image_status_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:00:30.263Z",
+        "host_id": "a01038e3-07af-c486-229a-23243b163a0e",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host llas1ocs2002: New image status quay.io/openshift-release-dev/ocp-v4.0-art-dev@sha256:4775c6461221dafe3ddd67ff683ccb665bed6eb278fa047d9d744aab9af65dcf. result: success. time: 30.04 seconds; size: 946.48 Megabytes; download rate: 33.04 MBps",
+        "name": "image_status_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:00:30.268Z",
+        "host_id": "a01038e3-07af-c486-229a-23243b163a0e",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host llas1ocs2002: New image status quay.io/openshift-release-dev/ocp-v4.0-art-dev@sha256:6874c245fd5d789ca82e7978cbbb1a74e8ff8fee198eb4bec9caabab4957cc4a. result: success. time: 12.87 seconds; size: 588.45 Megabytes; download rate: 47.95 MBps",
+        "name": "image_status_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:00:30.273Z",
+        "host_id": "a01038e3-07af-c486-229a-23243b163a0e",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host llas1ocs2002: New image status registry.redhat.io/rhai/assisted-installer-rhel9:92a2597df343959572cd8f5dc746966ac8cc1f4d. result: success. time: 9.61 seconds; size: 282.15 Megabytes; download rate: 30.78 MBps",
+        "name": "image_status_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:00:36.021Z",
+        "host_id": "a01038e3-07af-c486-229a-23243b163a0e",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host llas1ocs2002: updated status from preparing-for-installation to preparing-successful (Host finished successfully to prepare for installation)",
+        "name": "host_status_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:00:49.931Z",
+        "host_id": "97da499e-45f7-c862-5f59-771eb7a7ef11",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host llas1ocs2000: New image status quay.io/openshift-release-dev/ocp-release:4.18.33-x86_64. result: success. time: 15.94 seconds; size: 493.90 Megabytes; download rate: 32.49 MBps",
+        "name": "image_status_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:00:49.940Z",
+        "host_id": "97da499e-45f7-c862-5f59-771eb7a7ef11",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host llas1ocs2000: New image status quay.io/openshift-release-dev/ocp-v4.0-art-dev@sha256:4775c6461221dafe3ddd67ff683ccb665bed6eb278fa047d9d744aab9af65dcf. result: success. time: 30.18 seconds; size: 946.48 Megabytes; download rate: 32.89 MBps",
+        "name": "image_status_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:00:49.948Z",
+        "host_id": "97da499e-45f7-c862-5f59-771eb7a7ef11",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host llas1ocs2000: New image status quay.io/openshift-release-dev/ocp-v4.0-art-dev@sha256:6874c245fd5d789ca82e7978cbbb1a74e8ff8fee198eb4bec9caabab4957cc4a. result: success. time: 12.58 seconds; size: 588.45 Megabytes; download rate: 49.04 MBps",
+        "name": "image_status_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:00:49.956Z",
+        "host_id": "97da499e-45f7-c862-5f59-771eb7a7ef11",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host llas1ocs2000: New image status registry.redhat.io/rhai/assisted-installer-rhel9:92a2597df343959572cd8f5dc746966ac8cc1f4d. result: success. time: 9.63 seconds; size: 282.15 Megabytes; download rate: 30.72 MBps",
+        "name": "image_status_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:00:52.100Z",
+        "host_id": "97da499e-45f7-c862-5f59-771eb7a7ef11",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host llas1ocs2000: updated status from preparing-for-installation to preparing-successful (Host finished successfully to prepare for installation)",
+        "name": "host_status_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:00:58.131Z",
+        "host_id": "b7197597-e9a3-d022-20bf-71a13325aa8c",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host llas1ocs1001: New image status quay.io/openshift-release-dev/ocp-release:4.18.33-x86_64. result: success. time: 16.28 seconds; size: 493.90 Megabytes; download rate: 31.82 MBps",
+        "name": "image_status_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:00:58.137Z",
+        "host_id": "b7197597-e9a3-d022-20bf-71a13325aa8c",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host llas1ocs1001: New image status quay.io/openshift-release-dev/ocp-v4.0-art-dev@sha256:4775c6461221dafe3ddd67ff683ccb665bed6eb278fa047d9d744aab9af65dcf. result: success. time: 30.60 seconds; size: 946.48 Megabytes; download rate: 32.43 MBps",
+        "name": "image_status_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:00:58.142Z",
+        "host_id": "b7197597-e9a3-d022-20bf-71a13325aa8c",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host llas1ocs1001: New image status quay.io/openshift-release-dev/ocp-v4.0-art-dev@sha256:64f40c6a6f120ca98c5e57d970a3030246c944ba68435f81896c11087994009b. result: success. time: 12.67 seconds; size: 579.66 Megabytes; download rate: 47.99 MBps",
+        "name": "image_status_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:00:58.147Z",
+        "host_id": "b7197597-e9a3-d022-20bf-71a13325aa8c",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host llas1ocs1001: New image status registry.redhat.io/rhai/assisted-installer-rhel9:92a2597df343959572cd8f5dc746966ac8cc1f4d. result: success. time: 10.05 seconds; size: 282.15 Megabytes; download rate: 29.44 MBps",
+        "name": "image_status_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:00:59.721Z",
+        "host_id": "d2afed59-767f-4efe-8057-ee4cdc3bb945",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host llas1ocs3000: New image status quay.io/openshift-release-dev/ocp-release:4.18.33-x86_64. result: success. time: 15.88 seconds; size: 493.90 Megabytes; download rate: 32.61 MBps",
+        "name": "image_status_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:00:59.729Z",
+        "host_id": "d2afed59-767f-4efe-8057-ee4cdc3bb945",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host llas1ocs3000: New image status quay.io/openshift-release-dev/ocp-v4.0-art-dev@sha256:4775c6461221dafe3ddd67ff683ccb665bed6eb278fa047d9d744aab9af65dcf. result: success. time: 29.66 seconds; size: 946.48 Megabytes; download rate: 33.47 MBps",
+        "name": "image_status_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:00:59.736Z",
+        "host_id": "d2afed59-767f-4efe-8057-ee4cdc3bb945",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host llas1ocs3000: New image status quay.io/openshift-release-dev/ocp-v4.0-art-dev@sha256:64f40c6a6f120ca98c5e57d970a3030246c944ba68435f81896c11087994009b. result: success. time: 12.55 seconds; size: 579.66 Megabytes; download rate: 48.44 MBps",
+        "name": "image_status_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:00:59.743Z",
+        "host_id": "d2afed59-767f-4efe-8057-ee4cdc3bb945",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host llas1ocs3000: New image status registry.redhat.io/rhai/assisted-installer-rhel9:92a2597df343959572cd8f5dc746966ac8cc1f4d. result: success. time: 9.29 seconds; size: 282.15 Megabytes; download rate: 31.86 MBps",
+        "name": "image_status_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:01:00.069Z",
+        "host_id": "b7197597-e9a3-d022-20bf-71a13325aa8c",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host llas1ocs1001: updated status from preparing-for-installation to preparing-successful (Host finished successfully to prepare for installation)",
+        "name": "host_status_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:01:06.726Z",
+        "host_id": "b66641f4-b88a-dd84-edd0-88ee7cecfae9",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host llas1ocs1002: New image status quay.io/openshift-release-dev/ocp-release:4.18.33-x86_64. result: success. time: 15.67 seconds; size: 493.90 Megabytes; download rate: 33.04 MBps",
+        "name": "image_status_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:01:06.732Z",
+        "host_id": "b66641f4-b88a-dd84-edd0-88ee7cecfae9",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host llas1ocs1002: New image status quay.io/openshift-release-dev/ocp-v4.0-art-dev@sha256:4775c6461221dafe3ddd67ff683ccb665bed6eb278fa047d9d744aab9af65dcf. result: success. time: 30.14 seconds; size: 946.48 Megabytes; download rate: 32.92 MBps",
+        "name": "image_status_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:01:06.738Z",
+        "host_id": "b66641f4-b88a-dd84-edd0-88ee7cecfae9",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host llas1ocs1002: New image status quay.io/openshift-release-dev/ocp-v4.0-art-dev@sha256:64f40c6a6f120ca98c5e57d970a3030246c944ba68435f81896c11087994009b. result: success. time: 12.61 seconds; size: 579.66 Megabytes; download rate: 48.21 MBps",
+        "name": "image_status_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:01:06.743Z",
+        "host_id": "b66641f4-b88a-dd84-edd0-88ee7cecfae9",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host llas1ocs1002: New image status registry.redhat.io/rhai/assisted-installer-rhel9:92a2597df343959572cd8f5dc746966ac8cc1f4d. result: success. time: 9.82 seconds; size: 282.15 Megabytes; download rate: 30.13 MBps",
+        "name": "image_status_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:01:08.054Z",
+        "host_id": "d2afed59-767f-4efe-8057-ee4cdc3bb945",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host llas1ocs3000: updated status from preparing-for-installation to preparing-successful (Host finished successfully to prepare for installation)",
+        "name": "host_status_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:01:08.068Z",
+        "host_id": "b66641f4-b88a-dd84-edd0-88ee7cecfae9",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host llas1ocs1002: updated status from preparing-for-installation to preparing-successful (Host finished successfully to prepare for installation)",
+        "name": "host_status_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:01:13.248Z",
+        "message": "Updated status of the cluster to installing",
+        "name": "cluster_status_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:01:15.995Z",
+        "host_id": "42fd8fb6-3231-aeea-a21e-c7b34ad6f1ab",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host llas1ocs2001: updated status from preparing-successful to installing (Installation is in progress)",
+        "name": "host_status_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:01:16.008Z",
+        "host_id": "7abf6946-782e-055a-e732-6f2a05eae35b",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host llas1ocs3002: updated status from preparing-successful to installing (Installation is in progress)",
+        "name": "host_status_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:01:16.019Z",
+        "host_id": "a01038e3-07af-c486-229a-23243b163a0e",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host llas1ocs2002: updated status from preparing-successful to installing (Installation is in progress)",
+        "name": "host_status_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:01:16.030Z",
+        "host_id": "97da499e-45f7-c862-5f59-771eb7a7ef11",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host llas1ocs2000: updated status from preparing-successful to installing (Installation is in progress)",
+        "name": "host_status_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:01:16.041Z",
+        "host_id": "b7197597-e9a3-d022-20bf-71a13325aa8c",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host llas1ocs1001: updated status from preparing-successful to installing (Installation is in progress)",
+        "name": "host_status_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:01:16.051Z",
+        "host_id": "d2afed59-767f-4efe-8057-ee4cdc3bb945",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host llas1ocs3000: updated status from preparing-successful to installing (Installation is in progress)",
+        "name": "host_status_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:01:16.062Z",
+        "host_id": "81b899d5-fc55-e118-c8ab-3244c6acd6e6",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host llas1ocs1000: updated status from preparing-successful to installing (Installation is in progress)",
+        "name": "host_status_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:01:16.074Z",
+        "host_id": "b66641f4-b88a-dd84-edd0-88ee7cecfae9",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host llas1ocs1002: updated status from preparing-successful to installing (Installation is in progress)",
+        "name": "host_status_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:01:16.087Z",
+        "host_id": "522d43f3-ecce-03d8-6be9-a0653c28d1bd",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host llas1ocs3001: updated status from preparing-successful to installing (Installation is in progress)",
+        "name": "host_status_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:01:18.801Z",
+        "host_id": "7abf6946-782e-055a-e732-6f2a05eae35b",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host llas1ocs3002: updated status from installing to installing-in-progress (Starting installation)",
+        "name": "host_status_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:01:18.805Z",
+        "host_id": "7abf6946-782e-055a-e732-6f2a05eae35b",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs3002, reached installation stage Starting installation: worker",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:01:18.966Z",
+        "host_id": "7abf6946-782e-055a-e732-6f2a05eae35b",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs3002, reached installation stage Installing: worker",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:01:19.168Z",
+        "host_id": "7abf6946-782e-055a-e732-6f2a05eae35b",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs3002, reached installation stage Writing image to disk",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:01:21.272Z",
+        "host_id": "7abf6946-782e-055a-e732-6f2a05eae35b",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs3002, reached installation stage Writing image to disk: 8%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:01:22.271Z",
+        "host_id": "7abf6946-782e-055a-e732-6f2a05eae35b",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs3002, reached installation stage Writing image to disk: 13%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:01:22.367Z",
+        "host_id": "a01038e3-07af-c486-229a-23243b163a0e",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host llas1ocs2002: updated status from installing to installing-in-progress (Starting installation)",
+        "name": "host_status_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:01:22.371Z",
+        "host_id": "a01038e3-07af-c486-229a-23243b163a0e",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs2002, reached installation stage Starting installation: worker",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:01:22.602Z",
+        "host_id": "a01038e3-07af-c486-229a-23243b163a0e",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs2002, reached installation stage Installing: worker",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:01:22.843Z",
+        "host_id": "a01038e3-07af-c486-229a-23243b163a0e",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs2002, reached installation stage Writing image to disk",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:01:24.274Z",
+        "host_id": "7abf6946-782e-055a-e732-6f2a05eae35b",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs3002, reached installation stage Writing image to disk: 21%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:01:24.949Z",
+        "host_id": "a01038e3-07af-c486-229a-23243b163a0e",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs2002, reached installation stage Writing image to disk: 8%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:01:25.272Z",
+        "host_id": "7abf6946-782e-055a-e732-6f2a05eae35b",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs3002, reached installation stage Writing image to disk: 26%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:01:25.947Z",
+        "host_id": "a01038e3-07af-c486-229a-23243b163a0e",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs2002, reached installation stage Writing image to disk: 13%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:01:27.274Z",
+        "host_id": "7abf6946-782e-055a-e732-6f2a05eae35b",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs3002, reached installation stage Writing image to disk: 33%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:01:27.951Z",
+        "host_id": "a01038e3-07af-c486-229a-23243b163a0e",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs2002, reached installation stage Writing image to disk: 21%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:01:29.272Z",
+        "host_id": "7abf6946-782e-055a-e732-6f2a05eae35b",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs3002, reached installation stage Writing image to disk: 40%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:01:29.948Z",
+        "host_id": "a01038e3-07af-c486-229a-23243b163a0e",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs2002, reached installation stage Writing image to disk: 29%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:01:31.274Z",
+        "host_id": "7abf6946-782e-055a-e732-6f2a05eae35b",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs3002, reached installation stage Writing image to disk: 45%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:01:31.948Z",
+        "host_id": "a01038e3-07af-c486-229a-23243b163a0e",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs2002, reached installation stage Writing image to disk: 36%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:01:32.272Z",
+        "host_id": "7abf6946-782e-055a-e732-6f2a05eae35b",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs3002, reached installation stage Writing image to disk: 50%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:01:33.949Z",
+        "host_id": "a01038e3-07af-c486-229a-23243b163a0e",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs2002, reached installation stage Writing image to disk: 42%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:01:34.272Z",
+        "host_id": "7abf6946-782e-055a-e732-6f2a05eae35b",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs3002, reached installation stage Writing image to disk: 58%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:01:35.948Z",
+        "host_id": "a01038e3-07af-c486-229a-23243b163a0e",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs2002, reached installation stage Writing image to disk: 51%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:01:36.275Z",
+        "host_id": "7abf6946-782e-055a-e732-6f2a05eae35b",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs3002, reached installation stage Writing image to disk: 64%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:01:37.273Z",
+        "host_id": "7abf6946-782e-055a-e732-6f2a05eae35b",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs3002, reached installation stage Writing image to disk: 69%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:01:37.951Z",
+        "host_id": "a01038e3-07af-c486-229a-23243b163a0e",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs2002, reached installation stage Writing image to disk: 58%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:01:39.275Z",
+        "host_id": "7abf6946-782e-055a-e732-6f2a05eae35b",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs3002, reached installation stage Writing image to disk: 76%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:01:39.948Z",
+        "host_id": "a01038e3-07af-c486-229a-23243b163a0e",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs2002, reached installation stage Writing image to disk: 65%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:01:40.968Z",
+        "host_id": "a01038e3-07af-c486-229a-23243b163a0e",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs2002, reached installation stage Writing image to disk: 70%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:01:41.273Z",
+        "host_id": "7abf6946-782e-055a-e732-6f2a05eae35b",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs3002, reached installation stage Writing image to disk: 82%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:01:42.138Z",
+        "host_id": "97da499e-45f7-c862-5f59-771eb7a7ef11",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host llas1ocs2000: updated status from installing to installing-in-progress (Starting installation)",
+        "name": "host_status_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:01:42.144Z",
+        "host_id": "97da499e-45f7-c862-5f59-771eb7a7ef11",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs2000, reached installation stage Starting installation: master",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:01:42.311Z",
+        "host_id": "97da499e-45f7-c862-5f59-771eb7a7ef11",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs2000, reached installation stage Installing: master",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:01:42.525Z",
+        "host_id": "97da499e-45f7-c862-5f59-771eb7a7ef11",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs2000, reached installation stage Writing image to disk",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:01:42.951Z",
+        "host_id": "a01038e3-07af-c486-229a-23243b163a0e",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs2002, reached installation stage Writing image to disk: 77%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:01:43.274Z",
+        "host_id": "7abf6946-782e-055a-e732-6f2a05eae35b",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs3002, reached installation stage Writing image to disk: 87%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:01:44.619Z",
+        "host_id": "97da499e-45f7-c862-5f59-771eb7a7ef11",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs2000, reached installation stage Writing image to disk: 8%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:01:44.961Z",
+        "host_id": "a01038e3-07af-c486-229a-23243b163a0e",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs2002, reached installation stage Writing image to disk: 82%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:01:45.275Z",
+        "host_id": "7abf6946-782e-055a-e732-6f2a05eae35b",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs3002, reached installation stage Writing image to disk: 97%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:01:45.617Z",
+        "host_id": "97da499e-45f7-c862-5f59-771eb7a7ef11",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs2000, reached installation stage Writing image to disk: 13%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:01:46.210Z",
+        "host_id": "7abf6946-782e-055a-e732-6f2a05eae35b",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs3002, reached installation stage Writing image to disk: 100%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:01:46.963Z",
+        "host_id": "a01038e3-07af-c486-229a-23243b163a0e",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs2002, reached installation stage Writing image to disk: 88%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:01:47.618Z",
+        "host_id": "97da499e-45f7-c862-5f59-771eb7a7ef11",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs2000, reached installation stage Writing image to disk: 21%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:01:48.680Z",
+        "host_id": "7abf6946-782e-055a-e732-6f2a05eae35b",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs3002, reached installation stage Waiting for control plane",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:01:48.960Z",
+        "host_id": "a01038e3-07af-c486-229a-23243b163a0e",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs2002, reached installation stage Writing image to disk: 97%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:01:49.102Z",
+        "host_id": "b7197597-e9a3-d022-20bf-71a13325aa8c",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host llas1ocs1001: updated status from installing to installing-in-progress (Starting installation)",
+        "name": "host_status_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:01:49.105Z",
+        "host_id": "b7197597-e9a3-d022-20bf-71a13325aa8c",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs1001, reached installation stage Starting installation: worker",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:01:49.282Z",
+        "host_id": "b7197597-e9a3-d022-20bf-71a13325aa8c",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs1001, reached installation stage Installing: worker",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:01:49.572Z",
+        "host_id": "b7197597-e9a3-d022-20bf-71a13325aa8c",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs1001, reached installation stage Writing image to disk",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:01:49.619Z",
+        "host_id": "97da499e-45f7-c862-5f59-771eb7a7ef11",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs2000, reached installation stage Writing image to disk: 28%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:01:49.648Z",
+        "host_id": "a01038e3-07af-c486-229a-23243b163a0e",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs2002, reached installation stage Writing image to disk: 100%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:01:51.618Z",
+        "host_id": "97da499e-45f7-c862-5f59-771eb7a7ef11",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs2000, reached installation stage Writing image to disk: 36%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:01:51.698Z",
+        "host_id": "b7197597-e9a3-d022-20bf-71a13325aa8c",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs1001, reached installation stage Writing image to disk: 8%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:01:52.090Z",
+        "host_id": "a01038e3-07af-c486-229a-23243b163a0e",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs2002, reached installation stage Waiting for control plane",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:01:52.683Z",
+        "host_id": "b7197597-e9a3-d022-20bf-71a13325aa8c",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs1001, reached installation stage Writing image to disk: 13%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:01:52.891Z",
+        "host_id": "d2afed59-767f-4efe-8057-ee4cdc3bb945",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host llas1ocs3000: updated status from installing to installing-in-progress (Starting installation)",
+        "name": "host_status_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:01:52.899Z",
+        "host_id": "d2afed59-767f-4efe-8057-ee4cdc3bb945",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs3000, reached installation stage Starting installation: bootstrap",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:01:53.620Z",
+        "host_id": "97da499e-45f7-c862-5f59-771eb7a7ef11",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs2000, reached installation stage Writing image to disk: 41%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:01:54.681Z",
+        "host_id": "b7197597-e9a3-d022-20bf-71a13325aa8c",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs1001, reached installation stage Writing image to disk: 21%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:01:55.617Z",
+        "host_id": "97da499e-45f7-c862-5f59-771eb7a7ef11",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs2000, reached installation stage Writing image to disk: 49%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:01:56.684Z",
+        "host_id": "b7197597-e9a3-d022-20bf-71a13325aa8c",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs1001, reached installation stage Writing image to disk: 28%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:01:57.617Z",
+        "host_id": "97da499e-45f7-c862-5f59-771eb7a7ef11",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs2000, reached installation stage Writing image to disk: 57%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:01:58.119Z",
+        "host_id": "d2afed59-767f-4efe-8057-ee4cdc3bb945",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs3000, reached installation stage Installing: master",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:01:58.304Z",
+        "host_id": "d2afed59-767f-4efe-8057-ee4cdc3bb945",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs3000, reached installation stage Writing image to disk",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:01:58.682Z",
+        "host_id": "b7197597-e9a3-d022-20bf-71a13325aa8c",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs1001, reached installation stage Writing image to disk: 35%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:01:59.079Z",
+        "host_id": "b66641f4-b88a-dd84-edd0-88ee7cecfae9",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host llas1ocs1002: updated status from installing to installing-in-progress (Starting installation)",
+        "name": "host_status_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:01:59.083Z",
+        "host_id": "b66641f4-b88a-dd84-edd0-88ee7cecfae9",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs1002, reached installation stage Starting installation: worker",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:01:59.249Z",
+        "host_id": "b66641f4-b88a-dd84-edd0-88ee7cecfae9",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs1002, reached installation stage Installing: worker",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:01:59.482Z",
+        "host_id": "b66641f4-b88a-dd84-edd0-88ee7cecfae9",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs1002, reached installation stage Writing image to disk",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:01:59.618Z",
+        "host_id": "97da499e-45f7-c862-5f59-771eb7a7ef11",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs2000, reached installation stage Writing image to disk: 62%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:00.398Z",
+        "host_id": "d2afed59-767f-4efe-8057-ee4cdc3bb945",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs3000, reached installation stage Writing image to disk: 8%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:00.619Z",
+        "host_id": "97da499e-45f7-c862-5f59-771eb7a7ef11",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs2000, reached installation stage Writing image to disk: 68%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:00.682Z",
+        "host_id": "b7197597-e9a3-d022-20bf-71a13325aa8c",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs1001, reached installation stage Writing image to disk: 41%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:01.398Z",
+        "host_id": "d2afed59-767f-4efe-8057-ee4cdc3bb945",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs3000, reached installation stage Writing image to disk: 13%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:01.584Z",
+        "host_id": "b66641f4-b88a-dd84-edd0-88ee7cecfae9",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs1002, reached installation stage Writing image to disk: 8%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:02.584Z",
+        "host_id": "b66641f4-b88a-dd84-edd0-88ee7cecfae9",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs1002, reached installation stage Writing image to disk: 13%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:02.618Z",
+        "host_id": "97da499e-45f7-c862-5f59-771eb7a7ef11",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs2000, reached installation stage Writing image to disk: 75%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:02.684Z",
+        "host_id": "b7197597-e9a3-d022-20bf-71a13325aa8c",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs1001, reached installation stage Writing image to disk: 49%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:03.396Z",
+        "host_id": "d2afed59-767f-4efe-8057-ee4cdc3bb945",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs3000, reached installation stage Writing image to disk: 21%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:04.584Z",
+        "host_id": "b66641f4-b88a-dd84-edd0-88ee7cecfae9",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs1002, reached installation stage Writing image to disk: 21%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:04.683Z",
+        "host_id": "b7197597-e9a3-d022-20bf-71a13325aa8c",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs1001, reached installation stage Writing image to disk: 57%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:04.823Z",
+        "host_id": "42fd8fb6-3231-aeea-a21e-c7b34ad6f1ab",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host llas1ocs2001: updated status from installing to installing-in-progress (Starting installation)",
+        "name": "host_status_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:04.826Z",
+        "host_id": "42fd8fb6-3231-aeea-a21e-c7b34ad6f1ab",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs2001, reached installation stage Starting installation: worker",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:05.000Z",
+        "host_id": "42fd8fb6-3231-aeea-a21e-c7b34ad6f1ab",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs2001, reached installation stage Installing: worker",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:05.207Z",
+        "host_id": "42fd8fb6-3231-aeea-a21e-c7b34ad6f1ab",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs2001, reached installation stage Writing image to disk",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:05.396Z",
+        "host_id": "d2afed59-767f-4efe-8057-ee4cdc3bb945",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs3000, reached installation stage Writing image to disk: 28%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:05.624Z",
+        "host_id": "97da499e-45f7-c862-5f59-771eb7a7ef11",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs2000, reached installation stage Writing image to disk: 80%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:06.587Z",
+        "host_id": "b66641f4-b88a-dd84-edd0-88ee7cecfae9",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs1002, reached installation stage Writing image to disk: 28%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:06.682Z",
+        "host_id": "b7197597-e9a3-d022-20bf-71a13325aa8c",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs1001, reached installation stage Writing image to disk: 62%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:07.311Z",
+        "host_id": "42fd8fb6-3231-aeea-a21e-c7b34ad6f1ab",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs2001, reached installation stage Writing image to disk: 8%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:07.396Z",
+        "host_id": "d2afed59-767f-4efe-8057-ee4cdc3bb945",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs3000, reached installation stage Writing image to disk: 35%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:07.631Z",
+        "host_id": "97da499e-45f7-c862-5f59-771eb7a7ef11",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs2000, reached installation stage Writing image to disk: 86%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:07.684Z",
+        "host_id": "b7197597-e9a3-d022-20bf-71a13325aa8c",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs1001, reached installation stage Writing image to disk: 68%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:08.309Z",
+        "host_id": "42fd8fb6-3231-aeea-a21e-c7b34ad6f1ab",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs2001, reached installation stage Writing image to disk: 13%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:08.585Z",
+        "host_id": "b66641f4-b88a-dd84-edd0-88ee7cecfae9",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs1002, reached installation stage Writing image to disk: 35%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:08.638Z",
+        "host_id": "81b899d5-fc55-e118-c8ab-3244c6acd6e6",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host llas1ocs1000: updated status from installing to installing-in-progress (Starting installation)",
+        "name": "host_status_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:08.642Z",
+        "host_id": "81b899d5-fc55-e118-c8ab-3244c6acd6e6",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs1000, reached installation stage Starting installation: master",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:08.825Z",
+        "host_id": "81b899d5-fc55-e118-c8ab-3244c6acd6e6",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs1000, reached installation stage Installing: master",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:09.044Z",
+        "host_id": "81b899d5-fc55-e118-c8ab-3244c6acd6e6",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs1000, reached installation stage Writing image to disk",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:09.397Z",
+        "host_id": "d2afed59-767f-4efe-8057-ee4cdc3bb945",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs3000, reached installation stage Writing image to disk: 40%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:09.654Z",
+        "host_id": "97da499e-45f7-c862-5f59-771eb7a7ef11",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs2000, reached installation stage Writing image to disk: 94%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:09.685Z",
+        "host_id": "b7197597-e9a3-d022-20bf-71a13325aa8c",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs1001, reached installation stage Writing image to disk: 74%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:10.309Z",
+        "host_id": "42fd8fb6-3231-aeea-a21e-c7b34ad6f1ab",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs2001, reached installation stage Writing image to disk: 21%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:10.585Z",
+        "host_id": "b66641f4-b88a-dd84-edd0-88ee7cecfae9",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs1002, reached installation stage Writing image to disk: 40%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:11.073Z",
+        "host_id": "97da499e-45f7-c862-5f59-771eb7a7ef11",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs2000, reached installation stage Writing image to disk: 100%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:11.141Z",
+        "host_id": "81b899d5-fc55-e118-c8ab-3244c6acd6e6",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs1000, reached installation stage Writing image to disk: 8%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:11.397Z",
+        "host_id": "d2afed59-767f-4efe-8057-ee4cdc3bb945",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs3000, reached installation stage Writing image to disk: 48%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:11.684Z",
+        "host_id": "b7197597-e9a3-d022-20bf-71a13325aa8c",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs1001, reached installation stage Writing image to disk: 79%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:12.140Z",
+        "host_id": "81b899d5-fc55-e118-c8ab-3244c6acd6e6",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs1000, reached installation stage Writing image to disk: 13%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:12.310Z",
+        "host_id": "42fd8fb6-3231-aeea-a21e-c7b34ad6f1ab",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs2001, reached installation stage Writing image to disk: 28%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:12.587Z",
+        "host_id": "b66641f4-b88a-dd84-edd0-88ee7cecfae9",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs1002, reached installation stage Writing image to disk: 49%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:13.397Z",
+        "host_id": "d2afed59-767f-4efe-8057-ee4cdc3bb945",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs3000, reached installation stage Writing image to disk: 57%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:14.145Z",
+        "host_id": "81b899d5-fc55-e118-c8ab-3244c6acd6e6",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs1000, reached installation stage Writing image to disk: 21%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:14.312Z",
+        "host_id": "42fd8fb6-3231-aeea-a21e-c7b34ad6f1ab",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs2001, reached installation stage Writing image to disk: 36%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:14.589Z",
+        "host_id": "b66641f4-b88a-dd84-edd0-88ee7cecfae9",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs1002, reached installation stage Writing image to disk: 57%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:14.687Z",
+        "host_id": "b7197597-e9a3-d022-20bf-71a13325aa8c",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs1001, reached installation stage Writing image to disk: 87%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:14.967Z",
+        "host_id": "522d43f3-ecce-03d8-6be9-a0653c28d1bd",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host llas1ocs3001: updated status from installing to installing-in-progress (Starting installation)",
+        "name": "host_status_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:14.970Z",
+        "host_id": "522d43f3-ecce-03d8-6be9-a0653c28d1bd",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs3001, reached installation stage Starting installation: worker",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:15.154Z",
+        "host_id": "522d43f3-ecce-03d8-6be9-a0653c28d1bd",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs3001, reached installation stage Installing: worker",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:15.388Z",
+        "host_id": "522d43f3-ecce-03d8-6be9-a0653c28d1bd",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs3001, reached installation stage Writing image to disk",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:15.400Z",
+        "host_id": "d2afed59-767f-4efe-8057-ee4cdc3bb945",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs3000, reached installation stage Writing image to disk: 62%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:16.141Z",
+        "host_id": "81b899d5-fc55-e118-c8ab-3244c6acd6e6",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs1000, reached installation stage Writing image to disk: 28%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:16.396Z",
+        "host_id": "d2afed59-767f-4efe-8057-ee4cdc3bb945",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs3000, reached installation stage Writing image to disk: 68%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:16.585Z",
+        "host_id": "b66641f4-b88a-dd84-edd0-88ee7cecfae9",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs1002, reached installation stage Writing image to disk: 62%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:16.687Z",
+        "host_id": "b7197597-e9a3-d022-20bf-71a13325aa8c",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs1001, reached installation stage Writing image to disk: 95%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:17.311Z",
+        "host_id": "42fd8fb6-3231-aeea-a21e-c7b34ad6f1ab",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs2001, reached installation stage Writing image to disk: 44%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:17.500Z",
+        "host_id": "522d43f3-ecce-03d8-6be9-a0653c28d1bd",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs3001, reached installation stage Writing image to disk: 8%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:17.587Z",
+        "host_id": "b66641f4-b88a-dd84-edd0-88ee7cecfae9",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs1002, reached installation stage Writing image to disk: 68%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:17.905Z",
+        "host_id": "b7197597-e9a3-d022-20bf-71a13325aa8c",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs1001, reached installation stage Writing image to disk: 100%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:18.140Z",
+        "host_id": "81b899d5-fc55-e118-c8ab-3244c6acd6e6",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs1000, reached installation stage Writing image to disk: 35%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:18.397Z",
+        "host_id": "d2afed59-767f-4efe-8057-ee4cdc3bb945",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs3000, reached installation stage Writing image to disk: 74%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:18.503Z",
+        "host_id": "522d43f3-ecce-03d8-6be9-a0653c28d1bd",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs3001, reached installation stage Writing image to disk: 13%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:19.314Z",
+        "host_id": "42fd8fb6-3231-aeea-a21e-c7b34ad6f1ab",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs2001, reached installation stage Writing image to disk: 52%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:19.595Z",
+        "host_id": "b66641f4-b88a-dd84-edd0-88ee7cecfae9",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs1002, reached installation stage Writing image to disk: 74%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:20.145Z",
+        "host_id": "81b899d5-fc55-e118-c8ab-3244c6acd6e6",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs1000, reached installation stage Writing image to disk: 41%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:20.407Z",
+        "host_id": "d2afed59-767f-4efe-8057-ee4cdc3bb945",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs3000, reached installation stage Writing image to disk: 79%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:20.480Z",
+        "host_id": "b7197597-e9a3-d022-20bf-71a13325aa8c",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs1001, reached installation stage Waiting for control plane",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:20.502Z",
+        "host_id": "522d43f3-ecce-03d8-6be9-a0653c28d1bd",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs3001, reached installation stage Writing image to disk: 21%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:21.312Z",
+        "host_id": "42fd8fb6-3231-aeea-a21e-c7b34ad6f1ab",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs2001, reached installation stage Writing image to disk: 58%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:22.141Z",
+        "host_id": "81b899d5-fc55-e118-c8ab-3244c6acd6e6",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs1000, reached installation stage Writing image to disk: 49%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:22.500Z",
+        "host_id": "522d43f3-ecce-03d8-6be9-a0653c28d1bd",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs3001, reached installation stage Writing image to disk: 29%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:22.595Z",
+        "host_id": "b66641f4-b88a-dd84-edd0-88ee7cecfae9",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs1002, reached installation stage Writing image to disk: 79%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:23.312Z",
+        "host_id": "42fd8fb6-3231-aeea-a21e-c7b34ad6f1ab",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs2001, reached installation stage Writing image to disk: 66%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:23.407Z",
+        "host_id": "d2afed59-767f-4efe-8057-ee4cdc3bb945",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs3000, reached installation stage Writing image to disk: 88%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:24.140Z",
+        "host_id": "81b899d5-fc55-e118-c8ab-3244c6acd6e6",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs1000, reached installation stage Writing image to disk: 57%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:24.410Z",
+        "host_id": "d2afed59-767f-4efe-8057-ee4cdc3bb945",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs3000, reached installation stage Writing image to disk: 93%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:24.500Z",
+        "host_id": "522d43f3-ecce-03d8-6be9-a0653c28d1bd",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs3001, reached installation stage Writing image to disk: 36%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:24.596Z",
+        "host_id": "b66641f4-b88a-dd84-edd0-88ee7cecfae9",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs1002, reached installation stage Writing image to disk: 86%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:25.312Z",
+        "host_id": "42fd8fb6-3231-aeea-a21e-c7b34ad6f1ab",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs2001, reached installation stage Writing image to disk: 73%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:25.406Z",
+        "host_id": "d2afed59-767f-4efe-8057-ee4cdc3bb945",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs3000, reached installation stage Writing image to disk: 98%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:25.921Z",
+        "host_id": "d2afed59-767f-4efe-8057-ee4cdc3bb945",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs3000, reached installation stage Writing image to disk: 100%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:26.140Z",
+        "host_id": "81b899d5-fc55-e118-c8ab-3244c6acd6e6",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs1000, reached installation stage Writing image to disk: 62%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:26.500Z",
+        "host_id": "522d43f3-ecce-03d8-6be9-a0653c28d1bd",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs3001, reached installation stage Writing image to disk: 41%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:26.600Z",
+        "host_id": "b66641f4-b88a-dd84-edd0-88ee7cecfae9",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs1002, reached installation stage Writing image to disk: 94%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:27.143Z",
+        "host_id": "81b899d5-fc55-e118-c8ab-3244c6acd6e6",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs1000, reached installation stage Writing image to disk: 68%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:27.334Z",
+        "host_id": "42fd8fb6-3231-aeea-a21e-c7b34ad6f1ab",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs2001, reached installation stage Writing image to disk: 78%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:27.501Z",
+        "host_id": "522d43f3-ecce-03d8-6be9-a0653c28d1bd",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs3001, reached installation stage Writing image to disk: 46%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:27.957Z",
+        "host_id": "b66641f4-b88a-dd84-edd0-88ee7cecfae9",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs1002, reached installation stage Writing image to disk: 100%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:29.139Z",
+        "host_id": "81b899d5-fc55-e118-c8ab-3244c6acd6e6",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs1000, reached installation stage Writing image to disk: 74%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:29.328Z",
+        "host_id": "42fd8fb6-3231-aeea-a21e-c7b34ad6f1ab",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs2001, reached installation stage Writing image to disk: 83%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:29.502Z",
+        "host_id": "522d43f3-ecce-03d8-6be9-a0653c28d1bd",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs3001, reached installation stage Writing image to disk: 54%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:30.144Z",
+        "host_id": "b66641f4-b88a-dd84-edd0-88ee7cecfae9",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs1002, reached installation stage Waiting for control plane",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:30.328Z",
+        "host_id": "42fd8fb6-3231-aeea-a21e-c7b34ad6f1ab",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs2001, reached installation stage Writing image to disk: 88%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:31.141Z",
+        "host_id": "81b899d5-fc55-e118-c8ab-3244c6acd6e6",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs1000, reached installation stage Writing image to disk: 79%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:31.503Z",
+        "host_id": "522d43f3-ecce-03d8-6be9-a0653c28d1bd",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs3001, reached installation stage Writing image to disk: 60%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:32.325Z",
+        "host_id": "42fd8fb6-3231-aeea-a21e-c7b34ad6f1ab",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs2001, reached installation stage Writing image to disk: 97%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:33.145Z",
+        "host_id": "42fd8fb6-3231-aeea-a21e-c7b34ad6f1ab",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs2001, reached installation stage Writing image to disk: 100%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:33.501Z",
+        "host_id": "522d43f3-ecce-03d8-6be9-a0653c28d1bd",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs3001, reached installation stage Writing image to disk: 69%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:34.140Z",
+        "host_id": "81b899d5-fc55-e118-c8ab-3244c6acd6e6",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs1000, reached installation stage Writing image to disk: 86%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:35.250Z",
+        "host_id": "42fd8fb6-3231-aeea-a21e-c7b34ad6f1ab",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs2001, reached installation stage Waiting for control plane",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:35.501Z",
+        "host_id": "522d43f3-ecce-03d8-6be9-a0653c28d1bd",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs3001, reached installation stage Writing image to disk: 76%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:36.140Z",
+        "host_id": "81b899d5-fc55-e118-c8ab-3244c6acd6e6",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs1000, reached installation stage Writing image to disk: 94%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:37.505Z",
+        "host_id": "522d43f3-ecce-03d8-6be9-a0653c28d1bd",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs3001, reached installation stage Writing image to disk: 81%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:37.611Z",
+        "host_id": "81b899d5-fc55-e118-c8ab-3244c6acd6e6",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs1000, reached installation stage Writing image to disk: 100%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:39.518Z",
+        "host_id": "522d43f3-ecce-03d8-6be9-a0653c28d1bd",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs3001, reached installation stage Writing image to disk: 87%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:41.520Z",
+        "host_id": "522d43f3-ecce-03d8-6be9-a0653c28d1bd",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs3001, reached installation stage Writing image to disk: 95%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:42.665Z",
+        "host_id": "522d43f3-ecce-03d8-6be9-a0653c28d1bd",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs3001, reached installation stage Writing image to disk: 100%",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:02:45.327Z",
+        "host_id": "522d43f3-ecce-03d8-6be9-a0653c28d1bd",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs3001, reached installation stage Waiting for control plane",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:07:06.684Z",
+        "host_id": "d2afed59-767f-4efe-8057-ee4cdc3bb945",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs3000, reached installation stage Waiting for control plane: Waiting for bootstrap node preparation",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:07:06.773Z",
+        "host_id": "d2afed59-767f-4efe-8057-ee4cdc3bb945",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs3000, reached installation stage Waiting for control plane: Waiting for masters to join bootstrap control plane",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:07:07.886Z",
+        "host_id": "97da499e-45f7-c862-5f59-771eb7a7ef11",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Uploaded logs for host llas1ocs2000 cluster dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "name": "host_logs_uploaded",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:07:08.103Z",
+        "host_id": "97da499e-45f7-c862-5f59-771eb7a7ef11",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs2000, reached installation stage Rebooting",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:07:10.100Z",
+        "host_id": "81b899d5-fc55-e118-c8ab-3244c6acd6e6",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Uploaded logs for host llas1ocs1000 cluster dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "name": "host_logs_uploaded",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:07:10.318Z",
+        "host_id": "81b899d5-fc55-e118-c8ab-3244c6acd6e6",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs1000, reached installation stage Rebooting",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:10:58.298Z",
+        "host_id": "81b899d5-fc55-e118-c8ab-3244c6acd6e6",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs1000, reached installation stage Configuring",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:10:58.398Z",
+        "host_id": "97da499e-45f7-c862-5f59-771eb7a7ef11",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs2000, reached installation stage Configuring",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:18:01.433Z",
+        "host_id": "97da499e-45f7-c862-5f59-771eb7a7ef11",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs2000, reached installation stage Joined",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:18:06.522Z",
+        "host_id": "81b899d5-fc55-e118-c8ab-3244c6acd6e6",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs1000, reached installation stage Joined",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:18:11.603Z",
+        "host_id": "d2afed59-767f-4efe-8057-ee4cdc3bb945",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs3000, reached installation stage Waiting for bootkube",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:18:34.798Z",
+        "host_id": "81b899d5-fc55-e118-c8ab-3244c6acd6e6",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host llas1ocs1000: updated status from installing-in-progress to installed (Done)",
+        "name": "host_status_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:18:34.837Z",
+        "host_id": "81b899d5-fc55-e118-c8ab-3244c6acd6e6",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs1000, reached installation stage Done",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:18:34.929Z",
+        "host_id": "97da499e-45f7-c862-5f59-771eb7a7ef11",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host llas1ocs2000: updated status from installing-in-progress to installed (Done)",
+        "name": "host_status_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:18:34.954Z",
+        "host_id": "97da499e-45f7-c862-5f59-771eb7a7ef11",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs2000, reached installation stage Done",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:18:53.928Z",
+        "host_id": "81b899d5-fc55-e118-c8ab-3244c6acd6e6",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Node llas1ocs1000 has been rebooted 1 times before completing installation",
+        "name": "reboots_for_node",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:18:54.228Z",
+        "host_id": "97da499e-45f7-c862-5f59-771eb7a7ef11",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Node llas1ocs2000 has been rebooted 1 times before completing installation",
+        "name": "reboots_for_node",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:23:34.682Z",
+        "message": "Uploaded logs for the cluster",
+        "name": "cluster_logs_uploaded",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:25:32.271Z",
+        "host_id": "d2afed59-767f-4efe-8057-ee4cdc3bb945",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs3000, reached installation stage Waiting for bootkube: waiting for ETCD bootstrap to be complete",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:25:37.369Z",
+        "host_id": "d2afed59-767f-4efe-8057-ee4cdc3bb945",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs3000, reached installation stage Waiting for controller: waiting for controller pod ready event",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:27:53.993Z",
+        "host_id": "d2afed59-767f-4efe-8057-ee4cdc3bb945",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Uploaded logs for host llas1ocs3000 cluster dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "name": "host_logs_uploaded",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:27:54.203Z",
+        "host_id": "d2afed59-767f-4efe-8057-ee4cdc3bb945",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs3000, reached installation stage Rebooting",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:29:32.910Z",
+        "host_id": "a01038e3-07af-c486-229a-23243b163a0e",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Uploaded logs for host llas1ocs2002 cluster dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "name": "host_logs_uploaded",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:29:33.097Z",
+        "host_id": "a01038e3-07af-c486-229a-23243b163a0e",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs2002, reached installation stage Rebooting",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:29:33.879Z",
+        "host_id": "b66641f4-b88a-dd84-edd0-88ee7cecfae9",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Uploaded logs for host llas1ocs1002 cluster dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "name": "host_logs_uploaded",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:29:34.103Z",
+        "host_id": "b66641f4-b88a-dd84-edd0-88ee7cecfae9",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs1002, reached installation stage Rebooting",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:29:36.589Z",
+        "host_id": "7abf6946-782e-055a-e732-6f2a05eae35b",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Uploaded logs for host llas1ocs3002 cluster dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "name": "host_logs_uploaded",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:29:36.732Z",
+        "host_id": "42fd8fb6-3231-aeea-a21e-c7b34ad6f1ab",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Uploaded logs for host llas1ocs2001 cluster dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "name": "host_logs_uploaded",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:29:36.802Z",
+        "host_id": "7abf6946-782e-055a-e732-6f2a05eae35b",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs3002, reached installation stage Rebooting",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:29:36.961Z",
+        "host_id": "42fd8fb6-3231-aeea-a21e-c7b34ad6f1ab",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs2001, reached installation stage Rebooting",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:29:37.316Z",
+        "host_id": "b7197597-e9a3-d022-20bf-71a13325aa8c",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Uploaded logs for host llas1ocs1001 cluster dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "name": "host_logs_uploaded",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:29:37.531Z",
+        "host_id": "b7197597-e9a3-d022-20bf-71a13325aa8c",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs1001, reached installation stage Rebooting",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:29:37.958Z",
+        "host_id": "522d43f3-ecce-03d8-6be9-a0653c28d1bd",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Uploaded logs for host llas1ocs3001 cluster dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "name": "host_logs_uploaded",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:29:38.188Z",
+        "host_id": "522d43f3-ecce-03d8-6be9-a0653c28d1bd",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs3001, reached installation stage Rebooting",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:32:04.838Z",
+        "host_id": "d2afed59-767f-4efe-8057-ee4cdc3bb945",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs3000, reached installation stage Configuring",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:33:04.865Z",
+        "host_id": "b66641f4-b88a-dd84-edd0-88ee7cecfae9",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs1002, reached installation stage Configuring",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:33:34.735Z",
+        "host_id": "d2afed59-767f-4efe-8057-ee4cdc3bb945",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs3000, reached installation stage Joined",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:33:34.935Z",
+        "host_id": "42fd8fb6-3231-aeea-a21e-c7b34ad6f1ab",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs2001, reached installation stage Configuring",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:33:35.035Z",
+        "host_id": "b7197597-e9a3-d022-20bf-71a13325aa8c",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs1001, reached installation stage Configuring",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:33:35.139Z",
+        "host_id": "522d43f3-ecce-03d8-6be9-a0653c28d1bd",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs3001, reached installation stage Configuring",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:34:34.870Z",
+        "host_id": "a01038e3-07af-c486-229a-23243b163a0e",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs2002, reached installation stage Configuring",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:34:34.968Z",
+        "host_id": "7abf6946-782e-055a-e732-6f2a05eae35b",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs3002, reached installation stage Configuring",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:35:04.742Z",
+        "host_id": "b7197597-e9a3-d022-20bf-71a13325aa8c",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs1001, reached installation stage Joined",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:35:04.866Z",
+        "host_id": "b66641f4-b88a-dd84-edd0-88ee7cecfae9",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs1002, reached installation stage Joined",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:35:04.961Z",
+        "host_id": "42fd8fb6-3231-aeea-a21e-c7b34ad6f1ab",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs2001, reached installation stage Joined",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:35:05.055Z",
+        "host_id": "d2afed59-767f-4efe-8057-ee4cdc3bb945",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host llas1ocs3000: updated status from installing-in-progress to installed (Done)",
+        "name": "host_status_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:35:05.095Z",
+        "host_id": "d2afed59-767f-4efe-8057-ee4cdc3bb945",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs3000, reached installation stage Done",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:35:34.733Z",
+        "host_id": "522d43f3-ecce-03d8-6be9-a0653c28d1bd",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs3001, reached installation stage Joined",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:35:38.560Z",
+        "host_id": "d2afed59-767f-4efe-8057-ee4cdc3bb945",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Node llas1ocs3000 has been rebooted 1 times before completing installation",
+        "name": "reboots_for_node",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:36:04.768Z",
+        "host_id": "7abf6946-782e-055a-e732-6f2a05eae35b",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs3002, reached installation stage Joined",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:36:34.745Z",
+        "host_id": "a01038e3-07af-c486-229a-23243b163a0e",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs2002, reached installation stage Joined",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:37:34.739Z",
+        "host_id": "7abf6946-782e-055a-e732-6f2a05eae35b",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host llas1ocs3002: updated status from installing-in-progress to installed (Done)",
+        "name": "host_status_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:37:34.767Z",
+        "host_id": "7abf6946-782e-055a-e732-6f2a05eae35b",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs3002, reached installation stage Done",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:38:04.735Z",
+        "host_id": "b7197597-e9a3-d022-20bf-71a13325aa8c",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host llas1ocs1001: updated status from installing-in-progress to installed (Done)",
+        "name": "host_status_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:38:04.774Z",
+        "host_id": "b7197597-e9a3-d022-20bf-71a13325aa8c",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs1001, reached installation stage Done",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:38:04.868Z",
+        "host_id": "b66641f4-b88a-dd84-edd0-88ee7cecfae9",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host llas1ocs1002: updated status from installing-in-progress to installed (Done)",
+        "name": "host_status_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:38:04.896Z",
+        "host_id": "b66641f4-b88a-dd84-edd0-88ee7cecfae9",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs1002, reached installation stage Done",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:38:04.985Z",
+        "host_id": "42fd8fb6-3231-aeea-a21e-c7b34ad6f1ab",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host llas1ocs2001: updated status from installing-in-progress to installed (Done)",
+        "name": "host_status_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:38:05.012Z",
+        "host_id": "42fd8fb6-3231-aeea-a21e-c7b34ad6f1ab",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs2001, reached installation stage Done",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:38:05.107Z",
+        "host_id": "a01038e3-07af-c486-229a-23243b163a0e",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host llas1ocs2002: updated status from installing-in-progress to installed (Done)",
+        "name": "host_status_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:38:05.148Z",
+        "host_id": "a01038e3-07af-c486-229a-23243b163a0e",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs2002, reached installation stage Done",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:38:05.242Z",
+        "host_id": "522d43f3-ecce-03d8-6be9-a0653c28d1bd",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host llas1ocs3001: updated status from installing-in-progress to installed (Done)",
+        "name": "host_status_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:38:05.276Z",
+        "host_id": "522d43f3-ecce-03d8-6be9-a0653c28d1bd",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Host: llas1ocs3001, reached installation stage Done",
+        "name": "host_install_progress_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:38:07.735Z",
+        "host_id": "7abf6946-782e-055a-e732-6f2a05eae35b",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Node llas1ocs3002 has been rebooted 1 times before completing installation",
+        "name": "reboots_for_node",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:38:13.198Z",
+        "message": "Updated status of the cluster to finalizing",
+        "name": "cluster_status_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:38:34.710Z",
+        "message": "Updated finalizing stage of the cluster to 'Waiting for cluster operators'",
+        "name": "cluster_finalizing_stage_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:38:34.877Z",
+        "message": "Operator console status: failed message: RouteHealthDegraded: route not yet available, https://console-openshift-console.apps.openshift-llas1.ulti.io returns '503 Service Unavailable'",
+        "name": "cluster_operator_status",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:38:34.969Z",
+        "message": "Operator cvo status: failed message: ",
+        "name": "cluster_operator_status",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:38:35.652Z",
+        "host_id": "522d43f3-ecce-03d8-6be9-a0653c28d1bd",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Node llas1ocs3001 has been rebooted 1 times before completing installation",
+        "name": "reboots_for_node",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:38:35.687Z",
+        "host_id": "42fd8fb6-3231-aeea-a21e-c7b34ad6f1ab",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Node llas1ocs2001 has been rebooted 1 times before completing installation",
+        "name": "reboots_for_node",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:38:35.725Z",
+        "host_id": "b66641f4-b88a-dd84-edd0-88ee7cecfae9",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Node llas1ocs1002 has been rebooted 1 times before completing installation",
+        "name": "reboots_for_node",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:38:35.945Z",
+        "host_id": "b7197597-e9a3-d022-20bf-71a13325aa8c",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Node llas1ocs1001 has been rebooted 1 times before completing installation",
+        "name": "reboots_for_node",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:38:36.591Z",
+        "host_id": "a01038e3-07af-c486-229a-23243b163a0e",
+        "infra_env_id": "377e3cec-6326-474e-a956-b4a6218f9797",
+        "message": "Node llas1ocs2002 has been rebooted 1 times before completing installation",
+        "name": "reboots_for_node",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:40:34.876Z",
+        "message": "Operator console status: available message: All is well",
+        "name": "cluster_operator_status",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:46:34.970Z",
+        "message": "Operator cvo status: available message: Done applying 4.18.33",
+        "name": "cluster_operator_status",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:46:35.077Z",
+        "message": "Updated finalizing stage of the cluster to 'Adding router ca'",
+        "name": "cluster_finalizing_stage_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:46:35.416Z",
+        "message": "Updated finalizing stage of the cluster to 'Waiting for olm operators csv initialization'",
+        "name": "cluster_finalizing_stage_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:46:35.498Z",
+        "message": "Updated finalizing stage of the cluster to 'Done'",
+        "name": "cluster_finalizing_stage_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:46:43.329Z",
+        "message": "Updated status of the cluster to installed",
+        "name": "cluster_status_updated",
+        "severity": "info"
+    },
+    {
+        "cluster_id": "dedb899c-215a-4d74-9b67-ec6df5968d23",
+        "event_time": "2026-02-25T22:46:43.333Z",
+        "message": "Successfully completed installing cluster",
+        "name": "cluster_installation_completed",
+        "severity": "info"
+    }
+]

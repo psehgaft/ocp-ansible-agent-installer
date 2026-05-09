@@ -1,0 +1,30 @@
+---
+- name: Ensure render directory exists
+  ansible.builtin.file:
+    path: "{{ rhoso_render_dir }}/network"
+    state: directory
+    mode: "0700"
+
+- name: Render NetworkAttachmentDefinition manifests
+  ansible.builtin.template:
+    src: openstack-net-attach-def.yaml.j2
+    dest: "{{ rhoso_render_dir }}/network/openstack-net-attach-def.yaml"
+    mode: "0600"
+
+- name: Apply NAD manifests
+  ansible.builtin.command: oc apply -f "{{ rhoso_render_dir }}/network/openstack-net-attach-def.yaml"
+  environment:
+    KUBECONFIG: "{{ rhoso_kubeconfig | default(omit) }}"
+  register: _apply
+  changed_when: "'configured' in _apply.stdout or 'created' in _apply.stdout"
+
+- name: Verify NADs
+  ansible.builtin.command: oc get net-attach-def -n "{{ rhoso_project_name }}"
+  environment:
+    KUBECONFIG: "{{ rhoso_kubeconfig | default(omit) }}"
+  register: _nad_list
+  changed_when: false
+
+- name: Print NAD list
+  ansible.builtin.debug:
+    msg: "{{ _nad_list.stdout_lines }}"

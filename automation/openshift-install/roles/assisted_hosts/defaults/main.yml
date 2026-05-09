@@ -1,0 +1,15 @@
+---
+assisted_hosts_retries: 180
+assisted_hosts_delay: 10
+assisted_cluster_retries: 180
+assisted_cluster_delay: 10
+
+assisted_acceptable_host_statuses:
+  - known
+
+assisted_fatal_host_statuses:
+  - error
+
+assisted_fatal_cluster_statuses:
+  - error
+  - cancelled

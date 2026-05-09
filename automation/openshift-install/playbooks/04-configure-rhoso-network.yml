@@ -1,0 +1,27 @@
+---
+- name: Configure RHOSO networking (NMState NNCP + NADs + MetalLB VIPs + OVN forwarding)
+  hosts: all
+  gather_facts: false
+
+  roles:
+    - role: rhoso_preflight
+      tags: [preflight]
+      delegate_to: localhost
+
+    - role: rhoso_ovn_global_forwarding
+      when: rhoso_enable_ovn_global_forwarding | bool
+      tags: [ovn]
+      delegate_to: localhost
+
+    - role: rhoso_nmstate_nncp
+      tags: [nmstate, nncp]
+      delegate_to: localhost
+
+    - role: rhoso_multus_nad
+      tags: [multus, nad]
+      delegate_to: localhost
+
+    - role: rhoso_metallb_vips
+      when: rhoso_enable_metallb | bool
+      tags: [metallb]
+      delegate_to: localhost

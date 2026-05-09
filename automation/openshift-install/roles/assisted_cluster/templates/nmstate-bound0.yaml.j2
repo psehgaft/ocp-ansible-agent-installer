@@ -1,0 +1,42 @@
+interfaces:
+  - name: bond0
+    type: bond
+    state: up
+    mtu: 9000
+    ipv4:
+      enabled: true
+      dhcp: false
+      address:
+        - ip: "{{ hostvars[target_host].node_ipv4_address }}"
+          prefix-length: {{ hostvars[target_host].node_ipv4_prefix | int }}
+    link-aggregation:
+      mode: 802.3ad
+      options:
+        miimon: '100'
+      port:
+        - nic0
+        - nic1
+    ipv6:
+      enabled: false
+
+  - name: br-nfs
+    type: bond
+    state: up
+    mtu: 9000
+    link-aggregation:
+      mode: active-backup
+      port:
+        - nic2
+        - nic3
+        
+dns-resolver:
+  config:
+    server:
+{% for server in node_dns_servers %}
+      - "{{ server }}"
+{% endfor %}
+routes:
+  config:
+    - destination: 0.0.0.0/0
+      next-hop-address: "{{ hostvars[target_host].node_ipv4_gateway }}"
+      next-hop-interface: bond0

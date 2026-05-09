@@ -1,0 +1,9 @@
+---
+- name: RHOSO bootstrap (namespace + labels + osp-secret)
+  hosts: all
+  gather_facts: false
+
+  roles:
+    - role: rhoso_openstack_bootstrap
+      run_once:: true
+      delegate_to: localhost

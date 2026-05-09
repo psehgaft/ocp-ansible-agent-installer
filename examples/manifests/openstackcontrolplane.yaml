@@ -1,0 +1,105 @@
+---
+apiVersion: core.openstack.org/v1beta1
+kind: OpenStackControlPlane
+metadata:
+  name: openstack
+  namespace: openstack
+spec:
+  # Secret containing service passwords
+  secret: osp-secret
+  
+  # Storage class for persistent volumes
+  storageClass: local-storage
+  
+  # Keystone (Identity Service)
+  keystone:
+    enabled: true
+    template:
+      databaseInstance: openstack
+      secret: osp-secret
+      
+  # Placement Service
+  placement:
+    enabled: true
+    template:
+      databaseInstance: openstack
+      secret: osp-secret
+      
+  # Glance (Image Service)
+  glance:
+    enabled: true
+    template:
+      databaseInstance: openstack
+      storageClass: local-storage
+      storageRequest: 10Gi
+      secret: osp-secret
+      glanceAPIs:
+        default:
+          replicas: 1
+          
+  # Cinder (Block Storage Service)
+  cinder:
+    enabled: true
+    template:
+      databaseInstance: openstack
+      secret: osp-secret
+      cinderAPI:
+        replicas: 1
+      cinderScheduler:
+        replicas: 1
+      cinderBackup:
+        replicas: 1
+      cinderVolumes:
+        lvm-iscsi:
+          replicas: 1
+          
+  # Neutron (Networking Service)
+  neutron:
+    enabled: true
+    template:
+      databaseInstance: openstack
+      secret: osp-secret
+      neutronAPI:
+        replicas: 1
+        
+  # Nova (Compute Service)
+  nova:
+    enabled: true
+    template:
+      secret: osp-secret
+      apiServiceTemplate:
+        replicas: 1
+      metadataServiceTemplate:
+        replicas: 1
+      schedulerServiceTemplate:
+        replicas: 1
+        
+  # Heat (Orchestration Service)
+  heat:
+    enabled: false
+    
+  # Horizon (Dashboard)
+  horizon:
+    enabled: true
+    template:
+      replicas: 1
+      secret: osp-secret
+      
+  # MariaDB Database
+  mariadb:
+    enabled: true
+    templates:
+      openstack:
+        storageRequest: 50Gi
+        
+  # RabbitMQ Message Queue
+  rabbitmq:
+    templates:
+      rabbitmq:
+        replicas: 3
+        
+  # Memcached
+  memcached:
+    templates:
+      memcached:
+        replicas: 1

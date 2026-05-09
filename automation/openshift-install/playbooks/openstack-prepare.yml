@@ -1,0 +1,18 @@
+---
+- name: "Create ports needed for OpenShift control plane nodes"
+  hosts: all
+  gather_facts: false
+  connection: local
+
+  pre_tasks:
+    - name: "Assert os_undercloud is defined"
+      ansible.builtin.assert:
+        that:
+          - os_undercloud is defined
+      run_once: true
+      tags: always
+
+  roles:
+    - role: openstack_port_create
+      delegate_to: localhost
+

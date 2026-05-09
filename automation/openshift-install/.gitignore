@@ -1,0 +1,7 @@
+.collections
+discovery.iso
+troubleshooting
+oc
+auth/
+secrets/pull-secret-*.json
+rendered

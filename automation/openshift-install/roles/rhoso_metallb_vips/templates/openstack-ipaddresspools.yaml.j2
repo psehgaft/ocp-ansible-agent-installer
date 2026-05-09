@@ -1,0 +1,15 @@
+{% for net in rhoso_isolated_networks %}
+{% if net.vip_enabled | bool %}
+apiVersion: metallb.io/v1beta1
+kind: IPAddressPool
+metadata:
+  name: {{ net.name }}
+  namespace: {{ rhoso_metallb_namespace }}
+spec:
+  addresses:
+    - {{ net.metallb_pool_start }}-{{ net.metallb_pool_end }}
+  autoAssign: true
+  avoidBuggyIPs: false
+---
+{% endif %}
+{% endfor %}

@@ -1,0 +1,36 @@
+---
+- name: Detect default network type
+  ansible.builtin.command: oc get network.operator cluster --output=jsonpath='{.spec.defaultNetwork.type}'
+  environment:
+    KUBECONFIG: "{{ rhoso_kubeconfig | default(omit) }}"
+  register: _default_net_type
+  changed_when: false
+
+- name: Read current gatewayConfig.ipForwarding (OVN only)
+  ansible.builtin.command: oc get network.operator cluster -o jsonpath='{.spec.defaultNetwork.ovnKubernetesConfig.gatewayConfig.ipForwarding}'
+  environment:
+    KUBECONFIG: "{{ rhoso_kubeconfig | default(omit) }}"
+  register: _ip_forwarding
+  failed_when: false
+  changed_when: false
+  when: (_default_net_type.stdout | trim) == "OVNKubernetes"
+
+- name: Patch ipForwarding to Global (OVN only)
+  ansible.builtin.command: >
+    oc patch network.operator cluster
+    --type=merge
+    -p '{"spec":{"defaultNetwork":{"ovnKubernetesConfig":{"gatewayConfig":{"ipForwarding":"Global"}}}}}'
+  environment:
+    KUBECONFIG: "{{ rhoso_kubeconfig | default(omit) }}"
+  register: _patch
+  changed_when: true
+  when:
+    - (_default_net_type.stdout | trim) == "OVNKubernetes"
+    - (_ip_forwarding.stdout | trim) != "Global"
+
+- name: OVN forwarding status
+  ansible.builtin.debug:
+    msg:
+      - "defaultNetwork.type = {{ _default_net_type.stdout | trim }}"
+      - "gatewayConfig.ipForwarding (before) = {{ _ip_forwarding.stdout | default('N/A') | trim }}"
+      - "Patched to Global? {{ (_patch is defined) | bool }}"

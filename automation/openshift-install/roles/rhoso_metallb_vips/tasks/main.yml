@@ -1,0 +1,52 @@
+---
+- name: Ensure render directory exists
+  ansible.builtin.file:
+    path: "{{ rhoso_render_dir }}/network"
+    state: directory
+    mode: "0700"
+
+- name: Render MetalLB IPAddressPools
+  ansible.builtin.template:
+    src: openstack-ipaddresspools.yaml.j2
+    dest: "{{ rhoso_render_dir }}/network/openstack-ipaddresspools.yaml"
+    mode: "0600"
+
+- name: Render MetalLB L2Advertisements
+  ansible.builtin.template:
+    src: openstack-l2advertisements.yaml.j2
+    dest: "{{ rhoso_render_dir }}/network/openstack-l2advertisements.yaml"
+    mode: "0600"
+
+- name: Apply MetalLB IPAddressPools
+  ansible.builtin.command: oc apply -f "{{ rhoso_render_dir }}/network/openstack-ipaddresspools.yaml"
+  environment:
+    KUBECONFIG: "{{ rhoso_kubeconfig | default(omit) }}"
+  register: _apply_pools
+  changed_when: "'configured' in _apply_pools.stdout or 'created' in _apply_pools.stdout"
+
+- name: Apply MetalLB L2Advertisements
+  ansible.builtin.command: oc apply -f "{{ rhoso_render_dir }}/network/openstack-l2advertisements.yaml"
+  environment:
+    KUBECONFIG: "{{ rhoso_kubeconfig | default(omit) }}"
+  register: _apply_l2
+  changed_when: "'configured' in _apply_l2.stdout or 'created' in _apply_l2.stdout"
+
+- name: Verify IPAddressPools
+  ansible.builtin.command: oc get -n "{{ rhoso_metallb_namespace }}" ipaddresspool
+  environment:
+    KUBECONFIG: "{{ rhoso_kubeconfig | default(omit) }}"
+  register: _pools
+  changed_when: false
+
+- name: Verify L2Advertisements
+  ansible.builtin.command: oc get -n "{{ rhoso_metallb_namespace }}" l2advertisement
+  environment:
+    KUBECONFIG: "{{ rhoso_kubeconfig | default(omit) }}"
+  register: _l2
+  changed_when: false
+
+- name: Print MetalLB objects
+  ansible.builtin.debug:
+    msg:
+      - "{{ _pools.stdout_lines }}"
+      - "{{ _l2.stdout_lines }}"

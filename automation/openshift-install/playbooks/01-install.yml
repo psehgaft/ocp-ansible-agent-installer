@@ -1,0 +1,82 @@
+---
+- name: "OpenShift bare-metal install via Assisted Installer and Dell iDRAC"
+  hosts: all
+  gather_facts: false
+  connection: local
+  vars:
+    validate_certs: false  
+  pre_tasks:
+#TODO: Need to check disk space for iso image
+    - name: "Assert required variables exist"
+      ansible.builtin.assert:
+        that:
+          - idrac_ip is defined
+          - idrac_user is defined
+          - idrac_password is defined
+          - assisted_api_url is defined
+          - assisted_auth_mode is defined
+          - cluster_name is defined
+          - base_dns_domain is defined
+          - openshift_version is defined
+          - pull_secret_file is defined
+          - ssh_public_key_file is defined
+          - api_vip is defined
+          - ingress_vip is defined
+          - ssh_public_key is defined
+      run_once: true
+      tags: always
+
+    - name: "Create artifacts directories"
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        mode: "0755"
+      loop:
+        - "{{ artifacts_dir }}"
+        - "{{ artifacts_dir }}/{{ cluster_name }}"
+        - "{{ artifacts_dir }}/{{ cluster_name }}/auth"
+        - "{{ artifacts_dir }}/{{ cluster_name }}/raw"
+        - "{{ artifacts_dir }}/{{ cluster_name }}/reports"
+      run_once: true
+      tags: always
+
+#TODO: Need to add tags here
+  roles:
+    - role: idrac_discovery
+      tags: 
+        - always
+        - idrac_discovery
+    - role: assisted_auth
+      run_once: true
+      tags: 
+        - always
+        - assisted_auth
+    - role: assisted_cluster
+      run_once: true
+      tags: 
+        - always
+        - assisted_cluster
+    - role: idrac_boot_discovery_iso
+      tags: 
+        - always
+        - idrac_boot_discovery_iso
+    - role: assisted_hosts
+      run_once: true
+      tags: 
+        - always
+        - assisted_hosts
+    - role: assisted_install
+      run_once: true
+      tags: 
+        - always
+        - assisted_install
+    - role: post_install
+      run_once: true
+      tags: 
+        - always
+        - post_install
+    - role: report
+      run_once: true
+      tags: 
+        - always
+        - report

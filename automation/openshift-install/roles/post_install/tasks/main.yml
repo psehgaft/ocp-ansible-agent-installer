@@ -1,0 +1,59 @@
+---
+- name: "Download kubeconfig"
+  ansible.builtin.uri:
+    url: "{{ assisted_api_url }}/clusters/{{ cluster_id }}/downloads/credentials?file_name=kubeconfig"
+    method: GET
+    headers:
+      Authorization: "Bearer {{ assisted_access_token }}"
+      Accept: "application/octet-stream"
+    status_code: [200]
+    return_content: true
+  register: _kubeconfig
+  #no_log: true
+
+- name: "Write kubeconfig locally"
+  ansible.builtin.copy:
+    dest: "{{ output_kubeconfig }}"
+    content: "{{ _kubeconfig.content }}"
+    mode: "0600"
+  delegate_to: localhost
+
+- name: "Download kubeadmin password (credentials endpoint)"
+  ansible.builtin.uri:
+    url: "{{ assisted_api_url }}/clusters/{{ cluster_id }}/downloads/credentials?file_name=kubeadmin-password"
+    method: GET
+    headers:
+      Authorization: "Bearer {{ assisted_access_token }}"
+      Accept: "application/octet-stream"
+    status_code: [200]
+    return_content: true
+  register: _kubeadmin_pwd
+  #no_log: true
+
+- name: "Write kubeadmin password locally"
+  ansible.builtin.copy:
+    dest: "{{ output_kubeadmin_password }}"
+    content: "{{ _kubeadmin_pwd.content | trim }}"
+    mode: "0600"
+  delegate_to: localhost
+
+- name: "Best-effort: Verify cluster is reachable"
+  ansible.builtin.command:
+    cmd: >
+      oc --kubeconfig {{ output_kubeconfig }}
+      get clusterversion
+  register: _oc
+  changed_when: false
+  failed_when: false
+  delegate_to: localhost
+
+- name: "Persist oc verification output"
+  ansible.builtin.copy:
+    dest: "{{ artifacts_dir }}/{{ cluster_name }}/raw/oc-get-clusterversion.txt"
+    content: |
+      rc={{ _oc.rc }}
+      stdout:
+      {{ _oc.stdout }}
+      stderr:
+      {{ _oc.stderr }}
+  delegate_to: localhost

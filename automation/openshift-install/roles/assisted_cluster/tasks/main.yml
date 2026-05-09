@@ -1,0 +1,109 @@
+---
+- name: "Create cluster when it does not exist"
+  when: not lookup('file', '{{ artifacts_dir }}/{{ cluster_name }}/raw/cluster-create-response.json', errors='ignore')
+  block:
+    - name: "Render cluster-create payload"
+      ansible.builtin.set_fact:
+        cluster_create_payload: "{{ lookup('template', 'cluster-create.json.j2') | from_json }}"
+      vars:
+        template_src: "cluster-create.json.j2"
+      no_log: true
+
+    - name: "Create cluster definition"
+      ansible.builtin.uri:
+        url: "{{ assisted_api_url }}/clusters"
+        method: POST
+        headers:
+          Authorization: "Bearer {{ assisted_access_token }}"
+          Content-Type: "application/json"
+          Accept: "application/json"
+        body_format: json
+        body: "{{ cluster_create_payload }}"
+        status_code: [201, 202]
+        return_content: true
+      register: _cluster
+      no_log: true
+
+    - name: "Persist cluster definition response"
+      ansible.builtin.copy:
+        dest: "{{ artifacts_dir }}/{{ cluster_name }}/raw/cluster-create-response.json"
+        content: "{{ _cluster.json | to_nice_json }}"
+        mode: "0644"
+      delegate_to: localhost
+
+- name: "Get cluster data from persisted response"
+  ansible.builtin.set_fact:
+    _cluster: "{{ lookup('file', '{{ artifacts_dir }}/{{ cluster_name }}/raw/cluster-create-response.json') | from_json }}"
+  no_log: true
+
+- name: "Set cluster_id"
+  ansible.builtin.set_fact:
+    cluster_id: "{{ _cluster.id }}"
+  no_log: true
+
+- name: "Create infra-env when it does not exist"
+  when: not lookup('file', '{{ artifacts_dir }}/{{ cluster_name }}/raw/infraenv-create-response.json', errors='ignore')
+  block:
+    - name: "Render infra-env payload"
+      ansible.builtin.set_fact:
+        infraenv_create_payload: "{{ lookup('template', 'infraenv-create.json.j2') | from_json }}"
+      no_log: true
+
+    - name: Debug
+      ansible.builtin.debug:
+        msg: "{{ infraenv_create_payload.static_network_config[0].network_yaml | to_json }}"
+
+    - name: "Create infra-env"
+      ansible.builtin.uri:
+        url: "{{ assisted_api_url }}/infra-envs"
+        method: POST
+        headers:
+          Authorization: "Bearer {{ assisted_access_token }}"
+          Content-Type: "application/json"
+          Accept: "application/json"
+        body_format: json
+        body: "{{ infraenv_create_payload }}"
+        status_code: [201, 202]
+        return_content: true
+      register: _infraenv
+
+
+    - name: "Persist infra-env creation response"
+      ansible.builtin.copy:
+        dest: "{{ artifacts_dir }}/{{ cluster_name }}/raw/infraenv-create-response.json"
+        content: "{{ _infraenv.json | to_nice_json }}"
+        mode: "0644"
+      delegate_to: localhost
+
+- name: "Get infra-env data from persisted response"
+  ansible.builtin.set_fact:
+    _infraenv: "{{ lookup('file', '{{ artifacts_dir }}/{{ cluster_name }}/raw/infraenv-create-response.json') | from_json }}"
+  no_log: true
+
+- name: "Set infra_env_id"
+  ansible.builtin.set_fact:
+    infra_env_id: "{{ _infraenv.id }}"
+  no_log: true
+
+- name: "Get Discovery ISO download URL (pre-signed)"
+  ansible.builtin.uri:
+    url: "{{ assisted_api_url }}/infra-envs/{{ infra_env_id }}/downloads/image-url"
+    method: GET
+    headers:
+      Authorization: "Bearer {{ assisted_access_token }}"
+      Accept: "application/json"
+    status_code: [200]
+    return_content: true
+  register: _iso_url
+  no_log: true
+
+- name: "Set discovery_iso_url"
+  ansible.builtin.set_fact:
+    discovery_iso_url: "{{ (_iso_url.json.url | default(_iso_url.content | trim)) }}"
+  no_log: true
+
+#- name: "Persist ISO URL"
+#  ansible.builtin.copy:
+#    dest: "{{ artifacts_dir }}/{{ cluster_name }}/raw/discovery-iso-url.json"
+#    content: "{{ {'discovery_iso_url': discovery_iso_url, 'infra_env_id': infra_env_id, 'cluster_id': cluster_id} | to_nice_json }}"
+#  delegate_to: localhost

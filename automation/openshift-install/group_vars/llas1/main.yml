@@ -1,0 +1,404 @@
+# This will require trust and sudoers access
+os_director_ip: 10.150.23.9
+os_fabric_name: "openstack-llas1"
+os_undercloud: "undercloud"
+
+# Imaging network information
+node_ipv4_prefix: 24
+node_ipv4_gateway: "10.150.18.1"
+node_dns_servers:
+  - "10.146.16.248"
+  - "10.146.16.249"
+
+# iDRAC credentials (store with ansible-vault in real use)
+idrac_user: root
+
+# Assisted Installer / Assisted Service endpoint
+assisted_api_url: "https://api.openshift.com/api/assisted-install/v2"
+# Choose one:
+assisted_auth_mode: "saas"        # saas | onprem
+
+# Cluster identity
+cluster_name: "openshift-llas1"
+base_dns_domain: "ulti.io"
+openshift_version: "4.18"
+cpu_architecture: "x86_64"
+
+# Nodes (must match hosts above)
+control_plane_count: 3
+compute_count: 6
+
+# Networking (not discoverable from iDRAC)
+machine_network_cidr: "10.150.18.0/24"
+api_vip: "10.150.18.254"
+ingress_vip: "10.150.18.253"
+dns_servers: "{{ node_dns_servers }}"
+  
+ntp_servers:
+  - "135.84.76.123"
+
+# OCP networking (defaults are OK for most cases)
+service_network_cidr: "172.30.0.0/16"
+cluster_network_cidr: "10.128.0.0/14"
+cluster_network_host_prefix: 23
+
+# Pull-secret and SSH key locations (files on the Ansible control node)
+pull_secret_file: "./secrets/pull-secret.json"
+
+# This should be the ~/stack/.ssh/id_rsa_tripleo.pub
+ssh_public_key_file: "./secrets/id_rsa.pub"
+
+# ISO delivery options
+iso_delivery_mode: "local_http"   # direct_url | local_http
+iso_http_port: 8080               # only for local_http # VALIDATE THIS IN PRODUCTION!!!!!!!!
+iso_http_bind_ip: "0.0.0.0"       # only for local_http
+iso_http_server: "10.150.23.9"
+iso_http_dir: /tmp/ISOs
+
+# Local outputs
+artifacts_dir: "./artifacts"
+output_kubeconfig: "./artifacts/{{ cluster_name }}/auth/kubeconfig"
+output_kubeadmin_password: "./artifacts/{{ cluster_name }}/auth/kubeadmin-password"
+
+# Local kubeconfig with cluster-admin access (kubeadmin is fine)
+kubeconfig_path: "{{ output_kubeconfig }}"
+
+# oc binary name/path on the Ansible control node
+oc_bin: "~/bin/oc"
+
+# OperatorHub source (connected) or your mirrored CatalogSource (disconnected)
+operator_source: "redhat-operators"
+operator_source_namespace: "openshift-marketplace"
+
+# Channels (adjust if your org standardizes specific channels)
+nmstate_channel: "stable"
+metallb_channel: "stable"
+cert_manager_channel: "stable-v1"
+openstack_channel: "stable-v1.0"
+
+# Toggle optional operand CR creation
+create_nmstate_cr: true
+create_metallb_cr: true
+create_certmanager_cr: true
+create_openstack_cr: false
+
+# Path to kubeconfig used by oc. You can also export KUBECONFIG in your shell instead.
+rhoso_kubeconfig: "{{ output_kubeconfig }}"
+
+# Controls password validation behavior.
+# - HeatAuthEncryptionKey MUST be exactly 32 chars (per RHOSO docs).
+# - Other passwords are recommended to be 32 chars as well.
+rhoso_enforce_32char_passwords: true
+
+# If true, generate any missing secret values on the controller host.
+# Requires python3-cryptography ONLY if BarbicanSimpleCryptoKEK is missing.
+rhoso_generate_missing_secrets: false
+
+# If true, values provided in rhoso_osp_secret are already base64-encoded.
+# Default (false): provide plaintext and the template will base64-encode into Secret.data.
+rhoso_osp_secret_values_are_base64: false
+
+# Namespace where RHOSO control plane services will run.
+rhoso_project_name: "openstack"
+
+# Safety guardrails:
+# - If true, fail whenever any required value remains "TBD!".
+rhoso_fail_on_tbd: true
+
+# NMState: label used to identify worker nodes (used for selectors).
+rhoso_worker_label_key: "node-role.kubernetes.io/worker"
+
+# MetalLB:
+rhoso_metallb_namespace: "metallb-system"
+
+# If true, create MetalLB resources (IPAddressPools / L2Advertisements).
+rhoso_enable_metallb: false
+
+# If true, patch OVN-Kubernetes gatewayConfig.ipForwarding to Global when needed.
+rhoso_enable_ovn_global_forwarding: true
+
+
+##############
+
+rhoso_osp_secret_name: "osp-secret"
+rhoso_project_name: "openstack"
+
+# -----------------------------------------------------------------------------
+# RHOSO networking variables
+# -----------------------------------------------------------------------------
+# NOTE: Any missing IP or network value is intentionally set to "TBD!" so you can
+#       fill it in before running with rhoso_fail_on_tbd=true.
+# -----------------------------------------------------------------------------
+
+# Worker nodes that will host RHOSO control plane pods (edit as needed).
+# TODO: Dry this up. Worker nodes are already set in the inventory
+rhoso_worker_nodes:
+  - llas1rh1ocs1000
+  - llas1rh1ocs1001
+  - llas1rh1ocs1002
+  - llas1rh1ocs2000
+  - llas1rh1ocs2001
+  - llas1rh1ocs2002
+  - llas1rh1ocs3000
+  - llas1rh1ocs3001
+  - llas1rh1ocs3002
+
+# Base interface used to create VLAN sub-interfaces for isolated networks.
+# IMPORTANT: Do NOT use a base interface managed by the cluster network (for example, br-ex)
+# unless your design explicitly supports it.
+rhoso_isolated_base_iface: "bond0"
+
+# Optional: Configure DNS resolvers via NMState desiredState (leave as-is if managed elsewhere).
+rhoso_dns_nameservers:
+  - 10.146.16.248
+  - 10.146.16.249
+
+# -----------------------------------------------------------------------------
+# Isolated networks (defaults based on the "REDES" table you provided).
+# - "pod_ipam_*" are used by Whereabouts IPAM for pods (NetworkAttachmentDefinition)
+# - "metallb_pool_*" must be a NON-OVERLAPPING range used by MetalLB VIPs
+# -----------------------------------------------------------------------------
+rhoso_isolated_networks:
+  - name: internal_api
+    bond: bond0
+    vip_enabled: true
+    mtu: 9000
+    vlan_id: 401
+    subnet_cidr: "10.150.19.0/24"
+    prefix_length: 24
+    pod_ipam_start: "10.150.19.15"
+    pod_ipam_end: "10.150.19.250"
+    metallb_pool_start: "TBD!"
+    metallb_pool_end: "TBD!"
+    metallb_advertise_interface: "internal_api"
+    os_subnet_id: "341e96d7-c42b-4b1b-8b1b-5b48cc8f81ca"
+
+  - name: storage
+    bond: bond0
+    vip_enabled: true
+    mtu: 9000
+    vlan_id: 402
+    subnet_cidr: "10.150.20.0/24"
+    prefix_length: 24
+    pod_ipam_start: "10.150.20.15"
+    pod_ipam_end: "10.150.20.250"
+    metallb_pool_start: "TBD!"
+    metallb_pool_end: "TBD!"
+    metallb_advertise_interface: "storage"
+    os_subnet_id: "14a75270-4bc2-4ea8-be25-18f1be1a121a"
+
+  - name: tenant
+    bond: bond0
+    vip_enabled: true
+    mtu: 9000
+    vlan_id: 403
+    subnet_cidr: "10.150.21.0/24"
+    prefix_length: 24
+    pod_ipam_start: "10.150.21.15"
+    pod_ipam_end: "10.150.21.250"
+    metallb_pool_start: "TBD!"
+    metallb_pool_end: "TBD!"
+    metallb_advertise_interface: "tenant"
+    os_subnet_id: "0c1e6937-c46b-4c61-a51e-610143a82a12"
+
+  - name: storage_mgmt
+    bond: bond0
+    vip_enabled: true
+    mtu: 9000
+    vlan_id: 404
+    subnet_cidr: "10.150.22.0/24"
+    prefix_length: 24
+    pod_ipam_start: "10.150.22.15"
+    pod_ipam_end: "10.150.22.250"
+    metallb_pool_start: "TBD!"
+    metallb_pool_end: "TBD!"
+    metallb_advertise_interface: "storage_mgmt"
+    os_subnet_id: "57863c33-79d3-469b-9b44-aa24b85136da"
+
+  - name: external
+    bond: bond0
+    vip_enabled: true
+    mtu: 9000
+    vlan_id: 201
+    subnet_cidr: "10.150.23.0/24"
+    prefix_length: 24
+    pod_ipam_start: "10.150.23.15"
+    pod_ipam_end: "10.150.23.250"
+    metallb_pool_start: "TBD!"
+    metallb_pool_end: "TBD!"
+    metallb_advertise_interface: "external"
+    os_subnet_id: "e5b9c4f8-1018-442c-bb34-b31698907f42"
+
+# -----------------------------------------------------------------------------
+# Optional extra RHOSO networks from docs examples (disabled by default).
+# Keep as placeholders; set enabled=true and fill values to use.
+# -----------------------------------------------------------------------------
+rhoso_optional_networks: {}
+#  octavia:
+#    enabled: false
+#    vlan_id: "TBD!"
+#    subnet_cidr: "TBD!"
+#    prefix_length: "TBD!"
+#    pod_ipam_start: "TBD!"
+#    pod_ipam_end: "TBD!"
+#    bridge_name: "octbr"
+#    gateway_route_dst: "TBD!"
+#    gateway_route_gw: "TBD!"
+#    metallb_pool_start: "TBD!"
+#    metallb_pool_end: "TBD!"
+#    os_subnet_id: ""
+#  designate:
+#    enabled: false
+#    vlan_id: "TBD!"
+#    subnet_cidr: "TBD!"
+#    prefix_length: "TBD!"
+#    pod_ipam_start: "TBD!"
+#    pod_ipam_end: "TBD!"
+#    metallb_pool_start: "TBD!"
+#    metallb_pool_end: "TBD!"
+#    os_subnet_id: ""
+#  designateext:
+#    enabled: false
+#    vlan_id: "TBD!"
+#    subnet_cidr: "TBD!"
+#    prefix_length: "TBD!"
+#    pod_ipam_start: "TBD!"
+#    pod_ipam_end: "TBD!"
+#    metallb_pool_start: "TBD!"
+#    metallb_pool_end: "TBD!"
+#    os_subnet_id: ""
+
+rhoso_storage_networks:
+  - name: storage_1_1
+    bond: none
+    interface: em3
+    vip_enabled: true
+    mtu: 9000
+    vlan_id: 162
+    subnet_cidr: "10.148.162.0/23"
+    prefix_length: 23
+    pod_ipam_start: "10.148.162.30"
+    pod_ipam_end: "10.148.162.50"
+    metallb_pool_start: "TBD!"
+    metallb_pool_end: "TBD!"
+    metallb_advertise_interface: "storage_1_1"
+    os_subnet_id: "4013b54b-5bda-4ead-a328-708cc33c913c"
+  - name: storage_1_2
+    bond: none
+    interface: em4
+    vip_enabled: true
+    mtu: 9000
+    vlan_id: 164
+    subnet_cidr: "10.148.164.0/23"
+    prefix_length: 23
+    pod_ipam_start: "10.148.164.30"
+    pod_ipam_end: "10.148.164.50"
+    metallb_pool_start: "TBD!"
+    metallb_pool_end: "TBD!"
+    metallb_advertise_interface: "storage_1_2"
+    os_subnet_id: "cdddd224-4f96-45d5-a02a-cfba942e4768"
+  - name: storage_2_1
+    bond: none
+    interface: em3
+    vip_enabled: true
+    mtu: 9000
+    vlan_id: 172
+    subnet_cidr: "10.148.172.0/23"
+    prefix_length: 23
+    pod_ipam_start: "10.148.172.30"
+    pod_ipam_end: "10.148.172.50"
+    metallb_pool_start: "TBD!"
+    metallb_pool_end: "TBD!"
+    metallb_advertise_interface: "storage_2_1"
+    os_subnet_id: "8d896df9-81f9-4ac8-9cf8-6bab033ca764"
+  - name: storage_2_2
+    bond: none
+    interface: em4
+    vip_enabled: true
+    mtu: 9000
+    vlan_id: 174
+    subnet_cidr: "10.148.174.0/23"
+    prefix_length: 23
+    pod_ipam_start: "10.148.174.30"
+    pod_ipam_end: "10.148.174.50"
+    metallb_pool_start: "TBD!"
+    metallb_pool_end: "TBD!"
+    metallb_advertise_interface: "storage_2_2"
+    os_subnet_id: "017fba9b-bd2f-433a-89a2-dc2b7a415cc7"
+  - name: storage_3_1
+    bond: none
+    interface: em3
+    vip_enabled: true
+    mtu: 9000
+    vlan_id: 182
+    subnet_cidr: "10.148.182.0/23"
+    prefix_length: 23
+    pod_ipam_start: "10.148.182.30"
+    pod_ipam_end: "10.148.182.50"
+    metallb_pool_start: "TBD!"
+    metallb_pool_end: "TBD!"
+    metallb_advertise_interface: "storage_3_1"
+    os_subnet_id: "58e6321e-8cf8-483c-a4c0-d2a5e0e50939"
+  - name: storage_3_2
+    bond: none
+    interface: em4
+    vip_enabled: true
+    mtu: 9000
+    vlan_id: 184
+    subnet_cidr: "10.148.184.0/23"
+    prefix_length: 23
+    pod_ipam_start: "10.148.184.30"
+    pod_ipam_end: "10.148.184.50"
+    metallb_pool_start: "TBD!"
+    metallb_pool_end: "TBD!"
+    metallb_advertise_interface: "storage_3_2"
+    os_subnet_id: "606f5c1f-1e0f-473d-baf9-37329cca1b6d"
+  - name: br_nfs_1
+    bond: bond-nfs
+    vip_enabled: true
+    mtu: 9000
+    vlan_id: 160
+    subnet_cidr: "10.148.160.0/24"
+    prefix_length: 24
+    pod_ipam_start: "10.148.160.30"
+    pod_ipam_end: "10.148.160.50"
+    metallb_pool_start: "TBD!"
+    metallb_pool_end: "TBD!"
+    metallb_advertise_interface: "br_nfs_1"
+    os_subnet_id: "c0cc41da-9d18-4999-8040-04f924a35140"
+  - name: br_nfs_2
+    bond: bond-nfs
+    vip_enabled: true
+    mtu: 9000
+    vlan_id: 170
+    subnet_cidr: "10.148.170.0/24"
+    prefix_length: 24
+    pod_ipam_start: "10.148.170.30"
+    pod_ipam_end: "10.148.170.50"
+    metallb_pool_start: "TBD!"
+    metallb_pool_end: "TBD!"
+    metallb_advertise_interface: "br_nfs_2"
+    os_subnet_id: "c0dbf37c-17e4-4e17-8677-4fda1614add4"
+  - name: br_nfs_3
+    bond: bond-nfs
+    vip_enabled: true
+    mtu: 9000
+    vlan_id: 180
+    subnet_cidr: "10.148.180.0/24"
+    prefix_length: 24
+    pod_ipam_start: "10.148.180.30"
+    pod_ipam_end: "10.148.180.50"
+    metallb_pool_start: "TBD!"
+    metallb_pool_end: "TBD!"
+    metallb_advertise_interface: "br_nfs_3"
+    os_subnet_id: "60e8c067-7173-4024-9050-b239fbef2222"
+
+rhoso_interfaces:
+  - name: eno1
+    bond: bond0
+  - name: eno2
+    bond: bond0
+  - name: eno3
+    bond: bond-nfs
+  - name: eno4
+    bond: bond-nfs

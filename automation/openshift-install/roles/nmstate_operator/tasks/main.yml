@@ -1,0 +1,46 @@
+---
+# Installs Kubernetes NMState Operator via OLM:
+# Namespace -> OperatorGroup -> Subscription -> Wait for CSV Succeeded -> (Optional) create NMState CR
+# Requires:
+# - oc CLI on the control node
+# - oc_env fact (KUBECONFIG) set by the playbook
+# - operator_source/operator_source_namespace set (connected or mirrored catalog)
+
+- name: "Apply NMState namespace, OperatorGroup, and Subscription"
+  ansible.builtin.command: "{{ oc_bin }} apply -f -"
+  args:
+    stdin: |
+      {{ lookup('template', 'namespace.yaml.j2', template_vars={'namespace': nmstate_namespace}) }}
+      ---
+      {{ lookup('template', 'operatorgroup.yaml.j2', template_vars={'name': nmstate_operatorgroup, 'namespace': nmstate_namespace, 'target_namespaces':[nmstate_namespace]}) }}
+      ---
+      {{ lookup('template', 'subscription.yaml.j2', template_vars={'subscription_name': nmstate_subscription_name, 'namespace': nmstate_namespace, 'channel': nmstate_channel, 'package_name': nmstate_package_name, 'source': operator_source, 'sourceNamespace': operator_source_namespace}) }}
+  environment: "{{ oc_env }}"
+  changed_when: false
+
+- name: "Wait for NMState Subscription to report installedCSV"
+  ansible.builtin.command: >
+    {{ oc_bin }} -n {{ nmstate_namespace }} get subscription {{ nmstate_subscription_name }}
+    -o jsonpath='{.status.installedCSV}'
+  environment: "{{ oc_env }}"
+  register: _nm_csv
+  retries: 90
+  delay: 10
+  until: _nm_csv.stdout | length > 0
+  changed_when: false
+
+- name: "Wait for NMState CSV to be Succeeded"
+  ansible.builtin.command: >
+    {{ oc_bin }} -n {{ nmstate_namespace }} wait csv/{{ _nm_csv.stdout }}
+    --for jsonpath='{.status.phase}'=Succeeded --timeout=20m
+  environment: "{{ oc_env }}"
+  changed_when: false
+
+- name: "Create NMState operand CR (optional)"
+  when: create_nmstate_cr | bool
+  ansible.builtin.command: "{{ oc_bin }} apply -f -"
+  args:
+    stdin: |
+      {{ lookup('template', 'operand.yaml.j2', template_vars={'operand': {'apiVersion':'nmstate.io/v1','kind':'NMState','metadata':{'name':'nmstate'}} }) }}
+  environment: "{{ oc_env }}"
+  changed_when: false

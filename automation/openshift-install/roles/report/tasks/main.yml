@@ -1,0 +1,46 @@
+---
+- name: "Download events"
+  ansible.builtin.uri:
+    url: "{{ assisted_api_url }}/events?cluster_id={{ cluster_id }}"
+    method: GET
+    headers:
+      Authorization: "Bearer {{ assisted_access_token }}"
+      Accept: "application/json"
+    status_code: [200]
+    return_content: true
+  register: _events
+  no_log: true
+
+- name: "Persist events"
+  ansible.builtin.copy:
+    dest: "{{ artifacts_dir }}/{{ cluster_name }}/raw/events.json"
+    content: "{{ _events.json | to_nice_json }}"
+  delegate_to: localhost
+
+- name: "Attempt to download cluster logs (best-effort)"
+  ansible.builtin.uri:
+    url: "{{ assisted_api_url }}/{{ cluster_name }}/clusters/{{ cluster_id }}/downloads/logs"
+    method: GET
+    headers:
+      Authorization: "Bearer {{ assisted_access_token }}"
+      Accept: "application/octet-stream"
+    status_code: [200, 404]
+    return_content: true
+  register: _logs
+  failed_when: false
+  no_log: true
+
+- name: "Write logs bundle if present"
+  when: _logs.status == 200
+  ansible.builtin.copy:
+    dest: "{{ artifacts_dir }}/{{ cluster_name }}/reports/assisted-logs.tar.gz"
+    content: "{{ _logs.content }}"
+    mode: "0644"
+  delegate_to: localhost
+
+- name: "Write summary report"
+  ansible.builtin.template:
+    src: "report.md.j2"
+    dest: "{{ artifacts_dir }}/{{ cluster_name }}/reports/install-report.md"
+    mode: "0644"
+  delegate_to: localhost

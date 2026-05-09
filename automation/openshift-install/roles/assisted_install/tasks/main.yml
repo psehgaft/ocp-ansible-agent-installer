@@ -1,0 +1,57 @@
+---
+- name: "Set host roles and hostnames"
+  ansible.builtin.uri:
+    url: "{{ assisted_api_url }}/infra-envs/{{ infra_env_id }}/hosts/{{ inventory_to_ai_host_id[item] }}"
+    method: PATCH
+    headers:
+      Authorization: "Bearer {{ assisted_access_token }}"
+      Content-Type: "application/json"
+      Accept: "application/json"
+    body_format: json
+    body:
+      host_name: "{{ hostvars[item].node_hostname }}"
+      host_role: "{{ hostvars[item].node_role }}"
+    status_code: [200, 201, 202]
+    return_content: true
+  loop: "{{ ansible_play_batch }}"
+  no_log: true
+
+- name: "Start OpenShift installation"
+  ansible.builtin.uri:
+    url: "{{ assisted_api_url }}/clusters/{{ cluster_id }}/actions/install"
+    method: POST
+    headers:
+      Authorization: "Bearer {{ assisted_access_token }}"
+      Accept: "application/json"
+      Content-Type: "application/json"
+    status_code: [200, 202]
+    return_content: true
+  register: _install
+  no_log: true
+
+# TODO: This check doesn't work.
+- name: "Wait for cluster to reach installed state"
+  ansible.builtin.uri:
+    url: "{{ assisted_api_url }}/clusters/{{ cluster_id }}"
+    method: GET
+    headers:
+      Authorization: "Bearer {{ assisted_access_token }}"
+      Accept: "application/json"
+    status_code: [200]
+    return_content: true
+  register: _cluster_state
+  retries: 360
+  delay: 20
+  until: (_cluster_state.json.status | default('')) in ['installed', 'error', 'cancelled']
+  no_log: true
+
+- name: "Fail if cluster installation ended with error"
+  ansible.builtin.fail:
+    msg: "Cluster ended in status={{ _cluster_state.json.status }}. See artifacts_dir for events/logs."
+  when: (_cluster_state.json.status | default('')) != 'installed'
+
+- name: "Persist final cluster status"
+  ansible.builtin.copy:
+    dest: "{{ artifacts_dir }}/{{ cluster_name }}/raw/final.json"
+    content: "{{ _cluster_state.json | to_nice_json }}"
+  delegate_to: localhost

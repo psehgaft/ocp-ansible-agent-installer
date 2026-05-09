@@ -1,0 +1,1833 @@
+
+PLAY [Create ports needed for OpenShift control plane nodes] *******************
+
+TASK [Assert os_undercloud is defined] *****************************************
+Monday 02 March 2026  12:43:05 -0500 (0:00:00.053)       0:00:00.053 ********** 
+ok: [llas1ocs1000] => {
+    "changed": false,
+    "msg": "All assertions passed"
+}
+
+TASK [openstack_port_create : Create ports for OpenStack control plane nodes] ***
+Monday 02 March 2026  12:43:05 -0500 (0:00:00.161)       0:00:00.214 ********** 
+changed: [llas1ocs1000 -> localhost] => (item={'name': 'internal_api', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 401, 'subnet_cidr': '10.150.19.0/24', 'prefix_length': 24, 'pod_ipam_start': '10.150.19.15', 'pod_ipam_end': '10.150.19.250', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'internal_api', 'os_subnet_id': '341e96d7-c42b-4b1b-8b1b-5b48cc8f81ca'})
+changed: [llas1ocs2001 -> localhost] => (item={'name': 'internal_api', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 401, 'subnet_cidr': '10.150.19.0/24', 'prefix_length': 24, 'pod_ipam_start': '10.150.19.15', 'pod_ipam_end': '10.150.19.250', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'internal_api', 'os_subnet_id': '341e96d7-c42b-4b1b-8b1b-5b48cc8f81ca'})
+changed: [llas1ocs3000 -> localhost] => (item={'name': 'internal_api', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 401, 'subnet_cidr': '10.150.19.0/24', 'prefix_length': 24, 'pod_ipam_start': '10.150.19.15', 'pod_ipam_end': '10.150.19.250', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'internal_api', 'os_subnet_id': '341e96d7-c42b-4b1b-8b1b-5b48cc8f81ca'})
+changed: [llas1ocs2000 -> localhost] => (item={'name': 'internal_api', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 401, 'subnet_cidr': '10.150.19.0/24', 'prefix_length': 24, 'pod_ipam_start': '10.150.19.15', 'pod_ipam_end': '10.150.19.250', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'internal_api', 'os_subnet_id': '341e96d7-c42b-4b1b-8b1b-5b48cc8f81ca'})
+changed: [llas1ocs1001 -> localhost] => (item={'name': 'internal_api', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 401, 'subnet_cidr': '10.150.19.0/24', 'prefix_length': 24, 'pod_ipam_start': '10.150.19.15', 'pod_ipam_end': '10.150.19.250', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'internal_api', 'os_subnet_id': '341e96d7-c42b-4b1b-8b1b-5b48cc8f81ca'})
+changed: [llas1ocs1000 -> localhost] => (item={'name': 'storage', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 402, 'subnet_cidr': '10.150.20.0/24', 'prefix_length': 24, 'pod_ipam_start': '10.150.20.15', 'pod_ipam_end': '10.150.20.250', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'storage', 'os_subnet_id': '14a75270-4bc2-4ea8-be25-18f1be1a121a'})
+changed: [llas1ocs2001 -> localhost] => (item={'name': 'storage', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 402, 'subnet_cidr': '10.150.20.0/24', 'prefix_length': 24, 'pod_ipam_start': '10.150.20.15', 'pod_ipam_end': '10.150.20.250', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'storage', 'os_subnet_id': '14a75270-4bc2-4ea8-be25-18f1be1a121a'})
+changed: [llas1ocs3000 -> localhost] => (item={'name': 'storage', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 402, 'subnet_cidr': '10.150.20.0/24', 'prefix_length': 24, 'pod_ipam_start': '10.150.20.15', 'pod_ipam_end': '10.150.20.250', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'storage', 'os_subnet_id': '14a75270-4bc2-4ea8-be25-18f1be1a121a'})
+changed: [llas1ocs2000 -> localhost] => (item={'name': 'storage', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 402, 'subnet_cidr': '10.150.20.0/24', 'prefix_length': 24, 'pod_ipam_start': '10.150.20.15', 'pod_ipam_end': '10.150.20.250', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'storage', 'os_subnet_id': '14a75270-4bc2-4ea8-be25-18f1be1a121a'})
+changed: [llas1ocs1001 -> localhost] => (item={'name': 'storage', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 402, 'subnet_cidr': '10.150.20.0/24', 'prefix_length': 24, 'pod_ipam_start': '10.150.20.15', 'pod_ipam_end': '10.150.20.250', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'storage', 'os_subnet_id': '14a75270-4bc2-4ea8-be25-18f1be1a121a'})
+changed: [llas1ocs1000 -> localhost] => (item={'name': 'tenant', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 403, 'subnet_cidr': '10.150.21.0/24', 'prefix_length': 24, 'pod_ipam_start': '10.150.21.15', 'pod_ipam_end': '10.150.21.250', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'tenant', 'os_subnet_id': '0c1e6937-c46b-4c61-a51e-610143a82a12'})
+changed: [llas1ocs2001 -> localhost] => (item={'name': 'tenant', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 403, 'subnet_cidr': '10.150.21.0/24', 'prefix_length': 24, 'pod_ipam_start': '10.150.21.15', 'pod_ipam_end': '10.150.21.250', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'tenant', 'os_subnet_id': '0c1e6937-c46b-4c61-a51e-610143a82a12'})
+changed: [llas1ocs3000 -> localhost] => (item={'name': 'tenant', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 403, 'subnet_cidr': '10.150.21.0/24', 'prefix_length': 24, 'pod_ipam_start': '10.150.21.15', 'pod_ipam_end': '10.150.21.250', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'tenant', 'os_subnet_id': '0c1e6937-c46b-4c61-a51e-610143a82a12'})
+changed: [llas1ocs2000 -> localhost] => (item={'name': 'tenant', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 403, 'subnet_cidr': '10.150.21.0/24', 'prefix_length': 24, 'pod_ipam_start': '10.150.21.15', 'pod_ipam_end': '10.150.21.250', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'tenant', 'os_subnet_id': '0c1e6937-c46b-4c61-a51e-610143a82a12'})
+changed: [llas1ocs1001 -> localhost] => (item={'name': 'tenant', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 403, 'subnet_cidr': '10.150.21.0/24', 'prefix_length': 24, 'pod_ipam_start': '10.150.21.15', 'pod_ipam_end': '10.150.21.250', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'tenant', 'os_subnet_id': '0c1e6937-c46b-4c61-a51e-610143a82a12'})
+changed: [llas1ocs1000 -> localhost] => (item={'name': 'storage_mgmt', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 404, 'subnet_cidr': '10.150.22.0/24', 'prefix_length': 24, 'pod_ipam_start': '10.150.22.15', 'pod_ipam_end': '10.150.22.250', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'storage_mgmt', 'os_subnet_id': '57863c33-79d3-469b-9b44-aa24b85136da'})
+changed: [llas1ocs2001 -> localhost] => (item={'name': 'storage_mgmt', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 404, 'subnet_cidr': '10.150.22.0/24', 'prefix_length': 24, 'pod_ipam_start': '10.150.22.15', 'pod_ipam_end': '10.150.22.250', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'storage_mgmt', 'os_subnet_id': '57863c33-79d3-469b-9b44-aa24b85136da'})
+changed: [llas1ocs3000 -> localhost] => (item={'name': 'storage_mgmt', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 404, 'subnet_cidr': '10.150.22.0/24', 'prefix_length': 24, 'pod_ipam_start': '10.150.22.15', 'pod_ipam_end': '10.150.22.250', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'storage_mgmt', 'os_subnet_id': '57863c33-79d3-469b-9b44-aa24b85136da'})
+changed: [llas1ocs1001 -> localhost] => (item={'name': 'storage_mgmt', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 404, 'subnet_cidr': '10.150.22.0/24', 'prefix_length': 24, 'pod_ipam_start': '10.150.22.15', 'pod_ipam_end': '10.150.22.250', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'storage_mgmt', 'os_subnet_id': '57863c33-79d3-469b-9b44-aa24b85136da'})
+changed: [llas1ocs2000 -> localhost] => (item={'name': 'storage_mgmt', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 404, 'subnet_cidr': '10.150.22.0/24', 'prefix_length': 24, 'pod_ipam_start': '10.150.22.15', 'pod_ipam_end': '10.150.22.250', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'storage_mgmt', 'os_subnet_id': '57863c33-79d3-469b-9b44-aa24b85136da'})
+changed: [llas1ocs1000 -> localhost] => (item={'name': 'external', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 201, 'subnet_cidr': '10.150.23.0/24', 'prefix_length': 24, 'pod_ipam_start': '10.150.23.15', 'pod_ipam_end': '10.150.23.250', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'external', 'os_subnet_id': 'e5b9c4f8-1018-442c-bb34-b31698907f42'})
+changed: [llas1ocs2001 -> localhost] => (item={'name': 'external', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 201, 'subnet_cidr': '10.150.23.0/24', 'prefix_length': 24, 'pod_ipam_start': '10.150.23.15', 'pod_ipam_end': '10.150.23.250', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'external', 'os_subnet_id': 'e5b9c4f8-1018-442c-bb34-b31698907f42'})
+changed: [llas1ocs3000 -> localhost] => (item={'name': 'external', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 201, 'subnet_cidr': '10.150.23.0/24', 'prefix_length': 24, 'pod_ipam_start': '10.150.23.15', 'pod_ipam_end': '10.150.23.250', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'external', 'os_subnet_id': 'e5b9c4f8-1018-442c-bb34-b31698907f42'})
+changed: [llas1ocs1001 -> localhost] => (item={'name': 'external', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 201, 'subnet_cidr': '10.150.23.0/24', 'prefix_length': 24, 'pod_ipam_start': '10.150.23.15', 'pod_ipam_end': '10.150.23.250', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'external', 'os_subnet_id': 'e5b9c4f8-1018-442c-bb34-b31698907f42'})
+changed: [llas1ocs2000 -> localhost] => (item={'name': 'external', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 201, 'subnet_cidr': '10.150.23.0/24', 'prefix_length': 24, 'pod_ipam_start': '10.150.23.15', 'pod_ipam_end': '10.150.23.250', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'external', 'os_subnet_id': 'e5b9c4f8-1018-442c-bb34-b31698907f42'})
+changed: [llas1ocs1000 -> localhost] => (item={'name': 'storage_1_1', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 162, 'subnet_cidr': '10.148.162.0/23', 'prefix_length': '23``', 'pod_ipam_start': '10.148.162.30', 'pod_ipam_end': '10.148.162.50', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'storage_1_1', 'os_subnet_id': '4013b54b-5bda-4ead-a328-708cc33c913c'})
+changed: [llas1ocs3000 -> localhost] => (item={'name': 'storage_1_1', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 162, 'subnet_cidr': '10.148.162.0/23', 'prefix_length': '23``', 'pod_ipam_start': '10.148.162.30', 'pod_ipam_end': '10.148.162.50', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'storage_1_1', 'os_subnet_id': '4013b54b-5bda-4ead-a328-708cc33c913c'})
+changed: [llas1ocs2000 -> localhost] => (item={'name': 'storage_1_1', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 162, 'subnet_cidr': '10.148.162.0/23', 'prefix_length': '23``', 'pod_ipam_start': '10.148.162.30', 'pod_ipam_end': '10.148.162.50', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'storage_1_1', 'os_subnet_id': '4013b54b-5bda-4ead-a328-708cc33c913c'})
+changed: [llas1ocs2001 -> localhost] => (item={'name': 'storage_1_1', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 162, 'subnet_cidr': '10.148.162.0/23', 'prefix_length': '23``', 'pod_ipam_start': '10.148.162.30', 'pod_ipam_end': '10.148.162.50', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'storage_1_1', 'os_subnet_id': '4013b54b-5bda-4ead-a328-708cc33c913c'})
+changed: [llas1ocs1001 -> localhost] => (item={'name': 'storage_1_1', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 162, 'subnet_cidr': '10.148.162.0/23', 'prefix_length': '23``', 'pod_ipam_start': '10.148.162.30', 'pod_ipam_end': '10.148.162.50', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'storage_1_1', 'os_subnet_id': '4013b54b-5bda-4ead-a328-708cc33c913c'})
+changed: [llas1ocs1000 -> localhost] => (item={'name': 'storage_1_2', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 164, 'subnet_cidr': '10.148.164.0/23', 'prefix_length': '23``', 'pod_ipam_start': '10.148.164.30', 'pod_ipam_end': '10.148.164.50', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'storage_1_2', 'os_subnet_id': 'cdddd224-4f96-45d5-a02a-cfba942e4768'})
+changed: [llas1ocs2001 -> localhost] => (item={'name': 'storage_1_2', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 164, 'subnet_cidr': '10.148.164.0/23', 'prefix_length': '23``', 'pod_ipam_start': '10.148.164.30', 'pod_ipam_end': '10.148.164.50', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'storage_1_2', 'os_subnet_id': 'cdddd224-4f96-45d5-a02a-cfba942e4768'})
+changed: [llas1ocs1001 -> localhost] => (item={'name': 'storage_1_2', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 164, 'subnet_cidr': '10.148.164.0/23', 'prefix_length': '23``', 'pod_ipam_start': '10.148.164.30', 'pod_ipam_end': '10.148.164.50', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'storage_1_2', 'os_subnet_id': 'cdddd224-4f96-45d5-a02a-cfba942e4768'})
+changed: [llas1ocs3000 -> localhost] => (item={'name': 'storage_1_2', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 164, 'subnet_cidr': '10.148.164.0/23', 'prefix_length': '23``', 'pod_ipam_start': '10.148.164.30', 'pod_ipam_end': '10.148.164.50', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'storage_1_2', 'os_subnet_id': 'cdddd224-4f96-45d5-a02a-cfba942e4768'})
+changed: [llas1ocs2000 -> localhost] => (item={'name': 'storage_1_2', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 164, 'subnet_cidr': '10.148.164.0/23', 'prefix_length': '23``', 'pod_ipam_start': '10.148.164.30', 'pod_ipam_end': '10.148.164.50', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'storage_1_2', 'os_subnet_id': 'cdddd224-4f96-45d5-a02a-cfba942e4768'})
+changed: [llas1ocs1000 -> localhost] => (item={'name': 'storage_2_1', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 172, 'subnet_cidr': '10.148.172.0/23', 'prefix_length': '23``', 'pod_ipam_start': '10.148.172.30', 'pod_ipam_end': '10.148.172.50', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'storage_2_1', 'os_subnet_id': '8d896df9-81f9-4ac8-9cf8-6bab033ca764'})
+changed: [llas1ocs2001 -> localhost] => (item={'name': 'storage_2_1', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 172, 'subnet_cidr': '10.148.172.0/23', 'prefix_length': '23``', 'pod_ipam_start': '10.148.172.30', 'pod_ipam_end': '10.148.172.50', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'storage_2_1', 'os_subnet_id': '8d896df9-81f9-4ac8-9cf8-6bab033ca764'})
+changed: [llas1ocs2000 -> localhost] => (item={'name': 'storage_2_1', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 172, 'subnet_cidr': '10.148.172.0/23', 'prefix_length': '23``', 'pod_ipam_start': '10.148.172.30', 'pod_ipam_end': '10.148.172.50', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'storage_2_1', 'os_subnet_id': '8d896df9-81f9-4ac8-9cf8-6bab033ca764'})
+changed: [llas1ocs3000 -> localhost] => (item={'name': 'storage_2_1', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 172, 'subnet_cidr': '10.148.172.0/23', 'prefix_length': '23``', 'pod_ipam_start': '10.148.172.30', 'pod_ipam_end': '10.148.172.50', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'storage_2_1', 'os_subnet_id': '8d896df9-81f9-4ac8-9cf8-6bab033ca764'})
+changed: [llas1ocs1001 -> localhost] => (item={'name': 'storage_2_1', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 172, 'subnet_cidr': '10.148.172.0/23', 'prefix_length': '23``', 'pod_ipam_start': '10.148.172.30', 'pod_ipam_end': '10.148.172.50', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'storage_2_1', 'os_subnet_id': '8d896df9-81f9-4ac8-9cf8-6bab033ca764'})
+changed: [llas1ocs1000 -> localhost] => (item={'name': 'storage_2_2', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 174, 'subnet_cidr': '10.148.174.0/23', 'prefix_length': '23``', 'pod_ipam_start': '10.148.174.30', 'pod_ipam_end': '10.148.174.50', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'storage_2_2', 'os_subnet_id': '017fba9b-bd2f-433a-89a2-dc2b7a415cc7'})
+changed: [llas1ocs2001 -> localhost] => (item={'name': 'storage_2_2', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 174, 'subnet_cidr': '10.148.174.0/23', 'prefix_length': '23``', 'pod_ipam_start': '10.148.174.30', 'pod_ipam_end': '10.148.174.50', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'storage_2_2', 'os_subnet_id': '017fba9b-bd2f-433a-89a2-dc2b7a415cc7'})
+changed: [llas1ocs2000 -> localhost] => (item={'name': 'storage_2_2', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 174, 'subnet_cidr': '10.148.174.0/23', 'prefix_length': '23``', 'pod_ipam_start': '10.148.174.30', 'pod_ipam_end': '10.148.174.50', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'storage_2_2', 'os_subnet_id': '017fba9b-bd2f-433a-89a2-dc2b7a415cc7'})
+changed: [llas1ocs1001 -> localhost] => (item={'name': 'storage_2_2', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 174, 'subnet_cidr': '10.148.174.0/23', 'prefix_length': '23``', 'pod_ipam_start': '10.148.174.30', 'pod_ipam_end': '10.148.174.50', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'storage_2_2', 'os_subnet_id': '017fba9b-bd2f-433a-89a2-dc2b7a415cc7'})
+changed: [llas1ocs3000 -> localhost] => (item={'name': 'storage_2_2', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 174, 'subnet_cidr': '10.148.174.0/23', 'prefix_length': '23``', 'pod_ipam_start': '10.148.174.30', 'pod_ipam_end': '10.148.174.50', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'storage_2_2', 'os_subnet_id': '017fba9b-bd2f-433a-89a2-dc2b7a415cc7'})
+changed: [llas1ocs1000 -> localhost] => (item={'name': 'storage_3_1', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 182, 'subnet_cidr': '10.148.182.0/23', 'prefix_length': '23``', 'pod_ipam_start': '10.148.182.30', 'pod_ipam_end': '10.148.182.50', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'storage_3_1', 'os_subnet_id': '58e6321e-8cf8-483c-a4c0-d2a5e0e50939'})
+changed: [llas1ocs2001 -> localhost] => (item={'name': 'storage_3_1', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 182, 'subnet_cidr': '10.148.182.0/23', 'prefix_length': '23``', 'pod_ipam_start': '10.148.182.30', 'pod_ipam_end': '10.148.182.50', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'storage_3_1', 'os_subnet_id': '58e6321e-8cf8-483c-a4c0-d2a5e0e50939'})
+changed: [llas1ocs2000 -> localhost] => (item={'name': 'storage_3_1', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 182, 'subnet_cidr': '10.148.182.0/23', 'prefix_length': '23``', 'pod_ipam_start': '10.148.182.30', 'pod_ipam_end': '10.148.182.50', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'storage_3_1', 'os_subnet_id': '58e6321e-8cf8-483c-a4c0-d2a5e0e50939'})
+changed: [llas1ocs1000 -> localhost] => (item={'name': 'storage_3_2', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 184, 'subnet_cidr': '10.148.184.0/23', 'prefix_length': '23``', 'pod_ipam_start': '10.148.184.30', 'pod_ipam_end': '10.148.184.50', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'storage_3_2', 'os_subnet_id': '606f5c1f-1e0f-473d-baf9-37329cca1b6d'})
+changed: [llas1ocs3000 -> localhost] => (item={'name': 'storage_3_1', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 182, 'subnet_cidr': '10.148.182.0/23', 'prefix_length': '23``', 'pod_ipam_start': '10.148.182.30', 'pod_ipam_end': '10.148.182.50', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'storage_3_1', 'os_subnet_id': '58e6321e-8cf8-483c-a4c0-d2a5e0e50939'})
+changed: [llas1ocs1001 -> localhost] => (item={'name': 'storage_3_1', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 182, 'subnet_cidr': '10.148.182.0/23', 'prefix_length': '23``', 'pod_ipam_start': '10.148.182.30', 'pod_ipam_end': '10.148.182.50', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'storage_3_1', 'os_subnet_id': '58e6321e-8cf8-483c-a4c0-d2a5e0e50939'})
+changed: [llas1ocs2001 -> localhost] => (item={'name': 'storage_3_2', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 184, 'subnet_cidr': '10.148.184.0/23', 'prefix_length': '23``', 'pod_ipam_start': '10.148.184.30', 'pod_ipam_end': '10.148.184.50', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'storage_3_2', 'os_subnet_id': '606f5c1f-1e0f-473d-baf9-37329cca1b6d'})
+changed: [llas1ocs2000 -> localhost] => (item={'name': 'storage_3_2', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 184, 'subnet_cidr': '10.148.184.0/23', 'prefix_length': '23``', 'pod_ipam_start': '10.148.184.30', 'pod_ipam_end': '10.148.184.50', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'storage_3_2', 'os_subnet_id': '606f5c1f-1e0f-473d-baf9-37329cca1b6d'})
+changed: [llas1ocs1000 -> localhost] => (item={'name': 'br_nfs_1', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 160, 'subnet_cidr': '10.148.160.0/24', 'prefix_length': 24, 'pod_ipam_start': '10.148.160.30', 'pod_ipam_end': '10.148.160.50', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'br_nfs_1', 'os_subnet_id': 'c0cc41da-9d18-4999-8040-04f924a35140'})
+changed: [llas1ocs3000 -> localhost] => (item={'name': 'storage_3_2', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 184, 'subnet_cidr': '10.148.184.0/23', 'prefix_length': '23``', 'pod_ipam_start': '10.148.184.30', 'pod_ipam_end': '10.148.184.50', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'storage_3_2', 'os_subnet_id': '606f5c1f-1e0f-473d-baf9-37329cca1b6d'})
+changed: [llas1ocs1001 -> localhost] => (item={'name': 'storage_3_2', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 184, 'subnet_cidr': '10.148.184.0/23', 'prefix_length': '23``', 'pod_ipam_start': '10.148.184.30', 'pod_ipam_end': '10.148.184.50', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'storage_3_2', 'os_subnet_id': '606f5c1f-1e0f-473d-baf9-37329cca1b6d'})
+changed: [llas1ocs2001 -> localhost] => (item={'name': 'br_nfs_1', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 160, 'subnet_cidr': '10.148.160.0/24', 'prefix_length': 24, 'pod_ipam_start': '10.148.160.30', 'pod_ipam_end': '10.148.160.50', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'br_nfs_1', 'os_subnet_id': 'c0cc41da-9d18-4999-8040-04f924a35140'})
+changed: [llas1ocs2000 -> localhost] => (item={'name': 'br_nfs_1', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 160, 'subnet_cidr': '10.148.160.0/24', 'prefix_length': 24, 'pod_ipam_start': '10.148.160.30', 'pod_ipam_end': '10.148.160.50', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'br_nfs_1', 'os_subnet_id': 'c0cc41da-9d18-4999-8040-04f924a35140'})
+changed: [llas1ocs1000 -> localhost] => (item={'name': 'br_nfs_2', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 170, 'subnet_cidr': '10.148.170.0/24', 'prefix_length': 24, 'pod_ipam_start': '10.148.170.30', 'pod_ipam_end': '10.148.170.50', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'br_nfs_2', 'os_subnet_id': 'c0dbf37c-17e4-4e17-8677-4fda1614add4'})
+changed: [llas1ocs3000 -> localhost] => (item={'name': 'br_nfs_1', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 160, 'subnet_cidr': '10.148.160.0/24', 'prefix_length': 24, 'pod_ipam_start': '10.148.160.30', 'pod_ipam_end': '10.148.160.50', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'br_nfs_1', 'os_subnet_id': 'c0cc41da-9d18-4999-8040-04f924a35140'})
+changed: [llas1ocs1001 -> localhost] => (item={'name': 'br_nfs_1', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 160, 'subnet_cidr': '10.148.160.0/24', 'prefix_length': 24, 'pod_ipam_start': '10.148.160.30', 'pod_ipam_end': '10.148.160.50', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'br_nfs_1', 'os_subnet_id': 'c0cc41da-9d18-4999-8040-04f924a35140'})
+changed: [llas1ocs2001 -> localhost] => (item={'name': 'br_nfs_2', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 170, 'subnet_cidr': '10.148.170.0/24', 'prefix_length': 24, 'pod_ipam_start': '10.148.170.30', 'pod_ipam_end': '10.148.170.50', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'br_nfs_2', 'os_subnet_id': 'c0dbf37c-17e4-4e17-8677-4fda1614add4'})
+changed: [llas1ocs2000 -> localhost] => (item={'name': 'br_nfs_2', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 170, 'subnet_cidr': '10.148.170.0/24', 'prefix_length': 24, 'pod_ipam_start': '10.148.170.30', 'pod_ipam_end': '10.148.170.50', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'br_nfs_2', 'os_subnet_id': 'c0dbf37c-17e4-4e17-8677-4fda1614add4'})
+changed: [llas1ocs1000 -> localhost] => (item={'name': 'br_nfs_3', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 180, 'subnet_cidr': '10.148.180.0/24', 'prefix_length': 24, 'pod_ipam_start': '10.148.180.30', 'pod_ipam_end': '10.148.180.50', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'br_nfs_3', 'os_subnet_id': '60e8c067-7173-4024-9050-b239fbef2222'})
+changed: [llas1ocs3000 -> localhost] => (item={'name': 'br_nfs_2', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 170, 'subnet_cidr': '10.148.170.0/24', 'prefix_length': 24, 'pod_ipam_start': '10.148.170.30', 'pod_ipam_end': '10.148.170.50', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'br_nfs_2', 'os_subnet_id': 'c0dbf37c-17e4-4e17-8677-4fda1614add4'})
+changed: [llas1ocs1001 -> localhost] => (item={'name': 'br_nfs_2', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 170, 'subnet_cidr': '10.148.170.0/24', 'prefix_length': 24, 'pod_ipam_start': '10.148.170.30', 'pod_ipam_end': '10.148.170.50', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'br_nfs_2', 'os_subnet_id': 'c0dbf37c-17e4-4e17-8677-4fda1614add4'})
+changed: [llas1ocs2001 -> localhost] => (item={'name': 'br_nfs_3', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 180, 'subnet_cidr': '10.148.180.0/24', 'prefix_length': 24, 'pod_ipam_start': '10.148.180.30', 'pod_ipam_end': '10.148.180.50', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'br_nfs_3', 'os_subnet_id': '60e8c067-7173-4024-9050-b239fbef2222'})
+changed: [llas1ocs2000 -> localhost] => (item={'name': 'br_nfs_3', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 180, 'subnet_cidr': '10.148.180.0/24', 'prefix_length': 24, 'pod_ipam_start': '10.148.180.30', 'pod_ipam_end': '10.148.180.50', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'br_nfs_3', 'os_subnet_id': '60e8c067-7173-4024-9050-b239fbef2222'})
+changed: [llas1ocs3001 -> localhost] => (item={'name': 'internal_api', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 401, 'subnet_cidr': '10.150.19.0/24', 'prefix_length': 24, 'pod_ipam_start': '10.150.19.15', 'pod_ipam_end': '10.150.19.250', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'internal_api', 'os_subnet_id': '341e96d7-c42b-4b1b-8b1b-5b48cc8f81ca'})
+changed: [llas1ocs1001 -> localhost] => (item={'name': 'br_nfs_3', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 180, 'subnet_cidr': '10.148.180.0/24', 'prefix_length': 24, 'pod_ipam_start': '10.148.180.30', 'pod_ipam_end': '10.148.180.50', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'br_nfs_3', 'os_subnet_id': '60e8c067-7173-4024-9050-b239fbef2222'})
+changed: [llas1ocs3000 -> localhost] => (item={'name': 'br_nfs_3', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 180, 'subnet_cidr': '10.148.180.0/24', 'prefix_length': 24, 'pod_ipam_start': '10.148.180.30', 'pod_ipam_end': '10.148.180.50', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'br_nfs_3', 'os_subnet_id': '60e8c067-7173-4024-9050-b239fbef2222'})
+changed: [llas1ocs1002 -> localhost] => (item={'name': 'internal_api', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 401, 'subnet_cidr': '10.150.19.0/24', 'prefix_length': 24, 'pod_ipam_start': '10.150.19.15', 'pod_ipam_end': '10.150.19.250', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'internal_api', 'os_subnet_id': '341e96d7-c42b-4b1b-8b1b-5b48cc8f81ca'})
+changed: [llas1ocs2002 -> localhost] => (item={'name': 'internal_api', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 401, 'subnet_cidr': '10.150.19.0/24', 'prefix_length': 24, 'pod_ipam_start': '10.150.19.15', 'pod_ipam_end': '10.150.19.250', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'internal_api', 'os_subnet_id': '341e96d7-c42b-4b1b-8b1b-5b48cc8f81ca'})
+changed: [llas1ocs3001 -> localhost] => (item={'name': 'storage', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 402, 'subnet_cidr': '10.150.20.0/24', 'prefix_length': 24, 'pod_ipam_start': '10.150.20.15', 'pod_ipam_end': '10.150.20.250', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'storage', 'os_subnet_id': '14a75270-4bc2-4ea8-be25-18f1be1a121a'})
+changed: [llas1ocs3002 -> localhost] => (item={'name': 'internal_api', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 401, 'subnet_cidr': '10.150.19.0/24', 'prefix_length': 24, 'pod_ipam_start': '10.150.19.15', 'pod_ipam_end': '10.150.19.250', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'internal_api', 'os_subnet_id': '341e96d7-c42b-4b1b-8b1b-5b48cc8f81ca'})
+changed: [llas1ocs1002 -> localhost] => (item={'name': 'storage', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 402, 'subnet_cidr': '10.150.20.0/24', 'prefix_length': 24, 'pod_ipam_start': '10.150.20.15', 'pod_ipam_end': '10.150.20.250', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'storage', 'os_subnet_id': '14a75270-4bc2-4ea8-be25-18f1be1a121a'})
+changed: [llas1ocs2002 -> localhost] => (item={'name': 'storage', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 402, 'subnet_cidr': '10.150.20.0/24', 'prefix_length': 24, 'pod_ipam_start': '10.150.20.15', 'pod_ipam_end': '10.150.20.250', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'storage', 'os_subnet_id': '14a75270-4bc2-4ea8-be25-18f1be1a121a'})
+changed: [llas1ocs3001 -> localhost] => (item={'name': 'tenant', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 403, 'subnet_cidr': '10.150.21.0/24', 'prefix_length': 24, 'pod_ipam_start': '10.150.21.15', 'pod_ipam_end': '10.150.21.250', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'tenant', 'os_subnet_id': '0c1e6937-c46b-4c61-a51e-610143a82a12'})
+changed: [llas1ocs3002 -> localhost] => (item={'name': 'storage', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 402, 'subnet_cidr': '10.150.20.0/24', 'prefix_length': 24, 'pod_ipam_start': '10.150.20.15', 'pod_ipam_end': '10.150.20.250', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'storage', 'os_subnet_id': '14a75270-4bc2-4ea8-be25-18f1be1a121a'})
+changed: [llas1ocs1002 -> localhost] => (item={'name': 'tenant', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 403, 'subnet_cidr': '10.150.21.0/24', 'prefix_length': 24, 'pod_ipam_start': '10.150.21.15', 'pod_ipam_end': '10.150.21.250', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'tenant', 'os_subnet_id': '0c1e6937-c46b-4c61-a51e-610143a82a12'})
+changed: [llas1ocs2002 -> localhost] => (item={'name': 'tenant', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 403, 'subnet_cidr': '10.150.21.0/24', 'prefix_length': 24, 'pod_ipam_start': '10.150.21.15', 'pod_ipam_end': '10.150.21.250', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'tenant', 'os_subnet_id': '0c1e6937-c46b-4c61-a51e-610143a82a12'})
+changed: [llas1ocs3001 -> localhost] => (item={'name': 'storage_mgmt', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 404, 'subnet_cidr': '10.150.22.0/24', 'prefix_length': 24, 'pod_ipam_start': '10.150.22.15', 'pod_ipam_end': '10.150.22.250', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'storage_mgmt', 'os_subnet_id': '57863c33-79d3-469b-9b44-aa24b85136da'})
+changed: [llas1ocs3002 -> localhost] => (item={'name': 'tenant', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 403, 'subnet_cidr': '10.150.21.0/24', 'prefix_length': 24, 'pod_ipam_start': '10.150.21.15', 'pod_ipam_end': '10.150.21.250', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'tenant', 'os_subnet_id': '0c1e6937-c46b-4c61-a51e-610143a82a12'})
+changed: [llas1ocs1002 -> localhost] => (item={'name': 'storage_mgmt', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 404, 'subnet_cidr': '10.150.22.0/24', 'prefix_length': 24, 'pod_ipam_start': '10.150.22.15', 'pod_ipam_end': '10.150.22.250', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'storage_mgmt', 'os_subnet_id': '57863c33-79d3-469b-9b44-aa24b85136da'})
+changed: [llas1ocs2002 -> localhost] => (item={'name': 'storage_mgmt', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 404, 'subnet_cidr': '10.150.22.0/24', 'prefix_length': 24, 'pod_ipam_start': '10.150.22.15', 'pod_ipam_end': '10.150.22.250', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'storage_mgmt', 'os_subnet_id': '57863c33-79d3-469b-9b44-aa24b85136da'})
+changed: [llas1ocs3001 -> localhost] => (item={'name': 'external', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 201, 'subnet_cidr': '10.150.23.0/24', 'prefix_length': 24, 'pod_ipam_start': '10.150.23.15', 'pod_ipam_end': '10.150.23.250', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'external', 'os_subnet_id': 'e5b9c4f8-1018-442c-bb34-b31698907f42'})
+changed: [llas1ocs3002 -> localhost] => (item={'name': 'storage_mgmt', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 404, 'subnet_cidr': '10.150.22.0/24', 'prefix_length': 24, 'pod_ipam_start': '10.150.22.15', 'pod_ipam_end': '10.150.22.250', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'storage_mgmt', 'os_subnet_id': '57863c33-79d3-469b-9b44-aa24b85136da'})
+changed: [llas1ocs1002 -> localhost] => (item={'name': 'external', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 201, 'subnet_cidr': '10.150.23.0/24', 'prefix_length': 24, 'pod_ipam_start': '10.150.23.15', 'pod_ipam_end': '10.150.23.250', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'external', 'os_subnet_id': 'e5b9c4f8-1018-442c-bb34-b31698907f42'})
+changed: [llas1ocs2002 -> localhost] => (item={'name': 'external', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 201, 'subnet_cidr': '10.150.23.0/24', 'prefix_length': 24, 'pod_ipam_start': '10.150.23.15', 'pod_ipam_end': '10.150.23.250', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'external', 'os_subnet_id': 'e5b9c4f8-1018-442c-bb34-b31698907f42'})
+changed: [llas1ocs3001 -> localhost] => (item={'name': 'storage_1_1', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 162, 'subnet_cidr': '10.148.162.0/23', 'prefix_length': '23``', 'pod_ipam_start': '10.148.162.30', 'pod_ipam_end': '10.148.162.50', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'storage_1_1', 'os_subnet_id': '4013b54b-5bda-4ead-a328-708cc33c913c'})
+changed: [llas1ocs3002 -> localhost] => (item={'name': 'external', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 201, 'subnet_cidr': '10.150.23.0/24', 'prefix_length': 24, 'pod_ipam_start': '10.150.23.15', 'pod_ipam_end': '10.150.23.250', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'external', 'os_subnet_id': 'e5b9c4f8-1018-442c-bb34-b31698907f42'})
+changed: [llas1ocs1002 -> localhost] => (item={'name': 'storage_1_1', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 162, 'subnet_cidr': '10.148.162.0/23', 'prefix_length': '23``', 'pod_ipam_start': '10.148.162.30', 'pod_ipam_end': '10.148.162.50', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'storage_1_1', 'os_subnet_id': '4013b54b-5bda-4ead-a328-708cc33c913c'})
+changed: [llas1ocs2002 -> localhost] => (item={'name': 'storage_1_1', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 162, 'subnet_cidr': '10.148.162.0/23', 'prefix_length': '23``', 'pod_ipam_start': '10.148.162.30', 'pod_ipam_end': '10.148.162.50', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'storage_1_1', 'os_subnet_id': '4013b54b-5bda-4ead-a328-708cc33c913c'})
+changed: [llas1ocs3001 -> localhost] => (item={'name': 'storage_1_2', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 164, 'subnet_cidr': '10.148.164.0/23', 'prefix_length': '23``', 'pod_ipam_start': '10.148.164.30', 'pod_ipam_end': '10.148.164.50', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'storage_1_2', 'os_subnet_id': 'cdddd224-4f96-45d5-a02a-cfba942e4768'})
+changed: [llas1ocs3002 -> localhost] => (item={'name': 'storage_1_1', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 162, 'subnet_cidr': '10.148.162.0/23', 'prefix_length': '23``', 'pod_ipam_start': '10.148.162.30', 'pod_ipam_end': '10.148.162.50', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'storage_1_1', 'os_subnet_id': '4013b54b-5bda-4ead-a328-708cc33c913c'})
+changed: [llas1ocs1002 -> localhost] => (item={'name': 'storage_1_2', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 164, 'subnet_cidr': '10.148.164.0/23', 'prefix_length': '23``', 'pod_ipam_start': '10.148.164.30', 'pod_ipam_end': '10.148.164.50', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'storage_1_2', 'os_subnet_id': 'cdddd224-4f96-45d5-a02a-cfba942e4768'})
+changed: [llas1ocs2002 -> localhost] => (item={'name': 'storage_1_2', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 164, 'subnet_cidr': '10.148.164.0/23', 'prefix_length': '23``', 'pod_ipam_start': '10.148.164.30', 'pod_ipam_end': '10.148.164.50', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'storage_1_2', 'os_subnet_id': 'cdddd224-4f96-45d5-a02a-cfba942e4768'})
+changed: [llas1ocs3001 -> localhost] => (item={'name': 'storage_2_1', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 172, 'subnet_cidr': '10.148.172.0/23', 'prefix_length': '23``', 'pod_ipam_start': '10.148.172.30', 'pod_ipam_end': '10.148.172.50', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'storage_2_1', 'os_subnet_id': '8d896df9-81f9-4ac8-9cf8-6bab033ca764'})
+changed: [llas1ocs3002 -> localhost] => (item={'name': 'storage_1_2', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 164, 'subnet_cidr': '10.148.164.0/23', 'prefix_length': '23``', 'pod_ipam_start': '10.148.164.30', 'pod_ipam_end': '10.148.164.50', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'storage_1_2', 'os_subnet_id': 'cdddd224-4f96-45d5-a02a-cfba942e4768'})
+changed: [llas1ocs1002 -> localhost] => (item={'name': 'storage_2_1', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 172, 'subnet_cidr': '10.148.172.0/23', 'prefix_length': '23``', 'pod_ipam_start': '10.148.172.30', 'pod_ipam_end': '10.148.172.50', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'storage_2_1', 'os_subnet_id': '8d896df9-81f9-4ac8-9cf8-6bab033ca764'})
+changed: [llas1ocs2002 -> localhost] => (item={'name': 'storage_2_1', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 172, 'subnet_cidr': '10.148.172.0/23', 'prefix_length': '23``', 'pod_ipam_start': '10.148.172.30', 'pod_ipam_end': '10.148.172.50', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'storage_2_1', 'os_subnet_id': '8d896df9-81f9-4ac8-9cf8-6bab033ca764'})
+changed: [llas1ocs3001 -> localhost] => (item={'name': 'storage_2_2', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 174, 'subnet_cidr': '10.148.174.0/23', 'prefix_length': '23``', 'pod_ipam_start': '10.148.174.30', 'pod_ipam_end': '10.148.174.50', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'storage_2_2', 'os_subnet_id': '017fba9b-bd2f-433a-89a2-dc2b7a415cc7'})
+changed: [llas1ocs3002 -> localhost] => (item={'name': 'storage_2_1', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 172, 'subnet_cidr': '10.148.172.0/23', 'prefix_length': '23``', 'pod_ipam_start': '10.148.172.30', 'pod_ipam_end': '10.148.172.50', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'storage_2_1', 'os_subnet_id': '8d896df9-81f9-4ac8-9cf8-6bab033ca764'})
+changed: [llas1ocs1002 -> localhost] => (item={'name': 'storage_2_2', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 174, 'subnet_cidr': '10.148.174.0/23', 'prefix_length': '23``', 'pod_ipam_start': '10.148.174.30', 'pod_ipam_end': '10.148.174.50', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'storage_2_2', 'os_subnet_id': '017fba9b-bd2f-433a-89a2-dc2b7a415cc7'})
+changed: [llas1ocs2002 -> localhost] => (item={'name': 'storage_2_2', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 174, 'subnet_cidr': '10.148.174.0/23', 'prefix_length': '23``', 'pod_ipam_start': '10.148.174.30', 'pod_ipam_end': '10.148.174.50', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'storage_2_2', 'os_subnet_id': '017fba9b-bd2f-433a-89a2-dc2b7a415cc7'})
+changed: [llas1ocs3001 -> localhost] => (item={'name': 'storage_3_1', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 182, 'subnet_cidr': '10.148.182.0/23', 'prefix_length': '23``', 'pod_ipam_start': '10.148.182.30', 'pod_ipam_end': '10.148.182.50', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'storage_3_1', 'os_subnet_id': '58e6321e-8cf8-483c-a4c0-d2a5e0e50939'})
+changed: [llas1ocs3002 -> localhost] => (item={'name': 'storage_2_2', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 174, 'subnet_cidr': '10.148.174.0/23', 'prefix_length': '23``', 'pod_ipam_start': '10.148.174.30', 'pod_ipam_end': '10.148.174.50', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'storage_2_2', 'os_subnet_id': '017fba9b-bd2f-433a-89a2-dc2b7a415cc7'})
+changed: [llas1ocs1002 -> localhost] => (item={'name': 'storage_3_1', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 182, 'subnet_cidr': '10.148.182.0/23', 'prefix_length': '23``', 'pod_ipam_start': '10.148.182.30', 'pod_ipam_end': '10.148.182.50', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'storage_3_1', 'os_subnet_id': '58e6321e-8cf8-483c-a4c0-d2a5e0e50939'})
+changed: [llas1ocs2002 -> localhost] => (item={'name': 'storage_3_1', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 182, 'subnet_cidr': '10.148.182.0/23', 'prefix_length': '23``', 'pod_ipam_start': '10.148.182.30', 'pod_ipam_end': '10.148.182.50', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'storage_3_1', 'os_subnet_id': '58e6321e-8cf8-483c-a4c0-d2a5e0e50939'})
+changed: [llas1ocs3001 -> localhost] => (item={'name': 'storage_3_2', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 184, 'subnet_cidr': '10.148.184.0/23', 'prefix_length': '23``', 'pod_ipam_start': '10.148.184.30', 'pod_ipam_end': '10.148.184.50', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'storage_3_2', 'os_subnet_id': '606f5c1f-1e0f-473d-baf9-37329cca1b6d'})
+changed: [llas1ocs3002 -> localhost] => (item={'name': 'storage_3_1', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 182, 'subnet_cidr': '10.148.182.0/23', 'prefix_length': '23``', 'pod_ipam_start': '10.148.182.30', 'pod_ipam_end': '10.148.182.50', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'storage_3_1', 'os_subnet_id': '58e6321e-8cf8-483c-a4c0-d2a5e0e50939'})
+changed: [llas1ocs1002 -> localhost] => (item={'name': 'storage_3_2', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 184, 'subnet_cidr': '10.148.184.0/23', 'prefix_length': '23``', 'pod_ipam_start': '10.148.184.30', 'pod_ipam_end': '10.148.184.50', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'storage_3_2', 'os_subnet_id': '606f5c1f-1e0f-473d-baf9-37329cca1b6d'})
+changed: [llas1ocs2002 -> localhost] => (item={'name': 'storage_3_2', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 184, 'subnet_cidr': '10.148.184.0/23', 'prefix_length': '23``', 'pod_ipam_start': '10.148.184.30', 'pod_ipam_end': '10.148.184.50', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'storage_3_2', 'os_subnet_id': '606f5c1f-1e0f-473d-baf9-37329cca1b6d'})
+changed: [llas1ocs3001 -> localhost] => (item={'name': 'br_nfs_1', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 160, 'subnet_cidr': '10.148.160.0/24', 'prefix_length': 24, 'pod_ipam_start': '10.148.160.30', 'pod_ipam_end': '10.148.160.50', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'br_nfs_1', 'os_subnet_id': 'c0cc41da-9d18-4999-8040-04f924a35140'})
+changed: [llas1ocs3002 -> localhost] => (item={'name': 'storage_3_2', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 184, 'subnet_cidr': '10.148.184.0/23', 'prefix_length': '23``', 'pod_ipam_start': '10.148.184.30', 'pod_ipam_end': '10.148.184.50', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'storage_3_2', 'os_subnet_id': '606f5c1f-1e0f-473d-baf9-37329cca1b6d'})
+changed: [llas1ocs1002 -> localhost] => (item={'name': 'br_nfs_1', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 160, 'subnet_cidr': '10.148.160.0/24', 'prefix_length': 24, 'pod_ipam_start': '10.148.160.30', 'pod_ipam_end': '10.148.160.50', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'br_nfs_1', 'os_subnet_id': 'c0cc41da-9d18-4999-8040-04f924a35140'})
+changed: [llas1ocs2002 -> localhost] => (item={'name': 'br_nfs_1', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 160, 'subnet_cidr': '10.148.160.0/24', 'prefix_length': 24, 'pod_ipam_start': '10.148.160.30', 'pod_ipam_end': '10.148.160.50', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'br_nfs_1', 'os_subnet_id': 'c0cc41da-9d18-4999-8040-04f924a35140'})
+changed: [llas1ocs3001 -> localhost] => (item={'name': 'br_nfs_2', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 170, 'subnet_cidr': '10.148.170.0/24', 'prefix_length': 24, 'pod_ipam_start': '10.148.170.30', 'pod_ipam_end': '10.148.170.50', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'br_nfs_2', 'os_subnet_id': 'c0dbf37c-17e4-4e17-8677-4fda1614add4'})
+changed: [llas1ocs3002 -> localhost] => (item={'name': 'br_nfs_1', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 160, 'subnet_cidr': '10.148.160.0/24', 'prefix_length': 24, 'pod_ipam_start': '10.148.160.30', 'pod_ipam_end': '10.148.160.50', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'br_nfs_1', 'os_subnet_id': 'c0cc41da-9d18-4999-8040-04f924a35140'})
+changed: [llas1ocs1002 -> localhost] => (item={'name': 'br_nfs_2', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 170, 'subnet_cidr': '10.148.170.0/24', 'prefix_length': 24, 'pod_ipam_start': '10.148.170.30', 'pod_ipam_end': '10.148.170.50', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'br_nfs_2', 'os_subnet_id': 'c0dbf37c-17e4-4e17-8677-4fda1614add4'})
+changed: [llas1ocs2002 -> localhost] => (item={'name': 'br_nfs_2', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 170, 'subnet_cidr': '10.148.170.0/24', 'prefix_length': 24, 'pod_ipam_start': '10.148.170.30', 'pod_ipam_end': '10.148.170.50', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'br_nfs_2', 'os_subnet_id': 'c0dbf37c-17e4-4e17-8677-4fda1614add4'})
+changed: [llas1ocs3001 -> localhost] => (item={'name': 'br_nfs_3', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 180, 'subnet_cidr': '10.148.180.0/24', 'prefix_length': 24, 'pod_ipam_start': '10.148.180.30', 'pod_ipam_end': '10.148.180.50', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'br_nfs_3', 'os_subnet_id': '60e8c067-7173-4024-9050-b239fbef2222'})
+changed: [llas1ocs3002 -> localhost] => (item={'name': 'br_nfs_2', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 170, 'subnet_cidr': '10.148.170.0/24', 'prefix_length': 24, 'pod_ipam_start': '10.148.170.30', 'pod_ipam_end': '10.148.170.50', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'br_nfs_2', 'os_subnet_id': 'c0dbf37c-17e4-4e17-8677-4fda1614add4'})
+changed: [llas1ocs1002 -> localhost] => (item={'name': 'br_nfs_3', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 180, 'subnet_cidr': '10.148.180.0/24', 'prefix_length': 24, 'pod_ipam_start': '10.148.180.30', 'pod_ipam_end': '10.148.180.50', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'br_nfs_3', 'os_subnet_id': '60e8c067-7173-4024-9050-b239fbef2222'})
+changed: [llas1ocs2002 -> localhost] => (item={'name': 'br_nfs_3', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 180, 'subnet_cidr': '10.148.180.0/24', 'prefix_length': 24, 'pod_ipam_start': '10.148.180.30', 'pod_ipam_end': '10.148.180.50', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'br_nfs_3', 'os_subnet_id': '60e8c067-7173-4024-9050-b239fbef2222'})
+changed: [llas1ocs3002 -> localhost] => (item={'name': 'br_nfs_3', 'vip_enabled': True, 'mtu': 9000, 'vlan_id': 180, 'subnet_cidr': '10.148.180.0/24', 'prefix_length': 24, 'pod_ipam_start': '10.148.180.30', 'pod_ipam_end': '10.148.180.50', 'metallb_pool_start': 'TBD!', 'metallb_pool_end': 'TBD!', 'metallb_advertise_interface': 'br_nfs_3', 'os_subnet_id': '60e8c067-7173-4024-9050-b239fbef2222'})
+
+TASK [openstack_port_create : Full "Debug"] ************************************
+Monday 02 March 2026  12:44:28 -0500 (0:01:22.654)       0:01:22.869 ********** 
+ok: [llas1ocs1000 -> localhost] => {
+    "hostvars[inventory_hostname]['_ports']['results']": [
+        {
+            "ansible_loop_var": "item",
+            "changed": true,
+            "failed": false,
+            "id": "78f2be03-fd1c-4257-921e-be2b4a646e83",
+            "invocation": {
+                "module_args": {
+                    "admin_state_up": null,
+                    "allowed_address_pairs": null,
+                    "api_timeout": null,
+                    "auth": null,
+                    "auth_type": null,
+                    "availability_zone": null,
+                    "binding:profile": null,
+                    "binding:vnic_type": null,
+                    "ca_cert": null,
+                    "client_cert": null,
+                    "client_key": null,
+                    "device_id": null,
+                    "device_owner": null,
+                    "dns_domain": null,
+                    "dns_name": null,
+                    "extra_dhcp_opts": null,
+                    "fixed_ips": [
+                        {
+                            "subnet_id": "341e96d7-c42b-4b1b-8b1b-5b48cc8f81ca"
+                        }
+                    ],
+                    "interface": "public",
+                    "mac_address": null,
+                    "name": "llas1ocs1000_internal_api_port",
+                    "network": "internal_api",
+                    "no_security_groups": false,
+                    "port_security_enabled": null,
+                    "region_name": null,
+                    "security_groups": null,
+                    "state": "present",
+                    "timeout": 180,
+                    "validate_certs": null,
+                    "wait": true
+                }
+            },
+            "item": {
+                "metallb_advertise_interface": "internal_api",
+                "metallb_pool_end": "TBD!",
+                "metallb_pool_start": "TBD!",
+                "mtu": 9000,
+                "name": "internal_api",
+                "os_subnet_id": "341e96d7-c42b-4b1b-8b1b-5b48cc8f81ca",
+                "pod_ipam_end": "10.150.19.250",
+                "pod_ipam_start": "10.150.19.15",
+                "prefix_length": 24,
+                "subnet_cidr": "10.150.19.0/24",
+                "vip_enabled": true,
+                "vlan_id": 401
+            },
+            "port": {
+                "allowed_address_pairs": [],
+                "binding_host_id": "",
+                "binding_profile": {},
+                "binding_vif_details": {},
+                "binding_vif_type": "unbound",
+                "binding_vnic_type": "normal",
+                "created_at": "2026-03-02T16:24:16Z",
+                "data_plane_status": null,
+                "description": "",
+                "device_id": "",
+                "device_owner": "",
+                "device_profile": null,
+                "dns_assignment": [
+                    {
+                        "fqdn": "host-10-150-19-113.ulti.io.",
+                        "hostname": "host-10-150-19-113",
+                        "ip_address": "10.150.19.113"
+                    }
+                ],
+                "dns_domain": "",
+                "dns_name": "",
+                "extra_dhcp_opts": [],
+                "fixed_ips": [
+                    {
+                        "ip_address": "10.150.19.113",
+                        "subnet_id": "341e96d7-c42b-4b1b-8b1b-5b48cc8f81ca"
+                    }
+                ],
+                "id": "78f2be03-fd1c-4257-921e-be2b4a646e83",
+                "ip_allocation": "deferred",
+                "is_admin_state_up": true,
+                "is_port_security_enabled": true,
+                "location": {
+                    "cloud": "undercloud",
+                    "project": {
+                        "domain_id": null,
+                        "domain_name": "Default",
+                        "id": "8a1902a3a6c74624b8a3f3727b6e0ae4",
+                        "name": "admin"
+                    },
+                    "region_name": "regionOne",
+                    "zone": null
+                },
+                "mac_address": "fa:16:3e:3d:eb:f1",
+                "name": "llas1ocs1000_internal_api_port",
+                "network_id": "9bda8f21-368f-4b3f-9ecc-148d249ad7e6",
+                "numa_affinity_policy": null,
+                "project_id": "8a1902a3a6c74624b8a3f3727b6e0ae4",
+                "propagate_uplink_status": null,
+                "qos_network_policy_id": null,
+                "qos_policy_id": null,
+                "resource_request": null,
+                "revision_number": 2,
+                "security_group_ids": [
+                    "02cf22d7-339c-4a62-b8f5-5825d67c277a"
+                ],
+                "status": "DOWN",
+                "tags": [],
+                "trunk_details": null,
+                "updated_at": "2026-03-02T17:43:08Z"
+            }
+        },
+        {
+            "ansible_loop_var": "item",
+            "changed": true,
+            "failed": false,
+            "id": "58f77ba6-5757-4cd0-be58-2d2ade5c1f10",
+            "invocation": {
+                "module_args": {
+                    "admin_state_up": null,
+                    "allowed_address_pairs": null,
+                    "api_timeout": null,
+                    "auth": null,
+                    "auth_type": null,
+                    "availability_zone": null,
+                    "binding:profile": null,
+                    "binding:vnic_type": null,
+                    "ca_cert": null,
+                    "client_cert": null,
+                    "client_key": null,
+                    "device_id": null,
+                    "device_owner": null,
+                    "dns_domain": null,
+                    "dns_name": null,
+                    "extra_dhcp_opts": null,
+                    "fixed_ips": [
+                        {
+                            "subnet_id": "14a75270-4bc2-4ea8-be25-18f1be1a121a"
+                        }
+                    ],
+                    "interface": "public",
+                    "mac_address": null,
+                    "name": "llas1ocs1000_storage_port",
+                    "network": "storage",
+                    "no_security_groups": false,
+                    "port_security_enabled": null,
+                    "region_name": null,
+                    "security_groups": null,
+                    "state": "present",
+                    "timeout": 180,
+                    "validate_certs": null,
+                    "wait": true
+                }
+            },
+            "item": {
+                "metallb_advertise_interface": "storage",
+                "metallb_pool_end": "TBD!",
+                "metallb_pool_start": "TBD!",
+                "mtu": 9000,
+                "name": "storage",
+                "os_subnet_id": "14a75270-4bc2-4ea8-be25-18f1be1a121a",
+                "pod_ipam_end": "10.150.20.250",
+                "pod_ipam_start": "10.150.20.15",
+                "prefix_length": 24,
+                "subnet_cidr": "10.150.20.0/24",
+                "vip_enabled": true,
+                "vlan_id": 402
+            },
+            "port": {
+                "allowed_address_pairs": [],
+                "binding_host_id": "",
+                "binding_profile": {},
+                "binding_vif_details": {},
+                "binding_vif_type": "unbound",
+                "binding_vnic_type": "normal",
+                "created_at": "2026-03-02T16:24:18Z",
+                "data_plane_status": null,
+                "description": "",
+                "device_id": "",
+                "device_owner": "",
+                "device_profile": null,
+                "dns_assignment": [
+                    {
+                        "fqdn": "host-10-150-20-170.ulti.io.",
+                        "hostname": "host-10-150-20-170",
+                        "ip_address": "10.150.20.170"
+                    }
+                ],
+                "dns_domain": "",
+                "dns_name": "",
+                "extra_dhcp_opts": [],
+                "fixed_ips": [
+                    {
+                        "ip_address": "10.150.20.170",
+                        "subnet_id": "14a75270-4bc2-4ea8-be25-18f1be1a121a"
+                    }
+                ],
+                "id": "58f77ba6-5757-4cd0-be58-2d2ade5c1f10",
+                "ip_allocation": "deferred",
+                "is_admin_state_up": true,
+                "is_port_security_enabled": true,
+                "location": {
+                    "cloud": "undercloud",
+                    "project": {
+                        "domain_id": null,
+                        "domain_name": "Default",
+                        "id": "8a1902a3a6c74624b8a3f3727b6e0ae4",
+                        "name": "admin"
+                    },
+                    "region_name": "regionOne",
+                    "zone": null
+                },
+                "mac_address": "fa:16:3e:6e:ac:85",
+                "name": "llas1ocs1000_storage_port",
+                "network_id": "4fa80c6d-c57e-480a-a3a6-5cd41b2c81ea",
+                "numa_affinity_policy": null,
+                "project_id": "8a1902a3a6c74624b8a3f3727b6e0ae4",
+                "propagate_uplink_status": null,
+                "qos_network_policy_id": null,
+                "qos_policy_id": null,
+                "resource_request": null,
+                "revision_number": 2,
+                "security_group_ids": [
+                    "02cf22d7-339c-4a62-b8f5-5825d67c277a"
+                ],
+                "status": "DOWN",
+                "tags": [],
+                "trunk_details": null,
+                "updated_at": "2026-03-02T17:43:11Z"
+            }
+        },
+        {
+            "ansible_loop_var": "item",
+            "changed": true,
+            "failed": false,
+            "id": "25bdb47e-9d8a-47b0-9e09-5db66edcf2fb",
+            "invocation": {
+                "module_args": {
+                    "admin_state_up": null,
+                    "allowed_address_pairs": null,
+                    "api_timeout": null,
+                    "auth": null,
+                    "auth_type": null,
+                    "availability_zone": null,
+                    "binding:profile": null,
+                    "binding:vnic_type": null,
+                    "ca_cert": null,
+                    "client_cert": null,
+                    "client_key": null,
+                    "device_id": null,
+                    "device_owner": null,
+                    "dns_domain": null,
+                    "dns_name": null,
+                    "extra_dhcp_opts": null,
+                    "fixed_ips": [
+                        {
+                            "subnet_id": "0c1e6937-c46b-4c61-a51e-610143a82a12"
+                        }
+                    ],
+                    "interface": "public",
+                    "mac_address": null,
+                    "name": "llas1ocs1000_tenant_port",
+                    "network": "tenant",
+                    "no_security_groups": false,
+                    "port_security_enabled": null,
+                    "region_name": null,
+                    "security_groups": null,
+                    "state": "present",
+                    "timeout": 180,
+                    "validate_certs": null,
+                    "wait": true
+                }
+            },
+            "item": {
+                "metallb_advertise_interface": "tenant",
+                "metallb_pool_end": "TBD!",
+                "metallb_pool_start": "TBD!",
+                "mtu": 9000,
+                "name": "tenant",
+                "os_subnet_id": "0c1e6937-c46b-4c61-a51e-610143a82a12",
+                "pod_ipam_end": "10.150.21.250",
+                "pod_ipam_start": "10.150.21.15",
+                "prefix_length": 24,
+                "subnet_cidr": "10.150.21.0/24",
+                "vip_enabled": true,
+                "vlan_id": 403
+            },
+            "port": {
+                "allowed_address_pairs": [],
+                "binding_host_id": "",
+                "binding_profile": {},
+                "binding_vif_details": {},
+                "binding_vif_type": "unbound",
+                "binding_vnic_type": "normal",
+                "created_at": "2026-03-02T16:24:21Z",
+                "data_plane_status": null,
+                "description": "",
+                "device_id": "",
+                "device_owner": "",
+                "device_profile": null,
+                "dns_assignment": [
+                    {
+                        "fqdn": "host-10-150-21-148.ulti.io.",
+                        "hostname": "host-10-150-21-148",
+                        "ip_address": "10.150.21.148"
+                    }
+                ],
+                "dns_domain": "",
+                "dns_name": "",
+                "extra_dhcp_opts": [],
+                "fixed_ips": [
+                    {
+                        "ip_address": "10.150.21.148",
+                        "subnet_id": "0c1e6937-c46b-4c61-a51e-610143a82a12"
+                    }
+                ],
+                "id": "25bdb47e-9d8a-47b0-9e09-5db66edcf2fb",
+                "ip_allocation": "deferred",
+                "is_admin_state_up": true,
+                "is_port_security_enabled": true,
+                "location": {
+                    "cloud": "undercloud",
+                    "project": {
+                        "domain_id": null,
+                        "domain_name": "Default",
+                        "id": "8a1902a3a6c74624b8a3f3727b6e0ae4",
+                        "name": "admin"
+                    },
+                    "region_name": "regionOne",
+                    "zone": null
+                },
+                "mac_address": "fa:16:3e:e7:05:ec",
+                "name": "llas1ocs1000_tenant_port",
+                "network_id": "f0de8488-3ed4-4be6-8155-058a80fa2ba1",
+                "numa_affinity_policy": null,
+                "project_id": "8a1902a3a6c74624b8a3f3727b6e0ae4",
+                "propagate_uplink_status": null,
+                "qos_network_policy_id": null,
+                "qos_policy_id": null,
+                "resource_request": null,
+                "revision_number": 2,
+                "security_group_ids": [
+                    "02cf22d7-339c-4a62-b8f5-5825d67c277a"
+                ],
+                "status": "DOWN",
+                "tags": [],
+                "trunk_details": null,
+                "updated_at": "2026-03-02T17:43:13Z"
+            }
+        },
+        {
+            "ansible_loop_var": "item",
+            "changed": true,
+            "failed": false,
+            "id": "639f5098-f4c7-4651-a57b-27a507e07970",
+            "invocation": {
+                "module_args": {
+                    "admin_state_up": null,
+                    "allowed_address_pairs": null,
+                    "api_timeout": null,
+                    "auth": null,
+                    "auth_type": null,
+                    "availability_zone": null,
+                    "binding:profile": null,
+                    "binding:vnic_type": null,
+                    "ca_cert": null,
+                    "client_cert": null,
+                    "client_key": null,
+                    "device_id": null,
+                    "device_owner": null,
+                    "dns_domain": null,
+                    "dns_name": null,
+                    "extra_dhcp_opts": null,
+                    "fixed_ips": [
+                        {
+                            "subnet_id": "57863c33-79d3-469b-9b44-aa24b85136da"
+                        }
+                    ],
+                    "interface": "public",
+                    "mac_address": null,
+                    "name": "llas1ocs1000_storage_mgmt_port",
+                    "network": "storage_mgmt",
+                    "no_security_groups": false,
+                    "port_security_enabled": null,
+                    "region_name": null,
+                    "security_groups": null,
+                    "state": "present",
+                    "timeout": 180,
+                    "validate_certs": null,
+                    "wait": true
+                }
+            },
+            "item": {
+                "metallb_advertise_interface": "storage_mgmt",
+                "metallb_pool_end": "TBD!",
+                "metallb_pool_start": "TBD!",
+                "mtu": 9000,
+                "name": "storage_mgmt",
+                "os_subnet_id": "57863c33-79d3-469b-9b44-aa24b85136da",
+                "pod_ipam_end": "10.150.22.250",
+                "pod_ipam_start": "10.150.22.15",
+                "prefix_length": 24,
+                "subnet_cidr": "10.150.22.0/24",
+                "vip_enabled": true,
+                "vlan_id": 404
+            },
+            "port": {
+                "allowed_address_pairs": [],
+                "binding_host_id": "",
+                "binding_profile": {},
+                "binding_vif_details": {},
+                "binding_vif_type": "unbound",
+                "binding_vnic_type": "normal",
+                "created_at": "2026-03-02T16:24:23Z",
+                "data_plane_status": null,
+                "description": "",
+                "device_id": "",
+                "device_owner": "",
+                "device_profile": null,
+                "dns_assignment": [
+                    {
+                        "fqdn": "host-10-150-22-166.ulti.io.",
+                        "hostname": "host-10-150-22-166",
+                        "ip_address": "10.150.22.166"
+                    }
+                ],
+                "dns_domain": "",
+                "dns_name": "",
+                "extra_dhcp_opts": [],
+                "fixed_ips": [
+                    {
+                        "ip_address": "10.150.22.166",
+                        "subnet_id": "57863c33-79d3-469b-9b44-aa24b85136da"
+                    }
+                ],
+                "id": "639f5098-f4c7-4651-a57b-27a507e07970",
+                "ip_allocation": "deferred",
+                "is_admin_state_up": true,
+                "is_port_security_enabled": true,
+                "location": {
+                    "cloud": "undercloud",
+                    "project": {
+                        "domain_id": null,
+                        "domain_name": "Default",
+                        "id": "8a1902a3a6c74624b8a3f3727b6e0ae4",
+                        "name": "admin"
+                    },
+                    "region_name": "regionOne",
+                    "zone": null
+                },
+                "mac_address": "fa:16:3e:39:8d:26",
+                "name": "llas1ocs1000_storage_mgmt_port",
+                "network_id": "c67b873d-5510-4b4b-adb0-5baa1e50cecd",
+                "numa_affinity_policy": null,
+                "project_id": "8a1902a3a6c74624b8a3f3727b6e0ae4",
+                "propagate_uplink_status": null,
+                "qos_network_policy_id": null,
+                "qos_policy_id": null,
+                "resource_request": null,
+                "revision_number": 2,
+                "security_group_ids": [
+                    "02cf22d7-339c-4a62-b8f5-5825d67c277a"
+                ],
+                "status": "DOWN",
+                "tags": [],
+                "trunk_details": null,
+                "updated_at": "2026-03-02T17:43:16Z"
+            }
+        },
+        {
+            "ansible_loop_var": "item",
+            "changed": true,
+            "failed": false,
+            "id": "700e2275-6b09-4823-b7c9-55fa0e41e8fa",
+            "invocation": {
+                "module_args": {
+                    "admin_state_up": null,
+                    "allowed_address_pairs": null,
+                    "api_timeout": null,
+                    "auth": null,
+                    "auth_type": null,
+                    "availability_zone": null,
+                    "binding:profile": null,
+                    "binding:vnic_type": null,
+                    "ca_cert": null,
+                    "client_cert": null,
+                    "client_key": null,
+                    "device_id": null,
+                    "device_owner": null,
+                    "dns_domain": null,
+                    "dns_name": null,
+                    "extra_dhcp_opts": null,
+                    "fixed_ips": [
+                        {
+                            "subnet_id": "e5b9c4f8-1018-442c-bb34-b31698907f42"
+                        }
+                    ],
+                    "interface": "public",
+                    "mac_address": null,
+                    "name": "llas1ocs1000_external_port",
+                    "network": "external",
+                    "no_security_groups": false,
+                    "port_security_enabled": null,
+                    "region_name": null,
+                    "security_groups": null,
+                    "state": "present",
+                    "timeout": 180,
+                    "validate_certs": null,
+                    "wait": true
+                }
+            },
+            "item": {
+                "metallb_advertise_interface": "external",
+                "metallb_pool_end": "TBD!",
+                "metallb_pool_start": "TBD!",
+                "mtu": 9000,
+                "name": "external",
+                "os_subnet_id": "e5b9c4f8-1018-442c-bb34-b31698907f42",
+                "pod_ipam_end": "10.150.23.250",
+                "pod_ipam_start": "10.150.23.15",
+                "prefix_length": 24,
+                "subnet_cidr": "10.150.23.0/24",
+                "vip_enabled": true,
+                "vlan_id": 201
+            },
+            "port": {
+                "allowed_address_pairs": [],
+                "binding_host_id": "",
+                "binding_profile": {},
+                "binding_vif_details": {},
+                "binding_vif_type": "unbound",
+                "binding_vnic_type": "normal",
+                "created_at": "2026-03-02T16:24:26Z",
+                "data_plane_status": null,
+                "description": "",
+                "device_id": "",
+                "device_owner": "",
+                "device_profile": null,
+                "dns_assignment": [
+                    {
+                        "fqdn": "host-10-150-23-166.ulti.io.",
+                        "hostname": "host-10-150-23-166",
+                        "ip_address": "10.150.23.166"
+                    }
+                ],
+                "dns_domain": "",
+                "dns_name": "",
+                "extra_dhcp_opts": [],
+                "fixed_ips": [
+                    {
+                        "ip_address": "10.150.23.166",
+                        "subnet_id": "e5b9c4f8-1018-442c-bb34-b31698907f42"
+                    }
+                ],
+                "id": "700e2275-6b09-4823-b7c9-55fa0e41e8fa",
+                "ip_allocation": "deferred",
+                "is_admin_state_up": true,
+                "is_port_security_enabled": true,
+                "location": {
+                    "cloud": "undercloud",
+                    "project": {
+                        "domain_id": null,
+                        "domain_name": "Default",
+                        "id": "8a1902a3a6c74624b8a3f3727b6e0ae4",
+                        "name": "admin"
+                    },
+                    "region_name": "regionOne",
+                    "zone": null
+                },
+                "mac_address": "fa:16:3e:07:b2:61",
+                "name": "llas1ocs1000_external_port",
+                "network_id": "e4920e2a-6cb6-48e2-b61c-751827ff2572",
+                "numa_affinity_policy": null,
+                "project_id": "8a1902a3a6c74624b8a3f3727b6e0ae4",
+                "propagate_uplink_status": null,
+                "qos_network_policy_id": null,
+                "qos_policy_id": null,
+                "resource_request": null,
+                "revision_number": 2,
+                "security_group_ids": [
+                    "02cf22d7-339c-4a62-b8f5-5825d67c277a"
+                ],
+                "status": "DOWN",
+                "tags": [],
+                "trunk_details": null,
+                "updated_at": "2026-03-02T17:43:19Z"
+            }
+        },
+        {
+            "ansible_loop_var": "item",
+            "changed": true,
+            "failed": false,
+            "id": "675f9a20-bb98-45cf-a881-26847d9cbf8e",
+            "invocation": {
+                "module_args": {
+                    "admin_state_up": null,
+                    "allowed_address_pairs": null,
+                    "api_timeout": null,
+                    "auth": null,
+                    "auth_type": null,
+                    "availability_zone": null,
+                    "binding:profile": null,
+                    "binding:vnic_type": null,
+                    "ca_cert": null,
+                    "client_cert": null,
+                    "client_key": null,
+                    "device_id": null,
+                    "device_owner": null,
+                    "dns_domain": null,
+                    "dns_name": null,
+                    "extra_dhcp_opts": null,
+                    "fixed_ips": [
+                        {
+                            "subnet_id": "4013b54b-5bda-4ead-a328-708cc33c913c"
+                        }
+                    ],
+                    "interface": "public",
+                    "mac_address": null,
+                    "name": "llas1ocs1000_storage_1_1_port",
+                    "network": "storage_1_1",
+                    "no_security_groups": false,
+                    "port_security_enabled": null,
+                    "region_name": null,
+                    "security_groups": null,
+                    "state": "present",
+                    "timeout": 180,
+                    "validate_certs": null,
+                    "wait": true
+                }
+            },
+            "item": {
+                "metallb_advertise_interface": "storage_1_1",
+                "metallb_pool_end": "TBD!",
+                "metallb_pool_start": "TBD!",
+                "mtu": 9000,
+                "name": "storage_1_1",
+                "os_subnet_id": "4013b54b-5bda-4ead-a328-708cc33c913c",
+                "pod_ipam_end": "10.148.162.50",
+                "pod_ipam_start": "10.148.162.30",
+                "prefix_length": "23``",
+                "subnet_cidr": "10.148.162.0/23",
+                "vip_enabled": true,
+                "vlan_id": 162
+            },
+            "port": {
+                "allowed_address_pairs": [],
+                "binding_host_id": "",
+                "binding_profile": {},
+                "binding_vif_details": {},
+                "binding_vif_type": "unbound",
+                "binding_vnic_type": "normal",
+                "created_at": "2026-03-02T16:24:29Z",
+                "data_plane_status": null,
+                "description": "",
+                "device_id": "",
+                "device_owner": "",
+                "device_profile": null,
+                "dns_assignment": [
+                    {
+                        "fqdn": "host-10-148-162-43.ulti.io.",
+                        "hostname": "host-10-148-162-43",
+                        "ip_address": "10.148.162.43"
+                    }
+                ],
+                "dns_domain": "",
+                "dns_name": "",
+                "extra_dhcp_opts": [],
+                "fixed_ips": [
+                    {
+                        "ip_address": "10.148.162.43",
+                        "subnet_id": "4013b54b-5bda-4ead-a328-708cc33c913c"
+                    }
+                ],
+                "id": "675f9a20-bb98-45cf-a881-26847d9cbf8e",
+                "ip_allocation": "deferred",
+                "is_admin_state_up": true,
+                "is_port_security_enabled": true,
+                "location": {
+                    "cloud": "undercloud",
+                    "project": {
+                        "domain_id": null,
+                        "domain_name": "Default",
+                        "id": "8a1902a3a6c74624b8a3f3727b6e0ae4",
+                        "name": "admin"
+                    },
+                    "region_name": "regionOne",
+                    "zone": null
+                },
+                "mac_address": "fa:16:3e:bf:91:43",
+                "name": "llas1ocs1000_storage_1_1_port",
+                "network_id": "f6be594d-9961-495f-9dbb-df8b93acbd59",
+                "numa_affinity_policy": null,
+                "project_id": "8a1902a3a6c74624b8a3f3727b6e0ae4",
+                "propagate_uplink_status": null,
+                "qos_network_policy_id": null,
+                "qos_policy_id": null,
+                "resource_request": null,
+                "revision_number": 2,
+                "security_group_ids": [
+                    "02cf22d7-339c-4a62-b8f5-5825d67c277a"
+                ],
+                "status": "DOWN",
+                "tags": [],
+                "trunk_details": null,
+                "updated_at": "2026-03-02T17:43:22Z"
+            }
+        },
+        {
+            "ansible_loop_var": "item",
+            "changed": true,
+            "failed": false,
+            "id": "8d8b5126-cb9d-4837-a1e6-e7be81aa97f6",
+            "invocation": {
+                "module_args": {
+                    "admin_state_up": null,
+                    "allowed_address_pairs": null,
+                    "api_timeout": null,
+                    "auth": null,
+                    "auth_type": null,
+                    "availability_zone": null,
+                    "binding:profile": null,
+                    "binding:vnic_type": null,
+                    "ca_cert": null,
+                    "client_cert": null,
+                    "client_key": null,
+                    "device_id": null,
+                    "device_owner": null,
+                    "dns_domain": null,
+                    "dns_name": null,
+                    "extra_dhcp_opts": null,
+                    "fixed_ips": [
+                        {
+                            "subnet_id": "cdddd224-4f96-45d5-a02a-cfba942e4768"
+                        }
+                    ],
+                    "interface": "public",
+                    "mac_address": null,
+                    "name": "llas1ocs1000_storage_1_2_port",
+                    "network": "storage_1_2",
+                    "no_security_groups": false,
+                    "port_security_enabled": null,
+                    "region_name": null,
+                    "security_groups": null,
+                    "state": "present",
+                    "timeout": 180,
+                    "validate_certs": null,
+                    "wait": true
+                }
+            },
+            "item": {
+                "metallb_advertise_interface": "storage_1_2",
+                "metallb_pool_end": "TBD!",
+                "metallb_pool_start": "TBD!",
+                "mtu": 9000,
+                "name": "storage_1_2",
+                "os_subnet_id": "cdddd224-4f96-45d5-a02a-cfba942e4768",
+                "pod_ipam_end": "10.148.164.50",
+                "pod_ipam_start": "10.148.164.30",
+                "prefix_length": "23``",
+                "subnet_cidr": "10.148.164.0/23",
+                "vip_enabled": true,
+                "vlan_id": 164
+            },
+            "port": {
+                "allowed_address_pairs": [],
+                "binding_host_id": "",
+                "binding_profile": {},
+                "binding_vif_details": {},
+                "binding_vif_type": "unbound",
+                "binding_vnic_type": "normal",
+                "created_at": "2026-03-02T16:24:32Z",
+                "data_plane_status": null,
+                "description": "",
+                "device_id": "",
+                "device_owner": "",
+                "device_profile": null,
+                "dns_assignment": [
+                    {
+                        "fqdn": "host-10-148-164-33.ulti.io.",
+                        "hostname": "host-10-148-164-33",
+                        "ip_address": "10.148.164.33"
+                    }
+                ],
+                "dns_domain": "",
+                "dns_name": "",
+                "extra_dhcp_opts": [],
+                "fixed_ips": [
+                    {
+                        "ip_address": "10.148.164.33",
+                        "subnet_id": "cdddd224-4f96-45d5-a02a-cfba942e4768"
+                    }
+                ],
+                "id": "8d8b5126-cb9d-4837-a1e6-e7be81aa97f6",
+                "ip_allocation": "deferred",
+                "is_admin_state_up": true,
+                "is_port_security_enabled": true,
+                "location": {
+                    "cloud": "undercloud",
+                    "project": {
+                        "domain_id": null,
+                        "domain_name": "Default",
+                        "id": "8a1902a3a6c74624b8a3f3727b6e0ae4",
+                        "name": "admin"
+                    },
+                    "region_name": "regionOne",
+                    "zone": null
+                },
+                "mac_address": "fa:16:3e:2c:53:5d",
+                "name": "llas1ocs1000_storage_1_2_port",
+                "network_id": "a955280c-b3dd-4bc1-b2c7-aaa48a83b489",
+                "numa_affinity_policy": null,
+                "project_id": "8a1902a3a6c74624b8a3f3727b6e0ae4",
+                "propagate_uplink_status": null,
+                "qos_network_policy_id": null,
+                "qos_policy_id": null,
+                "resource_request": null,
+                "revision_number": 2,
+                "security_group_ids": [
+                    "02cf22d7-339c-4a62-b8f5-5825d67c277a"
+                ],
+                "status": "DOWN",
+                "tags": [],
+                "trunk_details": null,
+                "updated_at": "2026-03-02T17:43:25Z"
+            }
+        },
+        {
+            "ansible_loop_var": "item",
+            "changed": true,
+            "failed": false,
+            "id": "cec042ab-28d1-4a70-b2f5-af51fafe9759",
+            "invocation": {
+                "module_args": {
+                    "admin_state_up": null,
+                    "allowed_address_pairs": null,
+                    "api_timeout": null,
+                    "auth": null,
+                    "auth_type": null,
+                    "availability_zone": null,
+                    "binding:profile": null,
+                    "binding:vnic_type": null,
+                    "ca_cert": null,
+                    "client_cert": null,
+                    "client_key": null,
+                    "device_id": null,
+                    "device_owner": null,
+                    "dns_domain": null,
+                    "dns_name": null,
+                    "extra_dhcp_opts": null,
+                    "fixed_ips": [
+                        {
+                            "subnet_id": "8d896df9-81f9-4ac8-9cf8-6bab033ca764"
+                        }
+                    ],
+                    "interface": "public",
+                    "mac_address": null,
+                    "name": "llas1ocs1000_storage_2_1_port",
+                    "network": "storage_2_1",
+                    "no_security_groups": false,
+                    "port_security_enabled": null,
+                    "region_name": null,
+                    "security_groups": null,
+                    "state": "present",
+                    "timeout": 180,
+                    "validate_certs": null,
+                    "wait": true
+                }
+            },
+            "item": {
+                "metallb_advertise_interface": "storage_2_1",
+                "metallb_pool_end": "TBD!",
+                "metallb_pool_start": "TBD!",
+                "mtu": 9000,
+                "name": "storage_2_1",
+                "os_subnet_id": "8d896df9-81f9-4ac8-9cf8-6bab033ca764",
+                "pod_ipam_end": "10.148.172.50",
+                "pod_ipam_start": "10.148.172.30",
+                "prefix_length": "23``",
+                "subnet_cidr": "10.148.172.0/23",
+                "vip_enabled": true,
+                "vlan_id": 172
+            },
+            "port": {
+                "allowed_address_pairs": [],
+                "binding_host_id": "",
+                "binding_profile": {},
+                "binding_vif_details": {},
+                "binding_vif_type": "unbound",
+                "binding_vnic_type": "normal",
+                "created_at": "2026-03-02T16:24:34Z",
+                "data_plane_status": null,
+                "description": "",
+                "device_id": "",
+                "device_owner": "",
+                "device_profile": null,
+                "dns_assignment": [
+                    {
+                        "fqdn": "host-10-148-172-41.ulti.io.",
+                        "hostname": "host-10-148-172-41",
+                        "ip_address": "10.148.172.41"
+                    }
+                ],
+                "dns_domain": "",
+                "dns_name": "",
+                "extra_dhcp_opts": [],
+                "fixed_ips": [
+                    {
+                        "ip_address": "10.148.172.41",
+                        "subnet_id": "8d896df9-81f9-4ac8-9cf8-6bab033ca764"
+                    }
+                ],
+                "id": "cec042ab-28d1-4a70-b2f5-af51fafe9759",
+                "ip_allocation": "deferred",
+                "is_admin_state_up": true,
+                "is_port_security_enabled": true,
+                "location": {
+                    "cloud": "undercloud",
+                    "project": {
+                        "domain_id": null,
+                        "domain_name": "Default",
+                        "id": "8a1902a3a6c74624b8a3f3727b6e0ae4",
+                        "name": "admin"
+                    },
+                    "region_name": "regionOne",
+                    "zone": null
+                },
+                "mac_address": "fa:16:3e:07:4f:ba",
+                "name": "llas1ocs1000_storage_2_1_port",
+                "network_id": "751b7ed4-9757-44d2-96ac-09ca73a9bae9",
+                "numa_affinity_policy": null,
+                "project_id": "8a1902a3a6c74624b8a3f3727b6e0ae4",
+                "propagate_uplink_status": null,
+                "qos_network_policy_id": null,
+                "qos_policy_id": null,
+                "resource_request": null,
+                "revision_number": 2,
+                "security_group_ids": [
+                    "02cf22d7-339c-4a62-b8f5-5825d67c277a"
+                ],
+                "status": "DOWN",
+                "tags": [],
+                "trunk_details": null,
+                "updated_at": "2026-03-02T17:43:27Z"
+            }
+        },
+        {
+            "ansible_loop_var": "item",
+            "changed": true,
+            "failed": false,
+            "id": "478772ad-e509-48d2-bfed-0363bc32d115",
+            "invocation": {
+                "module_args": {
+                    "admin_state_up": null,
+                    "allowed_address_pairs": null,
+                    "api_timeout": null,
+                    "auth": null,
+                    "auth_type": null,
+                    "availability_zone": null,
+                    "binding:profile": null,
+                    "binding:vnic_type": null,
+                    "ca_cert": null,
+                    "client_cert": null,
+                    "client_key": null,
+                    "device_id": null,
+                    "device_owner": null,
+                    "dns_domain": null,
+                    "dns_name": null,
+                    "extra_dhcp_opts": null,
+                    "fixed_ips": [
+                        {
+                            "subnet_id": "017fba9b-bd2f-433a-89a2-dc2b7a415cc7"
+                        }
+                    ],
+                    "interface": "public",
+                    "mac_address": null,
+                    "name": "llas1ocs1000_storage_2_2_port",
+                    "network": "storage_2_2",
+                    "no_security_groups": false,
+                    "port_security_enabled": null,
+                    "region_name": null,
+                    "security_groups": null,
+                    "state": "present",
+                    "timeout": 180,
+                    "validate_certs": null,
+                    "wait": true
+                }
+            },
+            "item": {
+                "metallb_advertise_interface": "storage_2_2",
+                "metallb_pool_end": "TBD!",
+                "metallb_pool_start": "TBD!",
+                "mtu": 9000,
+                "name": "storage_2_2",
+                "os_subnet_id": "017fba9b-bd2f-433a-89a2-dc2b7a415cc7",
+                "pod_ipam_end": "10.148.174.50",
+                "pod_ipam_start": "10.148.174.30",
+                "prefix_length": "23``",
+                "subnet_cidr": "10.148.174.0/23",
+                "vip_enabled": true,
+                "vlan_id": 174
+            },
+            "port": {
+                "allowed_address_pairs": [],
+                "binding_host_id": "",
+                "binding_profile": {},
+                "binding_vif_details": {},
+                "binding_vif_type": "unbound",
+                "binding_vnic_type": "normal",
+                "created_at": "2026-03-02T16:24:36Z",
+                "data_plane_status": null,
+                "description": "",
+                "device_id": "",
+                "device_owner": "",
+                "device_profile": null,
+                "dns_assignment": [
+                    {
+                        "fqdn": "host-10-148-174-39.ulti.io.",
+                        "hostname": "host-10-148-174-39",
+                        "ip_address": "10.148.174.39"
+                    }
+                ],
+                "dns_domain": "",
+                "dns_name": "",
+                "extra_dhcp_opts": [],
+                "fixed_ips": [
+                    {
+                        "ip_address": "10.148.174.39",
+                        "subnet_id": "017fba9b-bd2f-433a-89a2-dc2b7a415cc7"
+                    }
+                ],
+                "id": "478772ad-e509-48d2-bfed-0363bc32d115",
+                "ip_allocation": "deferred",
+                "is_admin_state_up": true,
+                "is_port_security_enabled": true,
+                "location": {
+                    "cloud": "undercloud",
+                    "project": {
+                        "domain_id": null,
+                        "domain_name": "Default",
+                        "id": "8a1902a3a6c74624b8a3f3727b6e0ae4",
+                        "name": "admin"
+                    },
+                    "region_name": "regionOne",
+                    "zone": null
+                },
+                "mac_address": "fa:16:3e:ee:3c:0f",
+                "name": "llas1ocs1000_storage_2_2_port",
+                "network_id": "0546b77f-c02d-4fc0-85e4-71cfadd0ed27",
+                "numa_affinity_policy": null,
+                "project_id": "8a1902a3a6c74624b8a3f3727b6e0ae4",
+                "propagate_uplink_status": null,
+                "qos_network_policy_id": null,
+                "qos_policy_id": null,
+                "resource_request": null,
+                "revision_number": 2,
+                "security_group_ids": [
+                    "02cf22d7-339c-4a62-b8f5-5825d67c277a"
+                ],
+                "status": "DOWN",
+                "tags": [],
+                "trunk_details": null,
+                "updated_at": "2026-03-02T17:43:30Z"
+            }
+        },
+        {
+            "ansible_loop_var": "item",
+            "changed": true,
+            "failed": false,
+            "id": "3b27a29f-7c5c-41dd-98fe-2d3a2742a47c",
+            "invocation": {
+                "module_args": {
+                    "admin_state_up": null,
+                    "allowed_address_pairs": null,
+                    "api_timeout": null,
+                    "auth": null,
+                    "auth_type": null,
+                    "availability_zone": null,
+                    "binding:profile": null,
+                    "binding:vnic_type": null,
+                    "ca_cert": null,
+                    "client_cert": null,
+                    "client_key": null,
+                    "device_id": null,
+                    "device_owner": null,
+                    "dns_domain": null,
+                    "dns_name": null,
+                    "extra_dhcp_opts": null,
+                    "fixed_ips": [
+                        {
+                            "subnet_id": "58e6321e-8cf8-483c-a4c0-d2a5e0e50939"
+                        }
+                    ],
+                    "interface": "public",
+                    "mac_address": null,
+                    "name": "llas1ocs1000_storage_3_1_port",
+                    "network": "storage_3_1",
+                    "no_security_groups": false,
+                    "port_security_enabled": null,
+                    "region_name": null,
+                    "security_groups": null,
+                    "state": "present",
+                    "timeout": 180,
+                    "validate_certs": null,
+                    "wait": true
+                }
+            },
+            "item": {
+                "metallb_advertise_interface": "storage_3_1",
+                "metallb_pool_end": "TBD!",
+                "metallb_pool_start": "TBD!",
+                "mtu": 9000,
+                "name": "storage_3_1",
+                "os_subnet_id": "58e6321e-8cf8-483c-a4c0-d2a5e0e50939",
+                "pod_ipam_end": "10.148.182.50",
+                "pod_ipam_start": "10.148.182.30",
+                "prefix_length": "23``",
+                "subnet_cidr": "10.148.182.0/23",
+                "vip_enabled": true,
+                "vlan_id": 182
+            },
+            "port": {
+                "allowed_address_pairs": [],
+                "binding_host_id": "",
+                "binding_profile": {},
+                "binding_vif_details": {},
+                "binding_vif_type": "unbound",
+                "binding_vnic_type": "normal",
+                "created_at": "2026-03-02T16:24:39Z",
+                "data_plane_status": null,
+                "description": "",
+                "device_id": "",
+                "device_owner": "",
+                "device_profile": null,
+                "dns_assignment": [
+                    {
+                        "fqdn": "host-10-148-182-49.ulti.io.",
+                        "hostname": "host-10-148-182-49",
+                        "ip_address": "10.148.182.49"
+                    }
+                ],
+                "dns_domain": "",
+                "dns_name": "",
+                "extra_dhcp_opts": [],
+                "fixed_ips": [
+                    {
+                        "ip_address": "10.148.182.49",
+                        "subnet_id": "58e6321e-8cf8-483c-a4c0-d2a5e0e50939"
+                    }
+                ],
+                "id": "3b27a29f-7c5c-41dd-98fe-2d3a2742a47c",
+                "ip_allocation": "deferred",
+                "is_admin_state_up": true,
+                "is_port_security_enabled": true,
+                "location": {
+                    "cloud": "undercloud",
+                    "project": {
+                        "domain_id": null,
+                        "domain_name": "Default",
+                        "id": "8a1902a3a6c74624b8a3f3727b6e0ae4",
+                        "name": "admin"
+                    },
+                    "region_name": "regionOne",
+                    "zone": null
+                },
+                "mac_address": "fa:16:3e:94:19:6e",
+                "name": "llas1ocs1000_storage_3_1_port",
+                "network_id": "a14a85b1-7ade-424c-a8c8-83b8cb7ae890",
+                "numa_affinity_policy": null,
+                "project_id": "8a1902a3a6c74624b8a3f3727b6e0ae4",
+                "propagate_uplink_status": null,
+                "qos_network_policy_id": null,
+                "qos_policy_id": null,
+                "resource_request": null,
+                "revision_number": 2,
+                "security_group_ids": [
+                    "02cf22d7-339c-4a62-b8f5-5825d67c277a"
+                ],
+                "status": "DOWN",
+                "tags": [],
+                "trunk_details": null,
+                "updated_at": "2026-03-02T17:43:33Z"
+            }
+        },
+        {
+            "ansible_loop_var": "item",
+            "changed": true,
+            "failed": false,
+            "id": "53bb547f-589c-45be-a91f-4376420c71ee",
+            "invocation": {
+                "module_args": {
+                    "admin_state_up": null,
+                    "allowed_address_pairs": null,
+                    "api_timeout": null,
+                    "auth": null,
+                    "auth_type": null,
+                    "availability_zone": null,
+                    "binding:profile": null,
+                    "binding:vnic_type": null,
+                    "ca_cert": null,
+                    "client_cert": null,
+                    "client_key": null,
+                    "device_id": null,
+                    "device_owner": null,
+                    "dns_domain": null,
+                    "dns_name": null,
+                    "extra_dhcp_opts": null,
+                    "fixed_ips": [
+                        {
+                            "subnet_id": "606f5c1f-1e0f-473d-baf9-37329cca1b6d"
+                        }
+                    ],
+                    "interface": "public",
+                    "mac_address": null,
+                    "name": "llas1ocs1000_storage_3_2_port",
+                    "network": "storage_3_2",
+                    "no_security_groups": false,
+                    "port_security_enabled": null,
+                    "region_name": null,
+                    "security_groups": null,
+                    "state": "present",
+                    "timeout": 180,
+                    "validate_certs": null,
+                    "wait": true
+                }
+            },
+            "item": {
+                "metallb_advertise_interface": "storage_3_2",
+                "metallb_pool_end": "TBD!",
+                "metallb_pool_start": "TBD!",
+                "mtu": 9000,
+                "name": "storage_3_2",
+                "os_subnet_id": "606f5c1f-1e0f-473d-baf9-37329cca1b6d",
+                "pod_ipam_end": "10.148.184.50",
+                "pod_ipam_start": "10.148.184.30",
+                "prefix_length": "23``",
+                "subnet_cidr": "10.148.184.0/23",
+                "vip_enabled": true,
+                "vlan_id": 184
+            },
+            "port": {
+                "allowed_address_pairs": [],
+                "binding_host_id": "",
+                "binding_profile": {},
+                "binding_vif_details": {},
+                "binding_vif_type": "unbound",
+                "binding_vnic_type": "normal",
+                "created_at": "2026-03-02T16:24:41Z",
+                "data_plane_status": null,
+                "description": "",
+                "device_id": "",
+                "device_owner": "",
+                "device_profile": null,
+                "dns_assignment": [
+                    {
+                        "fqdn": "host-10-148-184-32.ulti.io.",
+                        "hostname": "host-10-148-184-32",
+                        "ip_address": "10.148.184.32"
+                    }
+                ],
+                "dns_domain": "",
+                "dns_name": "",
+                "extra_dhcp_opts": [],
+                "fixed_ips": [
+                    {
+                        "ip_address": "10.148.184.32",
+                        "subnet_id": "606f5c1f-1e0f-473d-baf9-37329cca1b6d"
+                    }
+                ],
+                "id": "53bb547f-589c-45be-a91f-4376420c71ee",
+                "ip_allocation": "deferred",
+                "is_admin_state_up": true,
+                "is_port_security_enabled": true,
+                "location": {
+                    "cloud": "undercloud",
+                    "project": {
+                        "domain_id": null,
+                        "domain_name": "Default",
+                        "id": "8a1902a3a6c74624b8a3f3727b6e0ae4",
+                        "name": "admin"
+                    },
+                    "region_name": "regionOne",
+                    "zone": null
+                },
+                "mac_address": "fa:16:3e:8b:31:55",
+                "name": "llas1ocs1000_storage_3_2_port",
+                "network_id": "d9fa7d44-a8d7-4723-a50a-b248cff26428",
+                "numa_affinity_policy": null,
+                "project_id": "8a1902a3a6c74624b8a3f3727b6e0ae4",
+                "propagate_uplink_status": null,
+                "qos_network_policy_id": null,
+                "qos_policy_id": null,
+                "resource_request": null,
+                "revision_number": 2,
+                "security_group_ids": [
+                    "02cf22d7-339c-4a62-b8f5-5825d67c277a"
+                ],
+                "status": "DOWN",
+                "tags": [],
+                "trunk_details": null,
+                "updated_at": "2026-03-02T17:43:36Z"
+            }
+        },
+        {
+            "ansible_loop_var": "item",
+            "changed": true,
+            "failed": false,
+            "id": "a0ed121b-2053-4db5-8af6-a259961bd9de",
+            "invocation": {
+                "module_args": {
+                    "admin_state_up": null,
+                    "allowed_address_pairs": null,
+                    "api_timeout": null,
+                    "auth": null,
+                    "auth_type": null,
+                    "availability_zone": null,
+                    "binding:profile": null,
+                    "binding:vnic_type": null,
+                    "ca_cert": null,
+                    "client_cert": null,
+                    "client_key": null,
+                    "device_id": null,
+                    "device_owner": null,
+                    "dns_domain": null,
+                    "dns_name": null,
+                    "extra_dhcp_opts": null,
+                    "fixed_ips": [
+                        {
+                            "subnet_id": "c0cc41da-9d18-4999-8040-04f924a35140"
+                        }
+                    ],
+                    "interface": "public",
+                    "mac_address": null,
+                    "name": "llas1ocs1000_br_nfs_1_port",
+                    "network": "br_nfs_1",
+                    "no_security_groups": false,
+                    "port_security_enabled": null,
+                    "region_name": null,
+                    "security_groups": null,
+                    "state": "present",
+                    "timeout": 180,
+                    "validate_certs": null,
+                    "wait": true
+                }
+            },
+            "item": {
+                "metallb_advertise_interface": "br_nfs_1",
+                "metallb_pool_end": "TBD!",
+                "metallb_pool_start": "TBD!",
+                "mtu": 9000,
+                "name": "br_nfs_1",
+                "os_subnet_id": "c0cc41da-9d18-4999-8040-04f924a35140",
+                "pod_ipam_end": "10.148.160.50",
+                "pod_ipam_start": "10.148.160.30",
+                "prefix_length": 24,
+                "subnet_cidr": "10.148.160.0/24",
+                "vip_enabled": true,
+                "vlan_id": 160
+            },
+            "port": {
+                "allowed_address_pairs": [],
+                "binding_host_id": "",
+                "binding_profile": {},
+                "binding_vif_details": {},
+                "binding_vif_type": "unbound",
+                "binding_vnic_type": "normal",
+                "created_at": "2026-03-02T16:24:44Z",
+                "data_plane_status": null,
+                "description": "",
+                "device_id": "",
+                "device_owner": "",
+                "device_profile": null,
+                "dns_assignment": [
+                    {
+                        "fqdn": "host-10-148-160-35.ulti.io.",
+                        "hostname": "host-10-148-160-35",
+                        "ip_address": "10.148.160.35"
+                    }
+                ],
+                "dns_domain": "",
+                "dns_name": "",
+                "extra_dhcp_opts": [],
+                "fixed_ips": [
+                    {
+                        "ip_address": "10.148.160.35",
+                        "subnet_id": "c0cc41da-9d18-4999-8040-04f924a35140"
+                    }
+                ],
+                "id": "a0ed121b-2053-4db5-8af6-a259961bd9de",
+                "ip_allocation": "deferred",
+                "is_admin_state_up": true,
+                "is_port_security_enabled": true,
+                "location": {
+                    "cloud": "undercloud",
+                    "project": {
+                        "domain_id": null,
+                        "domain_name": "Default",
+                        "id": "8a1902a3a6c74624b8a3f3727b6e0ae4",
+                        "name": "admin"
+                    },
+                    "region_name": "regionOne",
+                    "zone": null
+                },
+                "mac_address": "fa:16:3e:13:3d:ed",
+                "name": "llas1ocs1000_br_nfs_1_port",
+                "network_id": "03b39a79-0bd4-4dcd-8e32-d5be74ed36ea",
+                "numa_affinity_policy": null,
+                "project_id": "8a1902a3a6c74624b8a3f3727b6e0ae4",
+                "propagate_uplink_status": null,
+                "qos_network_policy_id": null,
+                "qos_policy_id": null,
+                "resource_request": null,
+                "revision_number": 2,
+                "security_group_ids": [
+                    "02cf22d7-339c-4a62-b8f5-5825d67c277a"
+                ],
+                "status": "DOWN",
+                "tags": [],
+                "trunk_details": null,
+                "updated_at": "2026-03-02T17:43:38Z"
+            }
+        },
+        {
+            "ansible_loop_var": "item",
+            "changed": true,
+            "failed": false,
+            "id": "62583857-cb2b-4146-b7e0-03da25e7732d",
+            "invocation": {
+                "module_args": {
+                    "admin_state_up": null,
+                    "allowed_address_pairs": null,
+                    "api_timeout": null,
+                    "auth": null,
+                    "auth_type": null,
+                    "availability_zone": null,
+                    "binding:profile": null,
+                    "binding:vnic_type": null,
+                    "ca_cert": null,
+                    "client_cert": null,
+                    "client_key": null,
+                    "device_id": null,
+                    "device_owner": null,
+                    "dns_domain": null,
+                    "dns_name": null,
+                    "extra_dhcp_opts": null,
+                    "fixed_ips": [
+                        {
+                            "subnet_id": "c0dbf37c-17e4-4e17-8677-4fda1614add4"
+                        }
+                    ],
+                    "interface": "public",
+                    "mac_address": null,
+                    "name": "llas1ocs1000_br_nfs_2_port",
+                    "network": "br_nfs_2",
+                    "no_security_groups": false,
+                    "port_security_enabled": null,
+                    "region_name": null,
+                    "security_groups": null,
+                    "state": "present",
+                    "timeout": 180,
+                    "validate_certs": null,
+                    "wait": true
+                }
+            },
+            "item": {
+                "metallb_advertise_interface": "br_nfs_2",
+                "metallb_pool_end": "TBD!",
+                "metallb_pool_start": "TBD!",
+                "mtu": 9000,
+                "name": "br_nfs_2",
+                "os_subnet_id": "c0dbf37c-17e4-4e17-8677-4fda1614add4",
+                "pod_ipam_end": "10.148.170.50",
+                "pod_ipam_start": "10.148.170.30",
+                "prefix_length": 24,
+                "subnet_cidr": "10.148.170.0/24",
+                "vip_enabled": true,
+                "vlan_id": 170
+            },
+            "port": {
+                "allowed_address_pairs": [],
+                "binding_host_id": "",
+                "binding_profile": {},
+                "binding_vif_details": {},
+                "binding_vif_type": "unbound",
+                "binding_vnic_type": "normal",
+                "created_at": "2026-03-02T16:24:46Z",
+                "data_plane_status": null,
+                "description": "",
+                "device_id": "",
+                "device_owner": "",
+                "device_profile": null,
+                "dns_assignment": [
+                    {
+                        "fqdn": "host-10-148-170-30.ulti.io.",
+                        "hostname": "host-10-148-170-30",
+                        "ip_address": "10.148.170.30"
+                    }
+                ],
+                "dns_domain": "",
+                "dns_name": "",
+                "extra_dhcp_opts": [],
+                "fixed_ips": [
+                    {
+                        "ip_address": "10.148.170.30",
+                        "subnet_id": "c0dbf37c-17e4-4e17-8677-4fda1614add4"
+                    }
+                ],
+                "id": "62583857-cb2b-4146-b7e0-03da25e7732d",
+                "ip_allocation": "deferred",
+                "is_admin_state_up": true,
+                "is_port_security_enabled": true,
+                "location": {
+                    "cloud": "undercloud",
+                    "project": {
+                        "domain_id": null,
+                        "domain_name": "Default",
+                        "id": "8a1902a3a6c74624b8a3f3727b6e0ae4",
+                        "name": "admin"
+                    },
+                    "region_name": "regionOne",
+                    "zone": null
+                },
+                "mac_address": "fa:16:3e:5c:9c:66",
+                "name": "llas1ocs1000_br_nfs_2_port",
+                "network_id": "c9d7770c-08ae-47f3-9798-75e54c752895",
+                "numa_affinity_policy": null,
+                "project_id": "8a1902a3a6c74624b8a3f3727b6e0ae4",
+                "propagate_uplink_status": null,
+                "qos_network_policy_id": null,
+                "qos_policy_id": null,
+                "resource_request": null,
+                "revision_number": 2,
+                "security_group_ids": [
+                    "02cf22d7-339c-4a62-b8f5-5825d67c277a"
+                ],
+                "status": "DOWN",
+                "tags": [],
+                "trunk_details": null,
+                "updated_at": "2026-03-02T17:43:41Z"
+            }
+        },
+        {
+            "ansible_loop_var": "item",
+            "changed": true,
+            "failed": false,
+            "id": "8c4ee9b3-2c52-4bc1-8fb3-130d56e285ac",
+            "invocation": {
+                "module_args": {
+                    "admin_state_up": null,
+                    "allowed_address_pairs": null,
+                    "api_timeout": null,
+                    "auth": null,
+                    "auth_type": null,
+                    "availability_zone": null,
+                    "binding:profile": null,
+                    "binding:vnic_type": null,
+                    "ca_cert": null,
+                    "client_cert": null,
+                    "client_key": null,
+                    "device_id": null,
+                    "device_owner": null,
+                    "dns_domain": null,
+                    "dns_name": null,
+                    "extra_dhcp_opts": null,
+                    "fixed_ips": [
+                        {
+                            "subnet_id": "60e8c067-7173-4024-9050-b239fbef2222"
+                        }
+                    ],
+                    "interface": "public",
+                    "mac_address": null,
+                    "name": "llas1ocs1000_br_nfs_3_port",
+                    "network": "br_nfs_3",
+                    "no_security_groups": false,
+                    "port_security_enabled": null,
+                    "region_name": null,
+                    "security_groups": null,
+                    "state": "present",
+                    "timeout": 180,
+                    "validate_certs": null,
+                    "wait": true
+                }
+            },
+            "item": {
+                "metallb_advertise_interface": "br_nfs_3",
+                "metallb_pool_end": "TBD!",
+                "metallb_pool_start": "TBD!",
+                "mtu": 9000,
+                "name": "br_nfs_3",
+                "os_subnet_id": "60e8c067-7173-4024-9050-b239fbef2222",
+                "pod_ipam_end": "10.148.180.50",
+                "pod_ipam_start": "10.148.180.30",
+                "prefix_length": 24,
+                "subnet_cidr": "10.148.180.0/24",
+                "vip_enabled": true,
+                "vlan_id": 180
+            },
+            "port": {
+                "allowed_address_pairs": [],
+                "binding_host_id": "",
+                "binding_profile": {},
+                "binding_vif_details": {},
+                "binding_vif_type": "unbound",
+                "binding_vnic_type": "normal",
+                "created_at": "2026-03-02T16:24:49Z",
+                "data_plane_status": null,
+                "description": "",
+                "device_id": "",
+                "device_owner": "",
+                "device_profile": null,
+                "dns_assignment": [
+                    {
+                        "fqdn": "host-10-148-180-36.ulti.io.",
+                        "hostname": "host-10-148-180-36",
+                        "ip_address": "10.148.180.36"
+                    }
+                ],
+                "dns_domain": "",
+                "dns_name": "",
+                "extra_dhcp_opts": [],
+                "fixed_ips": [
+                    {
+                        "ip_address": "10.148.180.36",
+                        "subnet_id": "60e8c067-7173-4024-9050-b239fbef2222"
+                    }
+                ],
+                "id": "8c4ee9b3-2c52-4bc1-8fb3-130d56e285ac",
+                "ip_allocation": "deferred",
+                "is_admin_state_up": true,
+                "is_port_security_enabled": true,
+                "location": {
+                    "cloud": "undercloud",
+                    "project": {
+                        "domain_id": null,
+                        "domain_name": "Default",
+                        "id": "8a1902a3a6c74624b8a3f3727b6e0ae4",
+                        "name": "admin"
+                    },
+                    "region_name": "regionOne",
+                    "zone": null
+                },
+                "mac_address": "fa:16:3e:d2:2a:b3",
+                "name": "llas1ocs1000_br_nfs_3_port",
+                "network_id": "f79e326e-9c71-4acc-9938-a59280050a2d",
+                "numa_affinity_policy": null,
+                "project_id": "8a1902a3a6c74624b8a3f3727b6e0ae4",
+                "propagate_uplink_status": null,
+                "qos_network_policy_id": null,
+                "qos_policy_id": null,
+                "resource_request": null,
+                "revision_number": 2,
+                "security_group_ids": [
+                    "02cf22d7-339c-4a62-b8f5-5825d67c277a"
+                ],
+                "status": "DOWN",
+                "tags": [],
+                "trunk_details": null,
+                "updated_at": "2026-03-02T17:43:44Z"
+            }
+        }
+    ]
+}
+
+TASK [openstack_port_create : Render the networking template into the artifacts_dir] ***
+Monday 02 March 2026  12:44:28 -0500 (0:00:00.111)       0:01:22.980 ********** 
+changed: [llas1ocs1000 -> localhost]
+
+PLAY RECAP *********************************************************************
+llas1ocs1000               : ok=4    changed=2    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+llas1ocs1001               : ok=1    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+llas1ocs1002               : ok=1    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+llas1ocs2000               : ok=1    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+llas1ocs2001               : ok=1    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+llas1ocs2002               : ok=1    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+llas1ocs3000               : ok=1    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+llas1ocs3001               : ok=1    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+llas1ocs3002               : ok=1    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+
+Monday 02 March 2026  12:44:29 -0500 (0:00:01.327)       0:01:24.308 ********** 
+=============================================================================== 
+openstack_port_create : Create ports for OpenStack control plane nodes -- 82.65s
+openstack_port_create : Render the networking template into the artifacts_dir --- 1.33s
+Assert os_undercloud is defined ----------------------------------------- 0.16s
+openstack_port_create : Full "Debug" ------------------------------------ 0.11s

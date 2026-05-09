@@ -1,0 +1,6 @@
+---
+# Kubernetes NMState Operator
+nmstate_namespace: "openshift-nmstate"
+nmstate_operatorgroup: "openshift-nmstate"
+nmstate_subscription_name: "kubernetes-nmstate-operator"
+nmstate_package_name: "kubernetes-nmstate-operator"

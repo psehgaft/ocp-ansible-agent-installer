@@ -1,0 +1,251 @@
+---
+interfaces:
+  # -----------------------------------------------------------------
+  # 1️⃣ OVS bridge br-ex
+  # -----------------------------------------------------------------
+  - name: br-ex
+    type: ovs-bridge
+    state: up
+    mtu: 9000
+    # No IP on the bridge itself (the JSON shows only members)
+    # DNS is global – handled later
+    # No DHCP
+    # No routes on the bridge itself
+    # -----------------------------------------------------------------
+    # 1a. Linux bond bond0 (LACP) – members em1 & em2
+    # -----------------------------------------------------------------
+  - name: bond0
+    type: bond
+    state: up
+    mtu: 9000
+    link-aggregation:
+      mode: 802.3ad          # mode=4 → LACP
+      miimon: 100
+      lacp-rate: fast        # lacp_rate=1 → fast
+    # Order matters – first listed is the primary
+    link-aggregation:
+      ports:
+        - name: em1
+          primary: true
+        - name: em2
+          primary: false
+
+  # -----------------------------------------------------------------
+  # 2️⃣ VLANs that sit on top of bond0 (and thus ultimately on br-ex)
+  # -----------------------------------------------------------------
+  - name: vlan201
+    type: vlan
+    state: up
+    mtu: 9000
+    vlan:
+      id: 201
+      base-iface: bond0
+    ipv4:
+      address:
+        - ip: 10.150.9.18
+          prefix-length: 24
+      dhcp: false
+      routes:
+        - destination: https://url.us.m.mimecastprotect.com/s/XOAZCG62Z3f2OE0oXfKfJIBVDJ0?domain=0.0.0.0
+          next-hop-address: 10.150.9.1
+
+  - name: vlan401
+    type: vlan
+    state: up
+    mtu: 9000
+    vlan:
+      id: 401
+      base-iface: bond0
+    ipv4:
+      address:
+        - ip: 10.150.2.40
+          prefix-length: 23
+      dhcp: false
+
+  - name: vlan402
+    type: vlan
+    state: up
+    mtu: 9000
+    vlan:
+      id: 402
+      base-iface: bond0
+    ipv4:
+      address:
+        - ip: 10.150.4.24
+          prefix-length: 23
+      dhcp: false
+
+  - name: vlan403
+    type: vlan
+    state: up
+    mtu: 9000
+    vlan:
+      id: 403
+      base-iface: bond0
+    ipv4:
+      address:
+        - ip: 10.150.6.17
+          prefix-length: 23
+      dhcp: false
+
+  - name: vlan404
+    type: vlan
+    state: up
+    mtu: 9000
+    vlan:
+      id: 404
+      base-iface: bond0
+    ipv4:
+      address:
+        - ip: 10.150.8.25
+          prefix-length: 24
+      dhcp: false
+
+  # -----------------------------------------------------------------
+  # 3️⃣ Stand‑alone VLANs on physical NICs em3 and em4
+  # -----------------------------------------------------------------
+  - name: vlan162
+    type: vlan
+    state: up
+    mtu: 9000
+    vlan:
+      id: 162
+      base-iface: em3
+    ipv4:
+      address:
+        - ip: 10.148.162.63
+          prefix-length: 23
+      dhcp: false
+
+  - name: vlan172
+    type: vlan
+    state: up
+    mtu: 9000
+    vlan:
+      id: 172
+      base-iface: em3
+    ipv4:
+      address:
+        - ip: 10.148.172.53
+          prefix-length: 23
+      dhcp: false
+
+  - name: vlan182
+    type: vlan
+    state: up
+    mtu: 9000
+    vlan:
+      id: 182
+      base-iface: em3
+    ipv4:
+      address:
+        - ip: 10.148.182.59
+          prefix-length: 23
+      dhcp: false
+
+  - name: vlan164
+    type: vlan
+    state: up
+    mtu: 9000
+    vlan:
+      id: 164
+      base-iface: em4
+    ipv4:
+      address:
+        - ip: 10.148.164.57
+          prefix-length: 23
+      dhcp: false
+
+  - name: vlan174
+    type: vlan
+    state: up
+    mtu: 9000
+    vlan:
+      id: 174
+      base-iface: em4
+    ipv4:
+      address:
+        - ip: 10.148.174.59
+          prefix-length: 23
+      dhcp: false
+
+  - name: vlan184
+    type: vlan
+    state: up
+    mtu: 9000
+    vlan:
+      id: 184
+      base-iface: em4
+    ipv4:
+      address:
+        - ip: 10.148.184.77
+          prefix-length: 23
+      dhcp: false
+
+  # -----------------------------------------------------------------
+  # 4️⃣ Linux bond br-nfs (active‑backup) – members em3 & em4
+  # -----------------------------------------------------------------
+  - name: br-nfs
+    type: bond
+    state: up
+    mtu: 9000
+    link-aggregation:
+      mode: active-backup
+    link-aggregation:
+      ports:
+        - name: em3
+          primary: true
+        - name: em4
+          primary: false
+
+  # -----------------------------------------------------------------
+  # 5️⃣ VLANs that sit on top of br‑nfs
+  # -----------------------------------------------------------------
+  - name: vlan160
+    type: vlan
+    state: up
+    mtu: 9000
+    vlan:
+      id: 160
+      base-iface: br-nfs
+    ipv4:
+      address:
+        - ip: 10.148.160.52
+          prefix-length: 24
+      dhcp: false
+
+  - name: vlan170
+    type: vlan
+    state: up
+    mtu: 9000
+    vlan:
+      id: 170
+      base-iface: br-nfs
+    ipv4:
+      address:
+        - ip: 10.148.170.60
+          prefix-length: 24
+      dhcp: false
+
+  - name: vlan180
+    type: vlan
+    state: up
+    mtu: 9000
+    vlan:
+      id: 180
+      base-iface: br-nfs
+    ipv4:
+      address:
+        - ip: 10.148.180.51
+          prefix-length: 24
+      dhcp: false
+
+# -----------------------------------------------------------------
+# Global DNS resolver (same for all interfaces)
+# -----------------------------------------------------------------
+dns-resolver:
+  config:
+    nameservers:
+      - 10.146.16.248
+      - 10.146.16.249
+

@@ -1,0 +1,44 @@
+---
+# Installs OpenStack Operator (RHOSO) via OLM:
+# Namespace -> OperatorGroup -> Subscription -> Wait for CSV Succeeded -> (Optional) create OpenStack CR
+# Note: Creating the `OpenStack` CR typically requires additional RHOSO prerequisites (networks, storage, etc.).
+#       Keep `create_openstack_cr` disabled until those are satisfied.
+
+- name: "Apply OpenStack operator namespace, OperatorGroup, and Subscription"
+  ansible.builtin.command: "{{ oc_bin }} apply -f -"
+  args:
+    stdin: |
+      {{ lookup('template', 'namespace.yaml.j2', template_vars={'namespace': openstack_operator_namespace}) }}
+      ---
+      {{ lookup('template', 'operatorgroup.yaml.j2', template_vars={'name': openstack_operatorgroup, 'namespace': openstack_operator_namespace}) }}
+      ---
+      {{ lookup('template', 'subscription.yaml.j2', template_vars={'subscription_name': openstack_subscription_name, 'namespace': openstack_operator_namespace, 'channel': openstack_channel, 'package_name': openstack_package_name, 'source': operator_source, 'sourceNamespace': operator_source_namespace}) }}
+  environment: "{{ oc_env }}"
+  changed_when: false
+
+- name: "Wait for OpenStack Operator Subscription to report installedCSV"
+  ansible.builtin.command: >
+    {{ oc_bin }} -n {{ openstack_operator_namespace }} get subscription {{ openstack_subscription_name }}
+    -o jsonpath='{.status.installedCSV}'
+  environment: "{{ oc_env }}"
+  register: _os_csv
+  retries: 120
+  delay: 10
+  until: _os_csv.stdout | length > 0
+  changed_when: false
+
+- name: "Wait for OpenStack Operator CSV to be Succeeded"
+  ansible.builtin.command: >
+    {{ oc_bin }} -n {{ openstack_operator_namespace }} wait csv/{{ _os_csv.stdout }}
+    --for jsonpath='{.status.phase}'=Succeeded --timeout=30m
+  environment: "{{ oc_env }}"
+  changed_when: false
+
+- name: "Create OpenStack operand CR (optional)"
+  when: create_openstack_cr | bool
+  ansible.builtin.command: "{{ oc_bin }} apply -f -"
+  args:
+    stdin: |
+      {{ lookup('template', 'operand.yaml.j2', template_vars={'operand': {'apiVersion':'operator.openstack.org/v1beta1','kind':'OpenStack','metadata':{'name':'openstack','namespace':openstack_operator_namespace}} }) }}
+  environment: "{{ oc_env }}"
+  changed_when: false

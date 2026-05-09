@@ -1,0 +1,24 @@
+{
+  "name": "{{ cluster_name }}-infraenv",
+  "cluster_id": "{{ cluster_id }}",
+  "pull_secret": {{ pull_secret | to_json }},
+  "ssh_authorized_key": {{ ssh_public_key | trim | to_json }},
+  "image_type": "minimal-iso",
+  "additional_ntp_sources": "{{ ntp_servers | join(',') }}",
+  "openshift_version": "{{ openshift_version }}",
+  "static_network_config": [
+{% for h in ansible_play_batch %}
+    {
+      "network_yaml": {{ lookup('template', 'nmstate.yaml.j2', template_vars={'target_host': h}) | trim | to_json }},
+      "mac_interface_map": [
+      {% for interface in hostvars[h].flat_nics %}
+        {
+          "mac_address": "{{ interface.MACAddress }}",
+          "logical_nic_name": "nic{{ loop.index0 }}"
+        }{% if not loop.last %},{% endif %}
+      {% endfor %}
+      ]
+    }{% if not loop.last %},{% endif %}
+{% endfor %}
+  ]
+}

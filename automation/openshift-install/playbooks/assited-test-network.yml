@@ -1,0 +1,131 @@
+---
+- name: Test Assited Installer and templates creation
+  hosts: localhost
+  gather_facts: false
+
+  vars_files: 
+    - ../host_llas1.yml
+
+  vars: 
+    assisted_api_url: "{{ assisted_api_url }}"
+    artifacts_dir: "{{ artifacts_dir | default('./artifacts') }}"
+
+  pre_tasks:
+
+    - name: Ensure artifacts directory exists
+      ansible.builtin.file:
+        path: "{{ artifacts_dir }}"
+        state: directory
+        mode: '0755'
+
+    - name: Load pull secret
+      ansible.builtin.set_fact:
+        pull_secret: "{{ lookup('file', pull_secret_file) | from_json }}"
+      no_log: true
+
+    - name: Load SSH public key
+      ansible.builtin.set_fact:
+        ssh_public_key: "{{ lookup('file', ssh_public_key_file) | trim }}"
+      no_log: true
+
+    - name: Validate Assisted auth mode
+      ansible.builtin.assert:
+        that:
+          - assisted_auth_mode in ['saas', 'onprem']
+        fail_msg: "assisted_auth_mode must be 'saas' or 'onprem'"
+
+  tasks:
+
+  #####################################################################
+  #  Render cluster payload
+  #####################################################################
+
+    - name: Render cluster-create payload
+      ansible.builtin.set_fact:
+        cluster_create_payload: "{{ lookup('template', '../templates/cluster-create.json.j2') | from_json }}"
+      no_log: true
+
+    - name: Debug cluster payload (sanitized)
+      ansible.builtin.debug:
+        msg: "{{ cluster_create_payload | combine({'pull_secret': '***redacted***'}) }}"
+
+  #####################################################################
+  #  Create cluster
+  #####################################################################
+
+    - name: Create cluster definition
+      ansible.builtin.uri:
+        url: "{{ assisted_api_url }}/clusters"
+        method: POST
+        headers:
+          Authorization: "Bearer {{ assisted_access_token }}"
+          Content-Type: "application/json"
+          Accept: "application/json"
+        body_format: json
+        body: "{{ cluster_create_payload }}"
+        status_code: [201, 202]
+        return_content: true
+      register: _cluster
+      no_log: true
+
+    - name: Extract cluster_id
+      ansible.builtin.set_fact:
+        cluster_id: "{{ _cluster.json.id }}"
+
+    - name: Show cluster_id
+      ansible.builtin.debug:
+        var: cluster_id
+
+  #####################################################################
+  #  Render InfraEnv payload
+  #####################################################################
+
+    - name: Render infraenv-create payload
+      ansible.builtin.set_fact:
+        infraenv_create_payload: "{{ lookup('template', '../templates/infraenv-create.json.j2') | from_json }}"
+      no_log: true
+
+    - name: Debug infraenv payload (sanitized)
+      ansible.builtin.debug:
+        msg: "{{ infraenv_create_payload | combine({'pull_secret': '***redacted***'}) }}"
+
+  #####################################################################
+  #  Create InfraEnv
+  #####################################################################
+
+    - name: Create InfraEnv
+      ansible.builtin.uri:
+        url: "{{ assisted_api_url }}/infra-envs"
+        method: POST
+        headers:
+          Authorization: "Bearer {{ assisted_access_token }}"
+          Content-Type: "application/json"
+          Accept: "application/json"
+        body_format: json
+        body: "{{ infraenv_create_payload }}"
+        status_code: [201, 202]
+        return_content: true
+      register: _infraenv
+      no_log: true
+
+    - name: Show InfraEnv ID
+      ansible.builtin.debug:
+        var: _infraenv.json.id
+
+  #####################################################################
+  #  Optional: Get ISO download URL
+  #####################################################################
+
+    - name: Get InfraEnv ISO download URL
+      ansible.builtin.uri:
+        url: "{{ assisted_api_url }}/infra-envs/{{ _infraenv.json.id }}/downloads/image-url"
+        method: GET
+        headers:
+          Authorization: "Bearer {{ assisted_access_token }}"
+          Accept: "application/json"
+        return_content: true
+      register: _iso
+
+    - name: Show ISO download URL
+      ansible.builtin.debug:
+        var: _iso.json.url 

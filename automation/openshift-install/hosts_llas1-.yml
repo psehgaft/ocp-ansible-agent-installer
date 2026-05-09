@@ -1,0 +1,73 @@
+all:
+  children:
+    cp:
+      hosts:
+        llas1ocs1000:
+        llas1ocs2000:
+        llas1ocs3000:
+    workers:
+      hosts:
+        llas1ocs1001:
+        llas1ocs2001:
+        llas1ocs3001:
+        llas1ocs1002:
+        llas1ocs2002:
+        llas1ocs3002:
+    llas1:
+      hosts:
+# Control plane
+        llas1ocs1000:
+          idrac_ip: 10.144.1.148
+          node_role: master
+          node_hostname: llas1ocs1000
+          # Single-NIC example (use bond/bridge in nmstate if needed)
+          node_ipv4_address: "10.150.18.241"
+      
+        llas1ocs2000:
+          idrac_ip: 10.144.2.148
+          # Static network parameters for this host (not discoverable from iDRAC)
+          node_role: master
+          node_hostname: llas1ocs2000
+          # Single-NIC example (use bond/bridge in nmstate if needed)
+          node_ipv4_address: "10.150.18.242"
+
+        llas1ocs3000:
+          idrac_ip: 10.144.3.148
+          # Static network parameters for this host (not discoverable from iDRAC)
+          node_role: master
+          node_hostname: llas1ocs3000
+          # Single-NIC example (use bond/bridge in nmstate if needed)
+          node_ipv4_address: "10.150.18.243"
+
+# Workers
+        llas1ocs1001:
+          idrac_ip: 10.144.1.188
+          node_role: worker
+          node_hostname: llas1ocs1001
+          node_ipv4_address: "10.150.18.244"
+        llas1ocs2001:
+          idrac_ip: 10.144.2.188
+          node_role: worker
+          node_hostname: llas1ocs2001
+          node_ipv4_address: "10.150.18.245"
+        llas1ocs3001:
+          idrac_ip: 10.144.3.188
+          node_role: worker
+          node_hostname: llas1ocs3001
+          node_ipv4_address: "10.150.18.246"
+        llas1ocs1002:
+          idrac_ip: 10.144.1.147
+          node_role: worker
+          node_hostname: llas1ocs1002
+          node_ipv4_address: "10.150.18.247"
+        llas1ocs2002:
+          idrac_ip: 10.144.2.147
+          node_role: worker
+          node_hostname: llas1ocs2002
+          node_ipv4_address: "10.150.18.248"
+        llas1ocs3002:
+          idrac_ip: 10.144.3.147
+          node_role: worker
+          node_hostname: llas1ocs3002
+          node_ipv4_address: "10.150.18.249"
+

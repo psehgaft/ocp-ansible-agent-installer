@@ -1,0 +1,6 @@
+---
+# MetalLB Operator
+metallb_namespace: "metallb-system"
+metallb_operatorgroup: "metallb-operator"
+metallb_subscription_name: "metallb-operator-sub"
+metallb_package_name: "metallb-operator"
