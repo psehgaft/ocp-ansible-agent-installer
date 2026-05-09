@@ -1,0 +1,36 @@
+---
+- name: Ensure render directory exists
+  ansible.builtin.file:
+    path: "{{ ocp_render_dir }}/{{ cluster_name }}/network"
+    state: directory
+    mode: "0700"
+
+- name: Render NNCP manifests
+  ansible.builtin.template:
+    src: openstack-nncp.yaml.j2
+    dest: "{{ ocp_render_dir }}/{{ cluster_name }}/network/openstack-nncp.yaml"
+    mode: "0600"
+
+- name: Stop here for testing
+  ansible.builtin.meta: end_play
+
+# Read render to variable
+# Assert on variable
+
+- name: Apply NNCP manifests
+  ansible.builtin.command: oc apply -f "{{ ocp_render_dir }}/{{ cluster_name }}/network/openstack-nncp.yaml"
+  environment:
+    KUBECONFIG: "{{ rhoso_kubeconfig | default(omit) }}"
+  register: _apply
+  changed_when: "'configured' in _apply.stdout or 'created' in _apply.stdout"
+
+- name: Show NNCP status table
+  ansible.builtin.command: oc get nncp
+  environment:
+    KUBECONFIG: "{{ rhoso_kubeconfig | default(omit) }}"
+  register: _nncp_table
+  changed_when: false
+
+- name: Print NNCP table
+  ansible.builtin.debug:
+    msg: "{{ _nncp_table.stdout_lines }}"

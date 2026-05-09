@@ -1,1 +1,0 @@
-rhoso_render_dir: "./artifacts/{{ cluster_name }}/rendered"

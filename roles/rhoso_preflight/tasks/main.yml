@@ -1,0 +1,135 @@
+---
+- name: Validate oc CLI is available
+  ansible.builtin.command: oc version --client
+  register: _oc_version
+  changed_when: false
+  run_once: true
+
+- name: Validate cluster access (oc whoami)
+  ansible.builtin.command: oc whoami
+  environment:
+    KUBECONFIG: "{{ rhoso_kubeconfig | default(omit) }}"
+  register: _oc_whoami
+  changed_when: false
+  run_once: true
+
+- name: Ensure openstack namespace exists (create if missing)
+  ansible.builtin.command: oc get ns "{{ rhoso_project_name }}" -o name
+  environment:
+    KUBECONFIG: "{{ rhoso_kubeconfig | default(omit) }}"
+  register: _ns_check
+  failed_when: false
+  changed_when: false
+  run_once: true
+
+- name: Create openstack namespace if missing
+  ansible.builtin.command: oc new-project "{{ rhoso_project_name }}"
+  environment:
+    KUBECONFIG: "{{ rhoso_kubeconfig | default(omit) }}"
+  when: _ns_check.rc != 0
+  run_once: true
+
+- name: Check required CRDs exist (NMState NNCP)
+  ansible.builtin.command: oc get crd nodenetworkconfigurationpolicies.nmstate.io -o name
+  environment:
+    KUBECONFIG: "{{ rhoso_kubeconfig | default(omit) }}"
+  register: _crd_nncp
+  changed_when: false
+  run_once: true
+
+- name: Check required CRDs exist (NetworkAttachmentDefinition)
+  ansible.builtin.command: oc get crd network-attachment-definitions.k8s.cni.cncf.io -o name
+  environment:
+    KUBECONFIG: "{{ rhoso_kubeconfig | default(omit) }}"
+  register: _crd_nad
+  changed_when: false
+  run_once: true
+
+- name: Check MetalLB CRDs exist (IPAddressPool, L2Advertisement) if enabled
+  ansible.builtin.command: oc get crd ipaddresspools.metallb.io l2advertisements.metallb.io -o name
+  environment:
+    KUBECONFIG: "{{ rhoso_kubeconfig | default(omit) }}"
+  register: _crd_metallb
+  changed_when: false
+  when: rhoso_enable_metallb | bool
+  run_once: true
+
+- name: Ensure MetalLB namespace exists if enabled
+  ansible.builtin.command: oc get ns "{{ rhoso_metallb_namespace }}" -o name
+  environment:
+    KUBECONFIG: "{{ rhoso_kubeconfig | default(omit) }}"
+  register: _metallb_ns
+  changed_when: false
+  when: rhoso_enable_metallb | bool
+  run_once: true
+
+# --- TBD guardrail -----------------------------------------------------------------------------
+- name: Collect variables that must not be TBD (basic)
+  ansible.builtin.set_fact:
+    _tbd_hits: "{{ _tbd_hits | default([]) + _new_hits }}"
+  vars:
+    _new_hits: >-
+      {{
+        []
+        + ([ 'rhoso_isolated_base_iface' ] if (rhoso_isolated_base_iface | string) == 'TBD!' else [])
+        + ([ 'rhoso_worker_nodes' ] if (rhoso_worker_nodes | length) == 0 else [])
+      }}
+  changed_when: false
+  run_once: true
+
+- name: Check TBD in network definitions
+  ansible.builtin.set_fact:
+    _tbd_hits: "{{ _tbd_hits + _net_hits }}"
+  vars:
+    _net_hits: >-
+      {{
+        [
+          'rhoso_isolated_networks[' ~ idx|string ~ '].' ~ key
+          for idx, net in (rhoso_isolated_networks | list | enumerate)
+          for key in ['subnet_cidr','pod_ipam_start','pod_ipam_end','vlan_id','mtu','prefix_length','metallb_pool_start','metallb_pool_end']
+          if (net.get(key) | string) == 'TBD!'
+        ]
+      }}
+  changed_when: false
+  run_once: true
+
+- name: Check TBD in per-node IPs
+  ansible.builtin.set_fact:
+    _tbd_hits: "{{ _tbd_hits + _ip_hits }}"
+  vars:
+    _ip_hits: >-
+      {{
+        [
+          'ocp_worker_node_ips.' ~ node ~ '.' ~ netname
+          for node in (rhoso_worker_nodes | default([]))
+          for netname in (rhoso_isolated_networks | map(attribute='name') | list)
+          if (ocp_worker_node_ips.get(node, {}).get(netname, 'TBD!') | string) == 'TBD!'
+        ]
+      }}
+  changed_when: false
+  run_once: true
+
+- name: Fail if TBD values are present (guardrail)
+  ansible.builtin.fail:
+    msg: |
+      One or more required variables are still set to "TBD!".
+      Please fill them in before applying RHOSO networking.
+
+      Missing values:
+      {{ _tbd_hits | unique | to_nice_yaml }}
+  when:
+    - rhoso_fail_on_tbd | bool
+    - (_tbd_hits | default([]) | length) > 0
+  run_once: true
+
+- name: Preflight summary
+  ansible.builtin.debug:
+    msg:
+      - "Cluster user: {{ _oc_whoami.stdout | trim }}"
+      - "Namespace: {{ rhoso_project_name }}"
+      - "NNCP CRD: {{ _crd_nncp.stdout | trim }}"
+      - "NAD CRD: {{ _crd_nad.stdout | trim }}"
+      - "MetalLB enabled: {{ rhoso_enable_metallb | bool }}"
+      - "OVN global forwarding patch enabled: {{ rhoso_enable_ovn_global_forwarding | bool }}"
+  run_once: true
+  

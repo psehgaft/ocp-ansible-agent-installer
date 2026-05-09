@@ -1,0 +1,25 @@
+# -----------------------------------------------------------------------------
+# Per-node IP addresses for the VLAN interfaces (host IPs).
+# Fill these values in before applying NNCPs.
+# TODO: Dry this up it should be in the inventory and assignment should come from the director
+# -----------------------------------------------------------------------------
+ocp_worker_node_ips:
+  worker1:
+    internal_api: "TBD"
+    storage: "TBD"
+    tenant: "TBD"
+    storage_mgmt: "1TBD"
+    external: "TBD"
+  worker2:
+    internal_api: "TBD"
+    storage: "TBD"
+    tenant: "TBD"
+    storage_mgmt: "1TBD"
+    external: "TBD"
+  worker3:
+    internal_api: "TBD"
+    storage: "TBD"
+    tenant: "TBD"
+    storage_mgmt: "1TBD"
+    external: "TBD"
+ 

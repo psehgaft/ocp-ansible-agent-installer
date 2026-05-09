@@ -1,4 +1,4 @@
-# Contributing to RHOSO Demo Lab Playground
+# Contributing to OCP agent isntall
 
 Thank you for your interest in contributing to this project!
 
