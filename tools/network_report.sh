@@ -85,4 +85,4 @@ echo "Report saved to: $REPORT_FILE" >> "$REPORT_FILE"
 # Display the report
 cat "$REPORT_FILE"
 echo ""
-echo "✅ Network report generated successfully: $REPORT_FILE"
+echo "Network report generated successfully: $REPORT_FILE"
