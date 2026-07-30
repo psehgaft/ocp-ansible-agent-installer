@@ -10,8 +10,16 @@ import yaml
 
 root = Path('.')
 errors = []
+excluded_parts = {
+    '.git', '.collections', '.ansible', '.venv', 'venv', 'env',
+    'node_modules', 'artifacts', 'www', '.cache', '__pycache__',
+}
+
+def is_repository_source(path: Path) -> bool:
+    return not any(part in excluded_parts for part in path.parts)
+
 for path in sorted(root.rglob('*.yml')) + sorted(root.rglob('*.yaml')):
-    if 'artifacts' in path.parts:
+    if not is_repository_source(path):
         continue
     try:
         yaml.safe_load(path.read_text())
