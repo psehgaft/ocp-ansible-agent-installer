@@ -14,6 +14,10 @@ from yaml.constructor import ConstructorError
 
 ROOT = Path(__file__).resolve().parents[1]
 ERRORS: list[str] = []
+EXCLUDED_PARTS = {
+    '.git', '.collections', '.ansible', '.venv', 'venv', 'env',
+    'node_modules', 'artifacts', 'www', '.cache', '__pycache__',
+}
 
 
 def error(message: str) -> None:
@@ -45,6 +49,15 @@ UniqueKeyLoader.add_constructor(
 )
 
 
+def is_repository_source(path: Path) -> bool:
+    """Return True only for source files owned by this repository."""
+    try:
+        relative = path.relative_to(ROOT)
+    except ValueError:
+        relative = path
+    return not any(part in EXCLUDED_PARTS for part in relative.parts)
+
+
 def load_yaml(path: Path):
     try:
         return yaml.load(path.read_text(), Loader=UniqueKeyLoader)
@@ -54,10 +67,12 @@ def load_yaml(path: Path):
 
 
 for path in sorted(ROOT.rglob("*.yml")) + sorted(ROOT.rglob("*.yaml")):
-    if "artifacts" not in path.parts:
+    if is_repository_source(path):
         load_yaml(path)
 
 for path in sorted(ROOT.rglob("*.j2")):
+    if not is_repository_source(path):
+        continue
     try:
         jinja2.Environment().parse(path.read_text())
     except Exception as exc:  # noqa: BLE001
