@@ -1,0 +1,7 @@
+---
+- name: Render consolidated BMC inventory report
+  ansible.builtin.template:
+    src: bmc-inventory.md.j2
+    dest: "{{ artifacts_dir }}/{{ cluster_name }}/reports/bmc-inventory.md"
+    mode: "0600"
+  run_once: true

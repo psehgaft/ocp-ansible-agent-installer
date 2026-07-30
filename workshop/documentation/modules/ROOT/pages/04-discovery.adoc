@@ -1,0 +1,49 @@
+= Module 2 Lab 1: Discover iLO and iDRAC
+
+*Lab Type:* Read-only discovery.
+
+*Estimated Time:* 20–30 minutes.
+
+== Learning Objectives
+
+* Discover Redfish resource IDs.
+* Collect hardware and firmware evidence.
+* Validate provisioning MAC selection.
+
+== 1. Run discovery
+
+[source,bash]
+----
+ansible-playbook -i inventories/lab/hosts.yml --ask-vault-pass playbooks/01-discover-bmc.yml
+----
+
+== 2. Review evidence
+
+[source,bash]
+----
+cat artifacts/ocp418-lab/reports/bmc-inventory.md
+jq '.normalized_nics, .provisioning_mac' artifacts/ocp418-lab/raw/bmc-master-0.json
+----
+
+== 3. Override an ambiguous NIC
+
+[source,yaml]
+----
+provisioning_nic_match: "Embedded LOM 1"
+# provisioning_mac_override: "aa:bb:cc:dd:ee:ff"
+
+# Optional deterministic mapping for a production bond:
+# mac_interface_map_override:
+#   - logical_nic_name: nic0
+#     mac_address: "aa:bb:cc:dd:ee:01"
+#   - logical_nic_name: nic1
+#     mac_address: "aa:bb:cc:dd:ee:02"
+----
+
+== Verification
+
+Every host reports the expected vendor, model, serial number, NICs, and provisioning MAC.
+
+== Conclusion
+
+You validated the hardware identity used by Assisted Installer host matching.

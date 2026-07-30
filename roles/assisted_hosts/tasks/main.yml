@@ -1,67 +1,51 @@
 ---
-# FIX: This logic needs to be better as the hosts counts can be correct but they may not be in a ready state yet.
-# This returns incorrect json that doesn't contain what is needed.
-- name: "Wait for hosts to register in Assisted Installer"
+- name: Wait for all hosts to register with inventory data
   vars:
-    desired_count: "{{ control_plane_count | int + compute_count | int }}"
+    desired_count: "{{ (control_plane_count | int) + (compute_count | int) }}"
   ansible.builtin.uri:
     url: "{{ assisted_api_url }}/clusters/{{ cluster_id }}/hosts?with-inventory=true"
     method: GET
     headers:
-      Authorization: "Bearer {{ assisted_access_token }}"
-      Accept: "application/json"
+      Authorization: "Bearer {{ assisted_access_token_effective }}"
+      Accept: application/json
     status_code: [200]
     return_content: true
-  register: _hosts
-  retries: 120
-  delay: 10
-  until: (_hosts.json | length) >= desired_count
+  register: _assisted_hosts
+  retries: "{{ assisted_host_registration_retries }}"
+  delay: "{{ assisted_host_registration_delay }}"
+  until:
+    - _assisted_hosts.json | length >= desired_count | int
+    - _assisted_hosts.json | selectattr('inventory', 'defined') | list | length >= desired_count | int
   no_log: true
 
-- name: "Persist raw hosts list"
+- name: Persist initial Assisted Installer hosts
   ansible.builtin.copy:
     dest: "{{ artifacts_dir }}/{{ cluster_name }}/raw/hosts-initial.json"
-    content: "{{ _hosts.json | to_nice_json }}"
-  delegate_to: localhost
+    content: "{{ _assisted_hosts.json | to_nice_json }}"
+    mode: "0600"
 
-- name: "Build map of parsed inventories by host_id"
+- name: Build inventory hostname to Assisted Installer host-ID map
   ansible.builtin.set_fact:
-    ai_host_inventory: >-
-      {{
-        dict(
-          _hosts.json | map(attribute='id')
-          | zip(_hosts.json | map(attribute='inventory') | map('from_json'))
-        )
-      }}
-
-- name: "Create mapping inventory_hostname -> assisted host id by matching provisioning MAC"
-  ansible.builtin.set_fact:
-    inventory_to_ai_host_id: "{{ inventory_to_ai_host_id | default({}) | combine({item: (matched_id)}) }}"
-  vars:
-    prov_mac: "{{ hostvars[item].provisioning_mac | lower }}"
-    matched_id: >-
-      {{
-        (_hosts.json
-          | selectattr('inventory','defined')
-          | selectattr('inventory','string')
-          | map('combine',{})
-          | selectattr('id','defined')
-          | selectattr('inventory','defined')
-          | select(
-              'search',
-              prov_mac
-            )
-          | map(attribute='id')
-          | list
-          | first
-        )
-      }}
-  loop: "{{ ansible_play_batch }}"
-  when: hostvars[item].provisioning_mac is defined
+    inventory_to_ai_host_id: >-
+      {%- set result = {} -%}
+      {%- for inv_host in groups['baremetal'] -%}
+        {%- set target_mac = hostvars[inv_host].provisioning_mac | lower -%}
+        {%- set match = namespace(id='') -%}
+        {%- for ai_host in _assisted_hosts.json -%}
+          {%- if target_mac in (ai_host.inventory | default('') | lower) -%}
+            {%- set match.id = ai_host.id -%}
+          {%- endif -%}
+        {%- endfor -%}
+        {%- set _ = result.update({inv_host: match.id}) -%}
+      {%- endfor -%}
+      {{ result }}
   no_log: true
 
-- name: "Fail if any host could not be matched"
-  ansible.builtin.fail:
-    msg: "Could not match Assisted host to inventory host {{ item }} by provisioning MAC={{ hostvars[item].provisioning_mac }}. Check discovery boot and networking."
-  loop: "{{ ansible_play_batch }}"
-  when: inventory_to_ai_host_id[item] is not defined
+- name: Assert every inventory host was matched by MAC
+  ansible.builtin.assert:
+    that:
+      - inventory_to_ai_host_id[item] | default('') | length > 0
+    fail_msg: >-
+      Could not match {{ item }} by provisioning MAC {{ hostvars[item].provisioning_mac }}.
+      Review hosts-initial.json, NIC selection, and discovery-network configuration.
+  loop: "{{ groups['baremetal'] }}"

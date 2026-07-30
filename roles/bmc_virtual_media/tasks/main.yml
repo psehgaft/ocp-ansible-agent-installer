@@ -1,0 +1,154 @@
+---
+- name: Select virtual-media resource ID
+  ansible.builtin.set_fact:
+    _virtual_media_resource_id: >-
+      {{ bmc_manager_id_effective if bmc_virtual_media_category == 'Manager' else bmc_system_id_effective }}
+
+- name: Best-effort eject existing media using preferred category
+  community.general.redfish_command:
+    category: "{{ bmc_virtual_media_category }}"
+    command: VirtualMediaEject
+    resource_id: "{{ _virtual_media_resource_id }}"
+    baseuri: "{{ bmc_baseuri_effective }}"
+    username: "{{ bmc_username_effective }}"
+    password: "{{ bmc_password_effective }}"
+    virtual_media:
+      image_url: "{{ effective_iso_url | trim }}"
+    timeout: "{{ bmc_timeout }}"
+    validate_certs: "{{ bmc_validate_certs }}"
+    ca_path: "{{ bmc_ca_path if bmc_ca_path | length > 0 else omit }}"
+  failed_when: false
+  no_log: true
+
+- name: Best-effort eject existing media using Systems fallback
+  community.general.redfish_command:
+    category: Systems
+    command: VirtualMediaEject
+    resource_id: "{{ bmc_system_id_effective }}"
+    baseuri: "{{ bmc_baseuri_effective }}"
+    username: "{{ bmc_username_effective }}"
+    password: "{{ bmc_password_effective }}"
+    virtual_media:
+      image_url: "{{ effective_iso_url | trim }}"
+    timeout: "{{ bmc_timeout }}"
+    validate_certs: "{{ bmc_validate_certs }}"
+    ca_path: "{{ bmc_ca_path if bmc_ca_path | length > 0 else omit }}"
+  when:
+    - bmc_virtual_media_category != 'Systems'
+    - bmc_virtual_media_fallback_to_systems | bool
+  failed_when: false
+  no_log: true
+
+- name: Insert discovery ISO using preferred Redfish category
+  block:
+    - name: Insert discovery ISO
+      community.general.redfish_command:
+        category: "{{ bmc_virtual_media_category }}"
+        command: VirtualMediaInsert
+        resource_id: "{{ _virtual_media_resource_id }}"
+        baseuri: "{{ bmc_baseuri_effective }}"
+        username: "{{ bmc_username_effective }}"
+        password: "{{ bmc_password_effective }}"
+        virtual_media:
+          image_url: "{{ effective_iso_url | trim }}"
+          media_types: [CD, DVD]
+          inserted: true
+          write_protected: true
+        timeout: "{{ bmc_timeout }}"
+        validate_certs: "{{ bmc_validate_certs }}"
+        ca_path: "{{ bmc_ca_path if bmc_ca_path | length > 0 else omit }}"
+      no_log: true
+  rescue:
+    - name: Stop when Systems virtual-media fallback is disabled
+      ansible.builtin.fail:
+        msg: >-
+          Virtual media insertion failed using category={{ bmc_virtual_media_category }} and
+          bmc_virtual_media_fallback_to_systems=false. Review the BMC Redfish VirtualMedia resource.
+      when: not (bmc_virtual_media_fallback_to_systems | bool)
+
+    - name: Insert discovery ISO using Systems fallback
+      community.general.redfish_command:
+        category: Systems
+        command: VirtualMediaInsert
+        resource_id: "{{ bmc_system_id_effective }}"
+        baseuri: "{{ bmc_baseuri_effective }}"
+        username: "{{ bmc_username_effective }}"
+        password: "{{ bmc_password_effective }}"
+        virtual_media:
+          image_url: "{{ effective_iso_url | trim }}"
+          media_types: [CD, DVD]
+          inserted: true
+          write_protected: true
+        timeout: "{{ bmc_timeout }}"
+        validate_certs: "{{ bmc_validate_certs }}"
+        ca_path: "{{ bmc_ca_path if bmc_ca_path | length > 0 else omit }}"
+      when: bmc_virtual_media_fallback_to_systems | bool
+      no_log: true
+
+- name: Configure one-time CD/DVD boot
+  community.general.redfish_command:
+    category: Systems
+    command: SetOneTimeBoot
+    resource_id: "{{ bmc_system_id_effective }}"
+    bootdevice: "{{ bmc_boot_device }}"
+    baseuri: "{{ bmc_baseuri_effective }}"
+    username: "{{ bmc_username_effective }}"
+    password: "{{ bmc_password_effective }}"
+    timeout: "{{ bmc_timeout }}"
+    validate_certs: "{{ bmc_validate_certs }}"
+    ca_path: "{{ bmc_ca_path if bmc_ca_path | length > 0 else omit }}"
+  no_log: true
+
+- name: Restart server to boot the discovery ISO
+  block:
+    - name: Execute configured Redfish power command
+      community.general.redfish_command:
+        category: Systems
+        command: "{{ bmc_power_command }}"
+        resource_id: "{{ bmc_system_id_effective }}"
+        baseuri: "{{ bmc_baseuri_effective }}"
+        username: "{{ bmc_username_effective }}"
+        password: "{{ bmc_password_effective }}"
+        timeout: "{{ bmc_timeout }}"
+        validate_certs: "{{ bmc_validate_certs }}"
+        ca_path: "{{ bmc_ca_path if bmc_ca_path | length > 0 else omit }}"
+      no_log: true
+  rescue:
+    - name: Power on server when restart is not accepted
+      community.general.redfish_command:
+        category: Systems
+        command: PowerOn
+        resource_id: "{{ bmc_system_id_effective }}"
+        baseuri: "{{ bmc_baseuri_effective }}"
+        username: "{{ bmc_username_effective }}"
+        password: "{{ bmc_password_effective }}"
+        timeout: "{{ bmc_timeout }}"
+        validate_certs: "{{ bmc_validate_certs }}"
+        ca_path: "{{ bmc_ca_path if bmc_ca_path | length > 0 else omit }}"
+      no_log: true
+
+- name: Persist mounted virtual-media state for later cleanup
+  ansible.builtin.copy:
+    dest: "{{ artifacts_dir }}/{{ cluster_name }}/raw/virtual-media-{{ inventory_hostname }}.json"
+    mode: "0600"
+    content: |
+      {{
+        {
+          'inventory_hostname': inventory_hostname,
+          'bmc_endpoint': bmc_endpoint_effective,
+          'bmc_type': bmc_type_effective,
+          'image_url': effective_iso_url | trim,
+          'virtual_media_category': bmc_virtual_media_category,
+          'system_id': bmc_system_id_effective,
+          'manager_id': bmc_manager_id_effective
+        } | to_nice_json
+      }}
+
+- name: Wait for discovery environment SSH
+  ansible.builtin.wait_for:
+    host: "{{ node_ipv4_address }}"
+    port: 22
+    delay: "{{ bmc_boot_wait_delay }}"
+    timeout: "{{ bmc_boot_wait_timeout }}"
+    state: started
+  when: bmc_wait_for_node_ssh | bool

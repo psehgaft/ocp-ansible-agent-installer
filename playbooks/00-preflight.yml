@@ -1,0 +1,8 @@
+---
+- name: Validate control-node, cluster, and BMC inputs
+  hosts: baremetal
+  gather_facts: false
+  connection: local
+  any_errors_fatal: true
+  roles:
+    - role: preflight

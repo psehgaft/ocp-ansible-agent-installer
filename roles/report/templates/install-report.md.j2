@@ -1,0 +1,35 @@
+# OpenShift Assisted Installer and Redfish Installation Report
+
+## Cluster
+
+- Name: `{{ cluster_name }}`
+- Base domain: `{{ base_dns_domain }}`
+- Requested version: `{{ openshift_version }}`
+- Cluster ID: `{{ cluster_id }}`
+- InfraEnv ID: `{{ infra_env_id }}`
+- API VIP: `{{ api_vip }}`
+- Ingress VIP: `{{ ingress_vip }}`
+
+## Outputs
+
+- kubeconfig: `{{ output_kubeconfig }}`
+- kubeadmin password: `{{ output_kubeadmin_password }}`
+- Raw evidence: `{{ artifacts_dir }}/{{ cluster_name }}/raw/`
+- Events: `{{ artifacts_dir }}/{{ cluster_name }}/raw/events.json`
+- BMC report: `{{ artifacts_dir }}/{{ cluster_name }}/reports/bmc-inventory.md`
+
+## Hosts
+
+| Host | Role | Node IP | BMC type | BMC endpoint | Model | Serial | Provisioning MAC |
+|---|---|---|---|---|---|---|---|
+{% for h in ansible_play_hosts_all %}
+| `{{ h }}` | `{{ hostvars[h].node_role }}` | `{{ hostvars[h].node_ipv4_address }}` | `{{ hostvars[h].bmc_type_effective | trim }}` | `{{ hostvars[h].bmc_endpoint_effective }}` | `{{ hostvars[h].bmc_system.Model | default('unknown') }}` | `{{ hostvars[h].bmc_system.SerialNumber | default('unknown') }}` | `{{ hostvars[h].provisioning_mac }}` |
+{% endfor %}
+
+## Review order after a failure
+
+1. `events.json`
+2. `cluster-final.json`
+3. `hosts-initial.json`
+4. `bmc-<hostname>.json`
+5. BMC lifecycle/event logs and virtual-media status

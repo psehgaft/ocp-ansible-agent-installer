@@ -1,0 +1,75 @@
+---
+- name: Validate existing HTTP ISO URL
+  ansible.builtin.assert:
+    that:
+      - iso_existing_url | length > 0
+      - "'CHANGE_ME' not in iso_existing_url"
+    fail_msg: "Set iso_existing_url to a BMC-reachable discovery ISO URL."
+  when: iso_delivery_mode == 'existing_http'
+  run_once: true
+
+- name: Validate local HTTP advertise address
+  ansible.builtin.assert:
+    that:
+      - iso_http_advertise_address | length > 0
+      - "'CHANGE_ME' not in iso_http_advertise_address"
+    fail_msg: "Set iso_http_advertise_address to the control-node address reachable by every BMC."
+  when: iso_delivery_mode == 'local_http'
+  run_once: true
+
+- name: Capture the control-node working directory
+  ansible.builtin.command: pwd
+  register: _control_workdir
+  changed_when: false
+  when: iso_delivery_mode == 'local_http'
+  run_once: true
+
+- name: Build absolute ISO publication directory
+  ansible.builtin.set_fact:
+    _iso_publish_directory: >-
+      {{
+        artifacts_dir ~ '/' ~ cluster_name ~ '/iso'
+        if artifacts_dir is match('^/')
+        else _control_workdir.stdout ~ '/' ~ (artifacts_dir | regex_replace('^\./', '')) ~ '/' ~ cluster_name ~ '/iso'
+      }}
+  when: iso_delivery_mode == 'local_http'
+  run_once: true
+
+- name: Download discovery ISO for local HTTP publication
+  ansible.builtin.get_url:
+    url: "{{ hostvars[ansible_play_hosts_all[0]].discovery_iso_url }}"
+    dest: "{{ artifacts_dir }}/{{ cluster_name }}/iso/discovery.iso"
+    mode: "0644"
+    validate_certs: true
+    force: true
+  when: iso_delivery_mode == 'local_http'
+  run_once: true
+  no_log: true
+
+- name: Start or replace local Podman ISO web server
+  ansible.builtin.command:
+    argv:
+      - podman
+      - run
+      - --detach
+      - --replace
+      - --name
+      - "{{ iso_http_container_name }}"
+      - --publish
+      - "{{ iso_http_bind_address }}:{{ iso_http_port }}:8080"
+      - --volume
+      - "{{ _iso_publish_directory }}:/var/www/html:Z,ro"
+      - "{{ iso_http_container_image }}"
+  changed_when: true
+  when: iso_delivery_mode == 'local_http'
+  run_once: true
+
+- name: Set effective discovery ISO URL on every host
+  ansible.builtin.set_fact:
+    effective_iso_url: >-
+      {{
+        ('http://' ~ iso_http_advertise_address ~ ':' ~ (iso_http_port | string) ~ '/discovery.iso')
+        if iso_delivery_mode == 'local_http'
+        else (iso_existing_url if iso_delivery_mode == 'existing_http' else hostvars[ansible_play_hosts_all[0]].discovery_iso_url)
+      }}
+  no_log: true

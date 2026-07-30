@@ -1,0 +1,47 @@
+= Module 2 Lab 2: Validate Virtual Media
+
+*Lab Type:* Disruptive, constrained test.
+
+*Estimated Time:* 20–40 minutes.
+
+[quote]
+Use a non-production host and `--limit`. This lab restarts the selected server.
+
+== Learning Objectives
+
+* Insert ISO media.
+* Set one-time CD/DVD boot.
+* Restart and then eject media.
+
+== 1. Run on one host
+
+[source,bash]
+----
+ansible-playbook \
+  -i inventories/lab/hosts.yml \
+  --ask-vault-pass \
+  --limit master-0 \
+  -e test_iso_url=https://web.example.com/images/test.iso \
+  -e bmc_wait_for_node_ssh=false \
+  playbooks/03-test-virtual-media.yml
+----
+
+== 2. Eject media
+
+[source,bash]
+----
+ansible-playbook \
+  -i inventories/lab/hosts.yml \
+  --ask-vault-pass \
+  --limit master-0 \
+  -e iso_existing_url=https://web.example.com/images/test.iso \
+  playbooks/90-eject-media.yml
+----
+
+== Verification
+
+The image is mounted for one boot, then removed, without changing persistent boot order.
+
+== Conclusion
+
+You validated virtual media before applying it to the cluster.

@@ -1,48 +1,12 @@
-# Temporary files
-/tmp/
-*.tmp
-*.log
-
-# Backup files
-*.backup
-*.bak
-*-backup.yaml
-*-backup.tar.gz
-
-# OpenStack credentials
-clouds.yaml
-*.rc
-*-openrc
-
-# Secrets (but allow example templates)
-*secret*.yaml
-*password*.conf
-!examples/configs/service-passwords.conf
-osp-secret.yaml
-
-# IDE files
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
-
-# OS files
-.DS_Store
-Thumbs.db
-
-# Python
-__pycache__/
-*.py[cod]
-*$py.class
-.Python
-venv/
-env/
-
-# Ansible
+artifacts/
+secrets/
 *.retry
+*.log
 .ansible/
-
-# Testing
-test-results/
-coverage/
+.collections/
+node_modules/
+workshop/build/
+inventories/*/group_vars/vault.yml
+!inventories/sample/group_vars/vault.yml.example
+__pycache__/
+*.pyc

@@ -1,0 +1,53 @@
+= Module 1 Lab 2: Configure Mixed-Vendor Inventory
+
+*Prepares you for:* Redfish discovery and Assisted Installer payload generation.
+
+*Lab Type:* Configuration.
+
+*Estimated Time:* 30–45 minutes.
+
+== Learning Objectives
+
+* Configure iLO and iDRAC hosts in one inventory.
+* Define cluster and static-network settings.
+* Configure ISO publication.
+
+== 1. Copy the sample
+
+[source,bash]
+----
+cp -a inventories/sample inventories/lab
+----
+
+== 2. Configure HPE and Dell hosts
+
+[source,yaml]
+----
+master-0:
+  bmc_type: ilo
+  bmc_endpoint: https://10.10.10.11
+  bmc_username: Administrator
+
+master-1:
+  bmc_type: idrac
+  bmc_endpoint: https://10.10.10.12
+  bmc_username: root
+----
+
+== 3. Replace cluster placeholders
+
+Edit `inventories/lab/group_vars/all.yml`, then run:
+
+[source,bash]
+----
+grep -R --line-number CHANGE_ME inventories/lab/hosts.yml inventories/lab/group_vars/all.yml
+ansible-inventory -i inventories/lab/hosts.yml --graph
+----
+
+== Verification
+
+The group sizes match `control_plane_count` and `compute_count`, and no active placeholder remains.
+
+== Conclusion
+
+You defined an auditable mixed-vendor cluster inventory.

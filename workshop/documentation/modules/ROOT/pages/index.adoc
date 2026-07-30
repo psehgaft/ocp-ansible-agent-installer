@@ -1,0 +1,26 @@
+= OpenShift Assisted Installer with HPE iLO and Dell iDRAC
+
+Welcome to the vendor-neutral Redfish installation workshop.
+
+== Overview
+
+This workshop provides a progressive, hands-on path from control-node preparation to a complete OpenShift bare-metal installation through the Assisted Installer API.
+
+You will practice:
+
+* Mixed HPE iLO and Dell iDRAC inventory design.
+* Secure credential handling with Ansible Vault.
+* Standards-based Redfish discovery.
+* NIC normalization and provisioning-MAC selection.
+* Virtual media, one-time boot, and server restart.
+* Assisted Installer Cluster and InfraEnv creation.
+* Static NMState and MAC-interface mapping.
+* Installation validation, reporting, and troubleshooting.
+
+== Learning Outcomes
+
+By the end of this workshop, you will be able to operate one Ansible workflow across iLO, iDRAC, and other conformant Redfish controllers while preserving explicit vendor intent through `bmc_type`.
+
+== Getting Started
+
+Begin with xref:environment-details.adoc[Environment Details], then continue to xref:01-environment.adoc[Module 1 Lab 1: Prepare the Environment].

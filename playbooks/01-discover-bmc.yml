@@ -1,0 +1,14 @@
+---
+- name: Discover HPE iLO, Dell iDRAC, or generic Redfish inventory
+  hosts: baremetal
+  gather_facts: false
+  connection: local
+  any_errors_fatal: true
+  roles:
+    - role: preflight
+      vars:
+        preflight_require_cluster_inputs: false
+        preflight_require_secret_files: false
+        preflight_validate_inventory_counts: false
+    - role: bmc_discovery
+    - role: bmc_report

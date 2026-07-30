@@ -1,0 +1,34 @@
+= Module 3 Lab 1: Create and Boot the Discovery ISO
+
+*Lab Type:* Cluster deployment.
+
+*Estimated Time:* 30–60 minutes plus boot time.
+
+== Learning Objectives
+
+* Create Assisted Installer resources.
+* Render NMState and MAC mappings.
+* Publish and boot the discovery ISO.
+
+== 1. Run preflight
+
+[source,bash]
+----
+./scripts/preflight.sh inventories/lab/hosts.yml
+ansible-playbook -i inventories/lab/hosts.yml --ask-vault-pass playbooks/00-preflight.yml
+----
+
+== 2. Boot the discovery ISO
+
+[source,bash]
+----
+ansible-playbook -i inventories/lab/hosts.yml --ask-vault-pass playbooks/02-boot-discovery-iso.yml
+----
+
+== Verification
+
+All hosts mount the ISO, boot the discovery environment, and begin registering with Assisted Installer.
+
+== Conclusion
+
+You booted one discovery workflow across HPE and Dell hardware.

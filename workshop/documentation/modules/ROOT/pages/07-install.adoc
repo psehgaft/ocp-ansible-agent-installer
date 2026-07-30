@@ -1,0 +1,43 @@
+= Module 3 Lab 2: Install and Verify OpenShift
+
+*Lab Type:* Installation.
+
+*Estimated Time:* 60–120 minutes.
+
+== Learning Objectives
+
+* Match hosts by MAC.
+* Assign roles and hostnames.
+* Start installation and retrieve credentials.
+
+== 1. Run the workflow
+
+[source,bash]
+----
+ansible-playbook -i inventories/lab/hosts.yml --ask-vault-pass playbooks/site.yml
+----
+
+== 2. Verify OpenShift
+
+[source,bash]
+----
+export KUBECONFIG=$PWD/artifacts/ocp418-lab/auth/kubeconfig
+oc get clusterversion
+oc get nodes -o wide
+oc get clusteroperators
+----
+
+== 3. Eject media
+
+[source,bash]
+----
+ansible-playbook -i inventories/lab/hosts.yml --ask-vault-pass playbooks/90-eject-media.yml
+----
+
+== Verification
+
+ClusterVersion is Available, nodes are Ready, operators are healthy, and virtual media is empty.
+
+== Conclusion
+
+You installed and validated OpenShift on mixed-vendor bare metal.

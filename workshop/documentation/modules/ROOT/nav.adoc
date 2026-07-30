@@ -1,0 +1,14 @@
+* xref:index.adoc[Workshop Overview]
+* xref:environment-details.adoc[Environment Details]
+* Module 1: Foundations
+** xref:01-environment.adoc[1.1 Prepare the Environment]
+** xref:02-inventory.adoc[1.2 Configure Mixed-Vendor Inventory]
+** xref:03-vault.adoc[1.3 Protect Credentials]
+* Module 2: Redfish Validation
+** xref:04-discovery.adoc[2.1 Discover iLO and iDRAC]
+** xref:05-virtual-media.adoc[2.2 Validate Virtual Media]
+* Module 3: OpenShift Installation
+** xref:06-discovery-iso.adoc[3.1 Create and Boot the ISO]
+** xref:07-install.adoc[3.2 Install and Verify OpenShift]
+* xref:08-final-challenge.adoc[Final Challenge]
+* xref:appendix.adoc[Appendix and Troubleshooting]

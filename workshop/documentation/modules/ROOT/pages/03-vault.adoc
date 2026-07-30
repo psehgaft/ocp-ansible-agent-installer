@@ -1,0 +1,40 @@
+= Module 1 Lab 3: Protect Credentials
+
+*Lab Type:* Security.
+
+*Estimated Time:* 15–20 minutes.
+
+== Learning Objectives
+
+* Store BMC passwords by host.
+* Store Assisted Installer tokens.
+* Encrypt the active variables file.
+
+== 1. Create and encrypt Vault
+
+[source,bash]
+----
+cp inventories/lab/group_vars/vault.yml.example inventories/lab/group_vars/vault.yml
+ansible-vault encrypt inventories/lab/group_vars/vault.yml
+----
+
+== 2. Install local secrets
+
+[source,bash]
+----
+install -d -m 0700 secrets
+install -m 0600 /path/to/pull-secret.json secrets/pull-secret.json
+install -m 0600 ~/.ssh/id_rsa.pub secrets/id_rsa.pub
+----
+
+== Verification
+
+[source,bash]
+----
+head -1 inventories/lab/group_vars/vault.yml
+git check-ignore -v inventories/lab/group_vars/vault.yml
+----
+
+== Conclusion
+
+Credentials are encrypted and excluded from Git.

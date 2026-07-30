@@ -1,11 +1,11 @@
 ---
-#- name: "Read pull secret and SSH public key"
-#  ansible.builtin.set_fact:
-#    pull_secret: "{{ lookup('file', pull_secret_file) }}"
-#    ssh_public_key: "{{ lookup('file', ssh_public_key_file) }}"
-#  no_log: true
+- name: Read pull secret and SSH public key
+  ansible.builtin.set_fact:
+    pull_secret: "{{ lookup('ansible.builtin.file', pull_secret_file) | trim }}"
+    ssh_public_key: "{{ lookup('ansible.builtin.file', ssh_public_key_file) | trim }}"
+  no_log: true
 
-- name: "Obtain Assisted Installer API access token (SaaS) from offline token"
+- name: Obtain SaaS access token from the offline token
   when: assisted_auth_mode == 'saas'
   ansible.builtin.uri:
     url: "https://sso.redhat.com/auth/realms/redhat-external/protocol/openid-connect/token"
@@ -17,18 +17,24 @@
       refresh_token: "{{ assisted_offline_token }}"
     return_content: true
     status_code: [200]
-  register: _token
+  register: _assisted_token
   no_log: true
 
-- name: "Set assisted_access_token fact"
+- name: Set effective Assisted Installer access token
   ansible.builtin.set_fact:
-    assisted_access_token: >-
+    assisted_access_token_effective: >-
       {{
-        (_token.json.access_token if assisted_auth_mode == 'saas' else assisted_access_token)
+        _assisted_token.json.access_token
+        if assisted_auth_mode == 'saas'
+        else assisted_access_token
       }}
   no_log: true
 
-- name: "Fail if token is missing"
-  ansible.builtin.fail:
-    msg: "assisted_access_token is missing. Provide assisted_offline_token (saas) or assisted_access_token (onprem)."
-  when: assisted_access_token is not defined or assisted_access_token | length == 0
+- name: Assert Assisted Installer token is available
+  ansible.builtin.assert:
+    that:
+      - assisted_access_token_effective is defined
+      - assisted_access_token_effective | length > 0
+    fail_msg: >-
+      Provide assisted_offline_token for SaaS or assisted_access_token for on-premises service.
+  no_log: true

@@ -1,0 +1,239 @@
+---
+- name: Query Redfish service root
+  ansible.builtin.uri:
+    url: "{{ bmc_endpoint_effective }}/redfish/v1/"
+    method: GET
+    user: "{{ bmc_username_effective }}"
+    password: "{{ bmc_password_effective }}"
+    force_basic_auth: true
+    validate_certs: "{{ bmc_validate_certs }}"
+    ca_path: "{{ bmc_ca_path if bmc_ca_path | length > 0 else omit }}"
+    return_content: true
+    status_code: [200]
+    timeout: "{{ bmc_timeout }}"
+  register: _redfish_root
+  no_log: true
+
+- name: Resolve Redfish collection URIs
+  ansible.builtin.set_fact:
+    _systems_uri: "{{ _redfish_root.json.Systems['@odata.id'] | default('/redfish/v1/Systems') }}"
+    _managers_uri: "{{ _redfish_root.json.Managers['@odata.id'] | default('/redfish/v1/Managers') }}"
+    _chassis_uri: "{{ _redfish_root.json.Chassis['@odata.id'] | default('/redfish/v1/Chassis') }}"
+
+- name: Query Redfish collections
+  ansible.builtin.uri:
+    url: "{{ bmc_endpoint_effective }}{{ item.uri }}"
+    method: GET
+    user: "{{ bmc_username_effective }}"
+    password: "{{ bmc_password_effective }}"
+    force_basic_auth: true
+    validate_certs: "{{ bmc_validate_certs }}"
+    ca_path: "{{ bmc_ca_path if bmc_ca_path | length > 0 else omit }}"
+    return_content: true
+    status_code: [200]
+    timeout: "{{ bmc_timeout }}"
+  loop:
+    - { name: systems, uri: "{{ _systems_uri }}" }
+    - { name: managers, uri: "{{ _managers_uri }}" }
+    - { name: chassis, uri: "{{ _chassis_uri }}" }
+  loop_control:
+    label: "{{ item.name }}"
+  register: _redfish_collections
+  no_log: true
+
+- name: Store collection responses
+  ansible.builtin.set_fact:
+    _systems_collection: "{{ _redfish_collections.results[0].json }}"
+    _managers_collection: "{{ _redfish_collections.results[1].json }}"
+    _chassis_collection: "{{ _redfish_collections.results[2].json }}"
+  no_log: true
+
+- name: Assert Redfish collections contain resources
+  ansible.builtin.assert:
+    that:
+      - _systems_collection.Members | default([]) | length > 0
+      - _managers_collection.Members | default([]) | length > 0
+      - _chassis_collection.Members | default([]) | length > 0
+    fail_msg: >-
+      The Redfish service did not expose Systems, Managers, and Chassis resources.
+      Configure bmc_system_id, bmc_manager_id, and bmc_chassis_id only after checking the service root.
+
+- name: Resolve selected Redfish resource URIs
+  ansible.builtin.set_fact:
+    _system_resource_uri: >-
+      {{ (_systems_uri ~ '/' ~ bmc_system_id) if bmc_system_id | length > 0 else _systems_collection.Members[0]['@odata.id'] }}
+    _manager_resource_uri: >-
+      {{ (_managers_uri ~ '/' ~ bmc_manager_id) if bmc_manager_id | length > 0 else _managers_collection.Members[0]['@odata.id'] }}
+    _chassis_resource_uri: >-
+      {{ (_chassis_uri ~ '/' ~ bmc_chassis_id) if bmc_chassis_id | length > 0 else _chassis_collection.Members[0]['@odata.id'] }}
+
+- name: Query selected Redfish resources
+  ansible.builtin.uri:
+    url: "{{ bmc_endpoint_effective }}{{ item.uri }}"
+    method: GET
+    user: "{{ bmc_username_effective }}"
+    password: "{{ bmc_password_effective }}"
+    force_basic_auth: true
+    validate_certs: "{{ bmc_validate_certs }}"
+    ca_path: "{{ bmc_ca_path if bmc_ca_path | length > 0 else omit }}"
+    return_content: true
+    status_code: [200]
+    timeout: "{{ bmc_timeout }}"
+  loop:
+    - { name: system, uri: "{{ _system_resource_uri }}" }
+    - { name: manager, uri: "{{ _manager_resource_uri }}" }
+    - { name: chassis, uri: "{{ _chassis_resource_uri }}" }
+  loop_control:
+    label: "{{ item.name }}"
+  register: _redfish_resources
+  no_log: true
+
+- name: Set resolved resource facts
+  ansible.builtin.set_fact:
+    bmc_system: "{{ _redfish_resources.results[0].json }}"
+    bmc_manager: "{{ _redfish_resources.results[1].json }}"
+    bmc_chassis: "{{ _redfish_resources.results[2].json }}"
+    bmc_system_id_effective: "{{ _system_resource_uri | redfish_resource_id }}"
+    bmc_manager_id_effective: "{{ _manager_resource_uri | redfish_resource_id }}"
+    bmc_chassis_id_effective: "{{ _chassis_resource_uri | redfish_resource_id }}"
+  no_log: true
+
+- name: Detect BMC type when auto was requested
+  vars:
+    _bmc_identity_text: >-
+      {{
+        {
+          'root': _redfish_root.json | default({}),
+          'system': bmc_system | default({}),
+          'manager': bmc_manager | default({}),
+          'chassis': bmc_chassis | default({})
+        } | to_json | lower
+      }}
+  ansible.builtin.set_fact:
+    bmc_type_effective: >-
+      {{
+        bmc_type_requested
+        if bmc_type_requested != 'auto'
+        else (
+          'ilo'
+          if ('hewlett' in _bmc_identity_text or 'hpe' in _bmc_identity_text or 'ilo' in _bmc_identity_text)
+          else ('idrac' if ('dell' in _bmc_identity_text or 'idrac' in _bmc_identity_text) else 'generic')
+        )
+      }}
+
+- name: Gather required NIC inventory through standard Redfish
+  community.general.redfish_info:
+    category: Systems
+    command: GetNicInventory
+    baseuri: "{{ bmc_baseuri_effective }}"
+    username: "{{ bmc_username_effective }}"
+    password: "{{ bmc_password_effective }}"
+    timeout: "{{ bmc_timeout }}"
+    validate_certs: "{{ bmc_validate_certs }}"
+    ca_path: "{{ bmc_ca_path if bmc_ca_path | length > 0 else omit }}"
+  register: _nic_inventory
+  no_log: true
+
+- name: Gather additional system inventory on a best-effort basis
+  community.general.redfish_info:
+    category: Systems
+    command: "GetCpuInventory,GetMemoryInventory,GetVolumeInventory,GetBiosAttributes,GetBootOverride,GetHealthReport"
+    baseuri: "{{ bmc_baseuri_effective }}"
+    username: "{{ bmc_username_effective }}"
+    password: "{{ bmc_password_effective }}"
+    timeout: "{{ bmc_timeout }}"
+    validate_certs: "{{ bmc_validate_certs }}"
+    ca_path: "{{ bmc_ca_path if bmc_ca_path | length > 0 else omit }}"
+  register: _system_inventory
+  failed_when: false
+  no_log: true
+
+- name: Gather manager inventory and virtual-media information
+  community.general.redfish_info:
+    category: Manager
+    command: "GetManagerInventory,GetManagerNicInventory,GetVirtualMedia,GetNetworkProtocols,GetHealthReport"
+    manager: "{{ bmc_manager_id_effective }}"
+    baseuri: "{{ bmc_baseuri_effective }}"
+    username: "{{ bmc_username_effective }}"
+    password: "{{ bmc_password_effective }}"
+    timeout: "{{ bmc_timeout }}"
+    validate_certs: "{{ bmc_validate_certs }}"
+    ca_path: "{{ bmc_ca_path if bmc_ca_path | length > 0 else omit }}"
+  register: _manager_inventory
+  failed_when: false
+  no_log: true
+
+- name: Gather chassis inventory
+  community.general.redfish_info:
+    category: Chassis
+    command: "GetChassisInventory,GetFanInventory,GetHealthReport"
+    baseuri: "{{ bmc_baseuri_effective }}"
+    username: "{{ bmc_username_effective }}"
+    password: "{{ bmc_password_effective }}"
+    timeout: "{{ bmc_timeout }}"
+    validate_certs: "{{ bmc_validate_certs }}"
+    ca_path: "{{ bmc_ca_path if bmc_ca_path | length > 0 else omit }}"
+  register: _chassis_inventory
+  failed_when: false
+  no_log: true
+
+- name: Gather firmware inventory
+  community.general.redfish_info:
+    category: Update
+    command: GetFirmwareInventory
+    baseuri: "{{ bmc_baseuri_effective }}"
+    username: "{{ bmc_username_effective }}"
+    password: "{{ bmc_password_effective }}"
+    timeout: "{{ bmc_timeout }}"
+    validate_certs: "{{ bmc_validate_certs }}"
+    ca_path: "{{ bmc_ca_path if bmc_ca_path | length > 0 else omit }}"
+  register: _firmware_inventory
+  failed_when: false
+  no_log: true
+
+- name: Normalize NIC data and select provisioning MAC
+  ansible.builtin.set_fact:
+    bmc_nics: "{{ _nic_inventory.redfish_facts | default({}) | redfish_nics }}"
+    provisioning_mac: >-
+      {{
+        _nic_inventory.redfish_facts | default({})
+        | redfish_select_provisioning_mac(provisioning_nic_match, provisioning_mac_override)
+      }}
+  no_log: true
+
+- name: Fail when no provisioning MAC can be selected
+  ansible.builtin.assert:
+    that:
+      - provisioning_mac | length > 0
+      - bmc_nics | length > 0
+    fail_msg: >-
+      No usable NIC MAC address was discovered from {{ bmc_endpoint_effective }} for
+      {{ inventory_hostname }}. Set provisioning_mac_override or update BMC firmware/permissions.
+
+- name: Persist normalized and raw BMC discovery evidence
+  ansible.builtin.copy:
+    dest: "{{ artifacts_dir }}/{{ cluster_name }}/raw/bmc-{{ inventory_hostname }}.json"
+    mode: "0600"
+    content: |
+      {{
+        {
+          'inventory_hostname': inventory_hostname,
+          'bmc_type_requested': bmc_type_requested,
+          'bmc_type_effective': bmc_type_effective,
+          'bmc_endpoint': bmc_endpoint_effective,
+          'system_id': bmc_system_id_effective,
+          'manager_id': bmc_manager_id_effective,
+          'chassis_id': bmc_chassis_id_effective,
+          'provisioning_mac': provisioning_mac,
+          'normalized_nics': bmc_nics,
+          'service_root': _redfish_root.json,
+          'system': bmc_system,
+          'manager': bmc_manager,
+          'chassis': bmc_chassis,
+          'nic_inventory': _nic_inventory.redfish_facts | default({}),
+          'system_inventory': _system_inventory.redfish_facts | default({}),
+          'manager_inventory': _manager_inventory.redfish_facts | default({}),
+          'chassis_inventory': _chassis_inventory.redfish_facts | default({}),
+          'firmware_inventory': _firmware_inventory.redfish_facts | default({})
+        } | to_nice_json
+      }}

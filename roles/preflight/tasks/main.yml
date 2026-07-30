@@ -1,0 +1,128 @@
+---
+- name: Normalize legacy and current BMC variables
+  ansible.builtin.set_fact:
+    _bmc_endpoint_input: >-
+      {{
+        bmc_endpoint
+        | default(
+            ('https://' ~ idrac_ip) if idrac_ip is defined else
+            (('https://' ~ ilo_ip) if ilo_ip is defined else '')
+          )
+      }}
+    bmc_username_effective: "{{ bmc_username | default(idrac_user | default(ilo_user | default(''))) }}"
+    bmc_password_effective: "{{ bmc_password | default(idrac_password | default(ilo_password | default(''))) }}"
+    bmc_type_requested: "{{ bmc_type | default('idrac' if idrac_ip is defined else ('ilo' if ilo_ip is defined else 'auto')) | lower }}"
+  no_log: true
+
+- name: Parse BMC endpoint
+  ansible.builtin.set_fact:
+    _bmc_endpoint_parts: "{{ _bmc_endpoint_input | redfish_endpoint_parts }}"
+  no_log: true
+
+- name: Set normalized BMC endpoint facts
+  ansible.builtin.set_fact:
+    bmc_endpoint_effective: "{{ _bmc_endpoint_parts.endpoint }}"
+    bmc_baseuri_effective: "{{ _bmc_endpoint_parts.baseuri }}"
+    bmc_host_effective: "{{ _bmc_endpoint_parts.host }}"
+    bmc_port_effective: "{{ _bmc_endpoint_parts.port }}"
+  no_log: true
+
+- name: Assert required host variables
+  ansible.builtin.assert:
+    that:
+      - bmc_type_requested in ['ilo', 'idrac', 'generic', 'auto']
+      - bmc_endpoint_effective | length > 0
+      - bmc_username_effective | length > 0
+      - bmc_password_effective | length > 0
+      - bmc_virtual_media_category | default('Manager') in ['Manager', 'Systems']
+      - node_role | default('') in ['master', 'worker']
+      - node_hostname | default('') | length > 0
+      - node_ipv4_address | default('') is match('^[0-9]{1,3}(\.[0-9]{1,3}){3}$')
+    fail_msg: >-
+      Invalid variables for {{ inventory_hostname }}. Review bmc_type, bmc_endpoint,
+      bmc_username, vaulted bmc_password, node_role, node_hostname, and node_ipv4_address.
+  no_log: true
+
+- name: Assert required cluster variables
+  ansible.builtin.assert:
+    that:
+      - assisted_api_url is defined
+      - assisted_auth_mode in ['saas', 'onprem']
+      - cluster_name is defined
+      - base_dns_domain is defined
+      - openshift_version is defined
+      - pull_secret_file is defined
+      - ssh_public_key_file is defined
+      - api_vip is defined
+      - ingress_vip is defined
+      - machine_network_cidr is defined
+      - install_network_mode in ['single', 'bond']
+      - iso_delivery_mode in ['local_http', 'existing_http', 'direct_url']
+    fail_msg: "A required cluster variable is missing or invalid. Review inventory group_vars/all.yml."
+  when: preflight_require_cluster_inputs | bool
+  run_once: true
+
+- name: Check pull secret file
+  ansible.builtin.stat:
+    path: "{{ pull_secret_file }}"
+  register: _pull_secret_stat
+  when: preflight_require_secret_files | bool
+  run_once: true
+
+- name: Check SSH public key file
+  ansible.builtin.stat:
+    path: "{{ ssh_public_key_file }}"
+  register: _ssh_key_stat
+  when: preflight_require_secret_files | bool
+  run_once: true
+
+- name: Assert required local files exist
+  ansible.builtin.assert:
+    that:
+      - _pull_secret_stat.stat.exists
+      - _ssh_key_stat.stat.exists
+    fail_msg: "Create the pull-secret and SSH public-key files configured in group_vars/all.yml."
+  when: preflight_require_secret_files | bool
+  run_once: true
+
+- name: Validate inventory host counts
+  ansible.builtin.assert:
+    that:
+      - groups['control_plane'] | default([]) | length == control_plane_count | int
+      - groups['workers'] | default([]) | length == compute_count | int
+    fail_msg: >-
+      control_plane_count or compute_count does not match the inventory groups.
+      control_plane={{ groups['control_plane'] | default([]) | length }},
+      workers={{ groups['workers'] | default([]) | length }}.
+  when: preflight_validate_inventory_counts | bool
+  run_once: true
+
+- name: Create artifact directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: "0700"
+  loop:
+    - "{{ artifacts_dir }}"
+    - "{{ artifacts_dir }}/{{ cluster_name }}"
+    - "{{ artifacts_dir }}/{{ cluster_name }}/auth"
+    - "{{ artifacts_dir }}/{{ cluster_name }}/iso"
+    - "{{ artifacts_dir }}/{{ cluster_name }}/raw"
+    - "{{ artifacts_dir }}/{{ cluster_name }}/reports"
+  run_once: true
+
+- name: Allow the rootless ISO web container to read the publication directory
+  ansible.builtin.file:
+    path: "{{ artifacts_dir }}/{{ cluster_name }}/iso"
+    state: directory
+    mode: "0755"
+  when: iso_delivery_mode | default('') == 'local_http'
+  run_once: true
+
+- name: Check BMC HTTPS port from the control node
+  ansible.builtin.wait_for:
+    host: "{{ bmc_host_effective }}"
+    port: "{{ bmc_port_effective }}"
+    state: started
+    timeout: "{{ preflight_bmc_port_timeout }}"
+  when: preflight_check_bmc_port | bool

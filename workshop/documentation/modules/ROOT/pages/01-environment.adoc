@@ -1,0 +1,68 @@
+= Module 1 Lab 1: Prepare the Environment
+
+*Before you start:*
+
+* Open xref:environment-details.adoc[Environment Details].
+* Confirm that your workstation has a terminal.
+
+*Prepares you for:* all remaining labs.
+
+*Lab Type:* Foundational.
+
+*Estimated Time:* 20–30 minutes.
+
+[quote]
+Validate tools, credentials, network paths, and repository content before issuing any Redfish power operation.
+
+== Learning Objectives
+
+After completing this lab, you will be able to:
+
+* Install the required control-node tools.
+* Install `community.general`.
+* Verify Redfish connectivity.
+* Run repository tests.
+
+== 1. Create a Python environment
+
+[source,bash]
+----
+python3 -m venv ~/venvs/ocp-redfish
+source ~/venvs/ocp-redfish/bin/activate
+python3 -m pip install --upgrade pip
+python3 -m pip install -r requirements.txt
+----
+
+== 2. Install the collection
+
+[source,bash]
+----
+ansible-galaxy collection install -r requirements.yml
+----
+
+== 3. Validate tools
+
+[source,bash]
+----
+python3 --version
+ansible --version
+curl --version
+jq --version
+podman --version
+----
+
+== 4. Validate the repository
+
+[source,bash]
+----
+python3 tests/test_redfish_filters.py
+./scripts/validate.sh inventories/sample/hosts.yml
+----
+
+== Verification
+
+Confirm that the collection is installed and the normalization tests pass.
+
+== Conclusion
+
+You prepared the control node and validated the repository before contacting production hardware.

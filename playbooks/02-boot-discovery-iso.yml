@@ -1,0 +1,15 @@
+---
+- name: Create Assisted Installer discovery ISO and boot bare-metal hosts
+  hosts: baremetal
+  gather_facts: false
+  connection: local
+  any_errors_fatal: true
+  roles:
+    - role: preflight
+    - role: bmc_discovery
+    - role: assisted_auth
+      run_once: true
+    - role: assisted_cluster
+      run_once: true
+    - role: iso_publish
+    - role: bmc_virtual_media

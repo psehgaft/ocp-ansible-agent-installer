@@ -1,0 +1,26 @@
+---
+- name: Test Redfish virtual media on one or more selected hosts
+  hosts: baremetal
+  gather_facts: false
+  connection: local
+  any_errors_fatal: true
+  pre_tasks:
+    - name: Require an explicit test ISO URL
+      ansible.builtin.assert:
+        that:
+          - test_iso_url is defined
+          - test_iso_url is match('^https?://')
+        fail_msg: >-
+          Pass a BMC-reachable ISO URL with -e test_iso_url=https://server/path/image.iso.
+          Use --limit to constrain this disruptive test to approved non-production hosts.
+      run_once: true
+  roles:
+    - role: preflight
+      vars:
+        preflight_require_cluster_inputs: false
+        preflight_require_secret_files: false
+        preflight_validate_inventory_counts: false
+    - role: bmc_discovery
+    - role: bmc_virtual_media
+      vars:
+        effective_iso_url: "{{ test_iso_url }}"

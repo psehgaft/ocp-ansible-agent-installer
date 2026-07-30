@@ -1,0 +1,5 @@
+name: ocp-redfish-installer
+version: main
+title: OpenShift Assisted Installer with iLO and iDRAC
+nav:
+  - modules/ROOT/nav.adoc

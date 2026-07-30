@@ -1,0 +1,24 @@
+= Environment Details
+
+== Required Infrastructure
+
+* One Linux Ansible control node.
+* Network access to all BMC HTTPS endpoints.
+* At least one non-production server for the disruptive virtual-media test.
+* A BMC-reachable HTTP or HTTPS location for ISO images.
+* Approved DNS, VIP, load-balancer, VLAN, MTU, gateway, and NTP configuration.
+
+== Required Credentials
+
+* HPE iLO and/or Dell iDRAC accounts with Redfish, virtual-media, and power privileges.
+* Red Hat Assisted Installer SaaS offline token or on-premises access token.
+* Red Hat pull secret.
+* SSH public key.
+
+== Safety Rules
+
+* Run discovery before power operations.
+* Use `--limit` for the first virtual-media test.
+* Use non-production hardware for validation.
+* Never store secrets in Git.
+* Confirm that each BMC can reach the ISO URL before restarting servers.

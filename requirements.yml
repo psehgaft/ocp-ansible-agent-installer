@@ -1,5 +1,4 @@
 ---
 collections:
   - name: community.general
-  - name: dellemc.openmanage
-
+    version: "13.2.0"

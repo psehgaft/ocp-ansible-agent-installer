@@ -1,0 +1,25 @@
+= Final Challenge
+
+A mixed cluster has three problems:
+
+* An iLO host selects the wrong provisioning MAC.
+* An iDRAC host cannot mount the ISO.
+* Registered hosts remain blocked by validation failures.
+
+== Tasks
+
+. Inspect normalized BMC evidence.
+. Configure a deterministic NIC selector.
+. Validate ISO reachability from the BMC network.
+. Review virtual-media categories and resource IDs.
+. Inspect Assisted Installer events and static-network mappings.
+. Repeat read-only discovery.
+. Repeat the one-host virtual-media test.
+. Resume installation only after all blocking conditions are understood.
+
+== Completion Criteria
+
+* Both vendors pass discovery and virtual-media tests.
+* All MAC mappings are deterministic.
+* All blocking validations are resolved.
+* Secrets and artifacts remain outside Git.

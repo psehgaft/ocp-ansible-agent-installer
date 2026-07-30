@@ -1,0 +1,9 @@
+---
+bmc_validate_certs: false
+bmc_ca_path: ""
+bmc_timeout: 120
+bmc_system_id: ""
+bmc_manager_id: ""
+bmc_chassis_id: ""
+provisioning_mac_override: ""
+provisioning_nic_match: ""

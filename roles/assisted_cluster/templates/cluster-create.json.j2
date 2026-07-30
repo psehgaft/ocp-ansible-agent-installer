@@ -1,19 +1,17 @@
 {
-  "name": "{{ cluster_name }}",
-  "openshift_version": "{{ openshift_version }}",
-  "base_dns_domain": "{{ base_dns_domain }}",
+  "name": {{ cluster_name | to_json }},
+  "openshift_version": {{ openshift_version | to_json }},
+  "base_dns_domain": {{ base_dns_domain | to_json }},
   "pull_secret": {{ pull_secret | to_json }},
-  "cpu_architecture": "{{ cpu_architecture | default('x86_64') }}",
-  "control_plane_count": {{ control_plane_count | default(3) }},
-  "api_vips": [{"ip": "{{ api_vip }}"}],
-  "ingress_vips": [{"ip": "{{ ingress_vip }}"}],
-  "machine_networks": [{"cidr": "{{ machine_network_cidr }}"}],
-  "service_network_cidr": "{{ service_network_cidr | default('172.30.0.0/16') }}",
-  "cluster_network_cidr": "{{ cluster_network_cidr | default('10.128.0.0/14') }}",
-  "cluster_network_host_prefix": {{ cluster_network_host_prefix | default(23) }},
-  "additional_ntp_source": "{{ (ntp_servers | default([])) | join(',') }}",
-  "ssh_public_key": "{{ ssh_public_key }}",
-  "platform": {
-    "type": "baremetal"
-  }
+  "cpu_architecture": {{ cpu_architecture | default('x86_64') | to_json }},
+  "control_plane_count": {{ control_plane_count | int }},
+  "api_vips": [{"ip": {{ api_vip | to_json }}}],
+  "ingress_vips": [{"ip": {{ ingress_vip | to_json }}}],
+  "machine_networks": [{"cidr": {{ machine_network_cidr | to_json }}}],
+  "service_network_cidr": {{ service_network_cidr | to_json }},
+  "cluster_network_cidr": {{ cluster_network_cidr | to_json }},
+  "cluster_network_host_prefix": {{ cluster_network_host_prefix | int }},
+  "additional_ntp_source": {{ ntp_servers | default([]) | join(',') | to_json }},
+  "ssh_public_key": {{ ssh_public_key | to_json }},
+  "platform": {"type": "baremetal"}
 }

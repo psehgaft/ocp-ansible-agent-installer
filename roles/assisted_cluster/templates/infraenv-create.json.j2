@@ -1,22 +1,33 @@
 {
-  "name": "{{ cluster_name }}-infraenv",
-  "cluster_id": "{{ cluster_id }}",
+  "name": {{ (cluster_name ~ '-infraenv') | to_json }},
+  "cluster_id": {{ cluster_id | to_json }},
   "pull_secret": {{ pull_secret | to_json }},
-  "ssh_authorized_key": {{ ssh_public_key | trim | to_json }},
-  "image_type": "minimal-iso",
-  "additional_ntp_sources": "{{ ntp_servers | join(',') }}",
-  "openshift_version": "{{ openshift_version }}",
+  "ssh_authorized_key": {{ ssh_public_key | to_json }},
+  "image_type": {{ assisted_image_type | default('minimal-iso') | to_json }},
+  "additional_ntp_sources": {{ ntp_servers | default([]) | join(',') | to_json }},
+  "openshift_version": {{ openshift_version | to_json }},
+  "cpu_architecture": {{ cpu_architecture | default('x86_64') | to_json }},
   "static_network_config": [
-{% for h in ansible_play_batch %}
+{% for h in groups['baremetal'] %}
     {
-      "network_yaml": {{ lookup('template', 'nmstate.yaml.j2', template_vars={'target_host': h}) | trim | to_json }},
+      "network_yaml": {{ lookup('ansible.builtin.template', 'nmstate.yaml.j2', template_vars={'target_host': h}) | trim | to_json }},
       "mac_interface_map": [
-      {% for interface in hostvars[h].flat_nics %}
+{% set explicit_mac_map = hostvars[h].mac_interface_map_override | default([]) %}
+{% if explicit_mac_map | length > 0 %}
+{% for interface in explicit_mac_map %}
         {
-          "mac_address": "{{ interface.MACAddress }}",
-          "logical_nic_name": "nic{{ loop.index0 }}"
+          "mac_address": {{ interface.mac_address | lower | to_json }},
+          "logical_nic_name": {{ interface.logical_nic_name | to_json }}
         }{% if not loop.last %},{% endif %}
-      {% endfor %}
+{% endfor %}
+{% else %}
+{% for interface in hostvars[h].bmc_nics %}
+        {
+          "mac_address": {{ interface.mac_address | to_json }},
+          "logical_nic_name": {{ ('nic' ~ loop.index0) | to_json }}
+        }{% if not loop.last %},{% endif %}
+{% endfor %}
+{% endif %}
       ]
     }{% if not loop.last %},{% endif %}
 {% endfor %}

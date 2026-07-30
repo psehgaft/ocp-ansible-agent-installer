@@ -1,0 +1,32 @@
+= Appendix
+
+== Command Reference
+
+[source,bash]
+----
+make collections
+make validate INVENTORY=inventories/lab/hosts.yml
+make discover INVENTORY=inventories/lab/hosts.yml
+make boot INVENTORY=inventories/lab/hosts.yml
+make install INVENTORY=inventories/lab/hosts.yml
+make eject INVENTORY=inventories/lab/hosts.yml
+----
+
+== Evidence
+
+[source,bash]
+----
+find artifacts/CLUSTER -type f -maxdepth 3 -print
+jq . artifacts/CLUSTER/raw/bmc-HOST.json
+jq . artifacts/CLUSTER/raw/events.json
+----
+
+== Cleanup
+
+[source,bash]
+----
+podman rm -f ocp-assisted-iso-httpd || true
+unset KUBECONFIG
+----
+
+See `docs/troubleshooting.md` in the repository for detailed failure analysis.
