@@ -1,0 +1,28 @@
+---
+- name: Install and configure optional OpenShift platform operators
+  hosts: localhost
+  gather_facts: false
+  connection: local
+  vars:
+    oc_env:
+      KUBECONFIG: "{{ platform_operators_kubeconfig }}"
+  pre_tasks:
+    - name: Validate platform operator prerequisites
+      ansible.builtin.assert:
+        that:
+          - platform_operators_kubeconfig is defined
+          - platform_operators_kubeconfig | length > 0
+          - oc_bin is defined
+          - operator_source is defined
+          - operator_source_namespace is defined
+
+  roles:
+    - role: openshift_virtualization_operator
+      when: install_openshift_virtualization_operator | bool
+      tags: [virtualization]
+    - role: odf_operator
+      when: install_odf_operator | bool
+      tags: [odf]
+    - role: cluster_baremetal_operator
+      when: configure_cluster_baremetal_operator | bool
+      tags: [baremetal]
