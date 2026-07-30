@@ -1,0 +1,77 @@
+---
+- name: Validate ODF variables
+  ansible.builtin.assert:
+    that:
+      - odf_install_plan_approval in ['Automatic', 'Manual']
+      - odf_channel | length > 0
+      - not odf_create_operand | bool or odf_operand_manifest | trim | length > 0
+    fail_msg: >-
+      Set a reviewed odf_operand_manifest before enabling odf_create_operand.
+      ODF topology, devices, capacity, and failure domains are environment-specific.
+
+- name: Apply ODF OLM resources
+  ansible.builtin.command: "{{ oc_bin | default('oc') }} apply -f -"
+  args:
+    stdin: |
+      apiVersion: v1
+      kind: Namespace
+      metadata:
+        name: {{ odf_namespace }}
+      ---
+      apiVersion: operators.coreos.com/v1
+      kind: OperatorGroup
+      metadata:
+        name: {{ odf_operatorgroup }}
+        namespace: {{ odf_namespace }}
+      spec:
+        targetNamespaces:
+          - {{ odf_namespace }}
+      ---
+      apiVersion: operators.coreos.com/v1alpha1
+      kind: Subscription
+      metadata:
+        name: {{ odf_subscription_name }}
+        namespace: {{ odf_namespace }}
+      spec:
+        channel: {{ odf_channel }}
+        installPlanApproval: {{ odf_install_plan_approval }}
+        name: {{ odf_package_name }}
+        source: {{ operator_source }}
+        sourceNamespace: {{ operator_source_namespace }}
+      {% if odf_starting_csv | length > 0 %}
+        startingCSV: {{ odf_starting_csv }}
+      {% endif %}
+  environment: "{{ oc_env }}"
+  register: _odf_apply
+  changed_when: "'created' in _odf_apply.stdout or 'configured' in _odf_apply.stdout"
+
+- name: Wait for ODF installed CSV
+  when: odf_install_plan_approval == 'Automatic'
+  ansible.builtin.command: >-
+    {{ oc_bin | default('oc') }} -n {{ odf_namespace }} get subscription {{ odf_subscription_name }}
+    -o jsonpath='{.status.installedCSV}'
+  environment: "{{ oc_env }}"
+  register: _odf_csv
+  retries: "{{ odf_operator_retries }}"
+  delay: "{{ odf_operator_delay }}"
+  until: _odf_csv.stdout | length > 0
+  changed_when: false
+
+- name: Wait for ODF CSV to succeed
+  when: odf_install_plan_approval == 'Automatic'
+  ansible.builtin.command: >-
+    {{ oc_bin | default('oc') }} -n {{ odf_namespace }} wait csv/{{ _odf_csv.stdout }}
+    --for=jsonpath='{.status.phase}'=Succeeded --timeout=30m
+  environment: "{{ oc_env }}"
+  changed_when: false
+
+- name: Apply reviewed ODF operand manifest
+  when:
+    - odf_install_plan_approval == 'Automatic'
+    - odf_create_operand | bool
+  ansible.builtin.command: "{{ oc_bin | default('oc') }} apply -f -"
+  args:
+    stdin: "{{ odf_operand_manifest }}"
+  environment: "{{ oc_env }}"
+  register: _odf_operand_apply
+  changed_when: "'created' in _odf_operand_apply.stdout or 'configured' in _odf_operand_apply.stdout"
