@@ -1,0 +1,73 @@
+---
+- name: Validate Cluster Baremetal Operator role variables
+  ansible.builtin.assert:
+    that:
+      - oc_bin | default('oc') | length > 0
+      - baremetal_provisioning_network in ['Disabled', 'Managed', 'Unmanaged']
+      - >-
+        baremetal_provisioning_network == 'Disabled' or
+        (
+          baremetal_provisioning_interface | length > 0 and
+          baremetal_provisioning_ip | length > 0 and
+          baremetal_provisioning_network_cidr | length > 0
+        )
+    fail_msg: >-
+      Managed or Unmanaged provisioning requires an interface, provisioning IP,
+      and provisioning network CIDR. Review the baremetal_* variables.
+
+- name: Verify that the baremetal cluster capability is installed
+  ansible.builtin.command: >-
+    {{ oc_bin | default('oc') }} get clusteroperator {{ baremetal_clusteroperator_name }} -o name
+  environment: "{{ oc_env }}"
+  register: _baremetal_clusteroperator
+  changed_when: false
+  failed_when: false
+
+- name: Fail when the Cluster Baremetal Operator is not part of the cluster payload
+  ansible.builtin.fail:
+    msg: >-
+      clusteroperator/{{ baremetal_clusteroperator_name }} was not found. The Cluster Baremetal
+      Operator is delivered by the Cluster Version Operator and cannot be installed from
+      OperatorHub. Confirm that the Baremetal capability was enabled during cluster installation.
+  when: _baremetal_clusteroperator.rc != 0
+
+- name: Create or update the Provisioning custom resource
+  when: baremetal_create_provisioning_cr | bool
+  ansible.builtin.command: "{{ oc_bin | default('oc') }} apply -f -"
+  args:
+    stdin: |
+      apiVersion: metal3.io/v1alpha1
+      kind: Provisioning
+      metadata:
+        name: {{ baremetal_provisioning_name }}
+      spec:
+        provisioningNetwork: {{ baremetal_provisioning_network | quote }}
+        watchAllNamespaces: {{ baremetal_watch_all_namespaces | bool | lower }}
+      {% if baremetal_provisioning_network != 'Disabled' %}
+        provisioningInterface: {{ baremetal_provisioning_interface | quote }}
+        provisioningIP: {{ baremetal_provisioning_ip | quote }}
+        provisioningNetworkCIDR: {{ baremetal_provisioning_network_cidr | quote }}
+      {% if baremetal_provisioning_dhcp_range | length > 0 %}
+        provisioningDHCPRange: {{ baremetal_provisioning_dhcp_range | quote }}
+      {% endif %}
+      {% endif %}
+  environment: "{{ oc_env }}"
+  register: _baremetal_provisioning_apply
+  changed_when: "'created' in _baremetal_provisioning_apply.stdout or 'configured' in _baremetal_provisioning_apply.stdout"
+
+- name: Wait for the Cluster Baremetal Operator to become available
+  ansible.builtin.command: >-
+    {{ oc_bin | default('oc') }} get clusteroperator {{ baremetal_clusteroperator_name }}
+    -o jsonpath='{range .status.conditions[?(@.type=="Available")]}{.status}{end}'
+  environment: "{{ oc_env }}"
+  register: _baremetal_available
+  retries: "{{ baremetal_operator_retries }}"
+  delay: "{{ baremetal_operator_delay }}"
+  until: _baremetal_available.stdout | trim == 'True'
+  changed_when: false
+
+- name: Verify the BareMetalHost CRD
+  when: baremetal_require_bmh_crd | bool
+  ansible.builtin.command: "{{ oc_bin | default('oc') }} get crd baremetalhosts.metal3.io -o name"
+  environment: "{{ oc_env }}"
+  changed_when: false
