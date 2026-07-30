@@ -42,8 +42,8 @@ ntp_servers:
 
 # REQUIRED: Choose single or bond for the primary installation interface.
 install_network_mode: "bond"  # single | bond
-install_network_interface: "nic0"       # Used when mode=single.
-install_network_bond_name: "bond0"      # Used when mode=bond.
+install_network_interface: "nic0"
+install_network_bond_name: "bond0"
 install_network_bond_ports:
   - "nic0"
   - "nic1"
@@ -58,10 +58,8 @@ ssh_public_key_file: "./secrets/id_rsa.pub"
 # BMC / Redfish settings.
 # =============================================================================
 
-# Use true with a trusted CA in production. False is intended only for labs.
 bmc_validate_certs: false
 # bmc_ca_path: "/etc/pki/ca-trust/source/anchors/bmc-ca.pem"
-
 bmc_timeout: 120
 bmc_boot_device: "Cd"
 bmc_virtual_media_category: "Manager"  # Manager | Systems
@@ -70,34 +68,19 @@ bmc_power_command: "PowerForceRestart"
 bmc_wait_for_node_ssh: true
 bmc_boot_wait_delay: 30
 bmc_boot_wait_timeout: 1200
-
-# Optional per-host override when automatic NIC selection is not acceptable.
-# Put provisioning_mac_override in the host entry, for example:
-# provisioning_mac_override: "aa:bb:cc:dd:ee:ff"
-# You can also use a regex against NIC name/ID:
-# provisioning_nic_match: "Embedded.1-1|LOM 1"
 provisioning_nic_match: ""
 
 # =============================================================================
 # Discovery ISO delivery.
 # =============================================================================
 
-# local_http downloads the ISO and starts a Podman web server on the control node.
-# existing_http uses iso_existing_url.
-# direct_url gives the Assisted Installer image URL directly to the BMC.
 iso_delivery_mode: "local_http"  # local_http | existing_http | direct_url
-
-# REQUIRED for local_http: address reachable from every iLO/iDRAC management network.
 iso_http_advertise_address: "CHANGE_ME_CONTROL_NODE_IP"
 iso_http_bind_address: "0.0.0.0"
 iso_http_port: 8080
 iso_http_container_name: "ocp-assisted-iso-httpd"
 iso_http_container_image: "registry.access.redhat.com/ubi9/httpd-24:latest"
-
-# REQUIRED only for existing_http.
 iso_existing_url: "https://CHANGE_ME_WEB_SERVER/discovery.iso"
-
-# Assisted Installer ISO type.
 assisted_image_type: "minimal-iso"  # minimal-iso | full-iso
 
 # =============================================================================
@@ -107,8 +90,6 @@ assisted_image_type: "minimal-iso"  # minimal-iso | full-iso
 artifacts_dir: "./artifacts"
 output_kubeconfig: "{{ artifacts_dir }}/{{ cluster_name }}/auth/kubeconfig"
 output_kubeadmin_password: "{{ artifacts_dir }}/{{ cluster_name }}/auth/kubeadmin-password"
-
-# Reuse persisted Assisted Installer state in artifacts/raw on reruns.
 assisted_reuse_state: true
 assisted_host_registration_retries: 120
 assisted_host_registration_delay: 10
@@ -116,3 +97,34 @@ assisted_ready_retries: 180
 assisted_ready_delay: 20
 assisted_install_retries: 360
 assisted_install_delay: 20
+
+# =============================================================================
+# Optional day-2 platform operators.
+# =============================================================================
+
+oc_bin: "oc"
+platform_operators_kubeconfig: "{{ output_kubeconfig }}"
+operator_source: "redhat-operators"
+operator_source_namespace: "openshift-marketplace"
+
+# Disabled by default so the base cluster installation remains independent.
+install_openshift_virtualization_operator: false
+install_odf_operator: false
+configure_cluster_baremetal_operator: false
+
+# OpenShift Virtualization.
+virtualization_channel: "stable"
+virtualization_install_plan_approval: "Automatic"  # Automatic | Manual
+virtualization_create_hyperconverged: true
+
+# ODF must match the OpenShift minor version.
+odf_channel: "stable-4.18"
+odf_install_plan_approval: "Automatic"  # Automatic | Manual
+odf_create_operand: false
+# Supply a complete reviewed StorageSystem/StorageCluster manifest before enabling.
+odf_operand_manifest: ""
+
+# Cluster Baremetal Operator is CVO-managed, not an OperatorHub package.
+baremetal_create_provisioning_cr: false
+baremetal_provisioning_network: "Disabled"  # Disabled | Managed | Unmanaged
+baremetal_watch_all_namespaces: false
