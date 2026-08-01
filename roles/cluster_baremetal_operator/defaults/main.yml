@@ -1,0 +1,14 @@
+---
+baremetal_clusteroperator_name: "baremetal"
+baremetal_namespace: "openshift-machine-api"
+baremetal_create_provisioning_cr: false
+baremetal_provisioning_name: "provisioning-configuration"
+baremetal_provisioning_network: "Disabled"
+baremetal_watch_all_namespaces: false
+baremetal_provisioning_interface: ""
+baremetal_provisioning_ip: ""
+baremetal_provisioning_network_cidr: ""
+baremetal_provisioning_dhcp_range: ""
+baremetal_operator_retries: 120
+baremetal_operator_delay: 10
+baremetal_require_bmh_crd: true

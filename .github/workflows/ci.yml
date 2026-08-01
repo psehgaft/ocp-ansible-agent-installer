@@ -1,0 +1,30 @@
+name: Validate Ansible repository
+
+on:
+  workflow_dispatch:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install Python dependencies
+        run: python -m pip install --upgrade pip && python -m pip install -r requirements.txt
+      - name: Install Ansible collections
+        run: ansible-galaxy collection install -r requirements.yml
+      - name: Prepare sample Vault variables
+        run: cp inventories/sample/group_vars/vault.yml.example inventories/sample/group_vars/vault.yml
+      - name: Validate repository
+        run: ./scripts/validate.sh inventories/sample/hosts.yml

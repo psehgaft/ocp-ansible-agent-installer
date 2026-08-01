@@ -1,0 +1,12 @@
+---
+virtualization_namespace: "openshift-cnv"
+virtualization_operatorgroup: "kubevirt-hyperconverged-group"
+virtualization_subscription_name: "hco-operatorhub"
+virtualization_package_name: "kubevirt-hyperconverged"
+virtualization_channel: "stable"
+virtualization_install_plan_approval: "Automatic"
+virtualization_starting_csv: ""
+virtualization_create_hyperconverged: true
+virtualization_hyperconverged_name: "kubevirt-hyperconverged"
+virtualization_operator_retries: 120
+virtualization_operator_delay: 10

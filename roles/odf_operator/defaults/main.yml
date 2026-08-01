@@ -1,0 +1,12 @@
+---
+odf_namespace: "openshift-storage"
+odf_operatorgroup: "openshift-storage-operatorgroup"
+odf_subscription_name: "odf-operator"
+odf_package_name: "odf-operator"
+odf_channel: "stable-4.18"
+odf_install_plan_approval: "Automatic"
+odf_starting_csv: ""
+odf_create_operand: false
+odf_operand_manifest: ""
+odf_operator_retries: 120
+odf_operator_delay: 10
