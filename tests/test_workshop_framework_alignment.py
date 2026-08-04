@@ -97,9 +97,9 @@ def test_assisted_installer_uses_generic_redfish_contract() -> None:
     discovery = (ROOT / "playbooks/day0/discover-bmc.yml").read_text(encoding="utf-8")
     preflight = (ROOT / "playbooks/00-preflight.yml").read_text(encoding="utf-8")
     install = (ROOT / "playbooks/day0/install.yml").read_text(encoding="utf-8")
-    bmc_defaults = (ROOT / "roles/bmc_discovery/defaults/main.yml").read_text(encoding="utf-8")
+    sample_inventory = (ROOT / "inventories/sample/hosts.yml").read_text(encoding="utf-8")
 
-    combined = "\n".join((discovery, preflight, install, bmc_defaults))
+    combined = "\n".join((discovery, preflight, install, sample_inventory))
     assert "bmc_discovery" in combined
     assert "bmc_endpoint" in combined
     assert "role: idrac_discovery" not in combined
@@ -110,10 +110,12 @@ def test_assisted_installer_retains_safety_and_output_contracts() -> None:
         encoding="utf-8"
     )
     install = (ROOT / "playbooks/day0/install.yml").read_text(encoding="utf-8")
+    post_install = (ROOT / "roles/post_install/tasks/main.yml").read_text(encoding="utf-8")
     readme = (ROOT / "README.md").read_text(encoding="utf-8")
 
     assert "--limit" in readme
     assert "test_iso_url" in virtual_media
-    assert "kubeconfig" in install.lower()
-    assert "kubeadmin" in install.lower()
-    assert "artifacts" in install.lower()
+    assert "role: post_install" in install
+    assert "kubeconfig" in post_install.lower()
+    assert "kubeadmin" in post_install.lower()
+    assert "artifacts" in post_install.lower()
