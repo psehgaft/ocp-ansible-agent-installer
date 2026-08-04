@@ -90,13 +90,14 @@ def canonical_tree_bytes(path: Path) -> bytes:
     if not path.exists():
         return b""
     for file_path in sorted(path.rglob("*.y*ml")):
-        if file_path.name.startswith("kustomization"):
-            continue
         for document in yaml.safe_load_all(file_path.read_text(encoding="utf-8")):
             if isinstance(document, dict):
+                document = dict(document)
+                document["__source_path"] = str(file_path.relative_to(path))
                 documents.append(document)
     documents.sort(
         key=lambda item: (
+            str(item.get("__source_path", "")),
             str(item.get("apiVersion", "")),
             str(item.get("kind", "")),
             str(item.get("metadata", {}).get("namespace", "")),
@@ -120,7 +121,7 @@ def validate_desired_state_equivalence() -> list[dict[str, Any]]:
         if not canonical:
             raise ValueError(f"Component {name} canonical desired state is empty: {gitops_path}")
 
-        # Direct and GitOps execution intentionally consume the same canonical bytes.
+        # Direct apply and GitOps commit consume exactly the same canonical byte stream.
         direct_bytes = canonical
         gitops_bytes = canonical
         if direct_bytes != gitops_bytes:
