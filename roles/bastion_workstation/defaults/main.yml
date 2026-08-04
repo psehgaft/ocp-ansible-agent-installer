@@ -1,0 +1,34 @@
+---
+bastion_openshift_version: "4.18"
+bastion_kubernetes_minor: "v1.31"
+bastion_helm_version: "v3.17.3"
+bastion_kustomize_version: "v5.6.0"
+bastion_architecture: "amd64"
+bastion_install_kubelet: true
+bastion_enable_kubelet: false
+bastion_install_python_packages: true
+bastion_python_packages:
+  - ansible-core>=2.18,<2.22
+  - jinja2>=3.1
+  - kubernetes>=30.1
+  - openshift>=0.13
+  - PyYAML>=6.0
+  - jsonschema>=4.0
+bastion_system_packages:
+  - bash-completion
+  - bind-utils
+  - buildah
+  - curl
+  - git
+  - gzip
+  - jq
+  - make
+  - openssl
+  - podman
+  - python3
+  - python3-pip
+  - rsync
+  - skopeo
+  - tar
+  - unzip
+  - wget
