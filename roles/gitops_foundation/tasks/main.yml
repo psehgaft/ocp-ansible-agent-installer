@@ -1,0 +1,66 @@
+---
+- name: Validate GitOps foundation inputs
+  ansible.builtin.assert:
+    that:
+      - platform_deployment_mode in ['direct', 'render', 'gitops']
+      - gitops_environment in ['lab', 'development', 'testing', 'production']
+      - gitops_secret_strategy in gitops_allowed_secret_strategies
+      - gitops_git_write_enabled is boolean
+    fail_msg: Invalid GitOps foundation configuration.
+
+- name: Reject plaintext secret rendering
+  ansible.builtin.assert:
+    that:
+      - platform_plaintext_secrets | default({}) | length == 0
+    fail_msg: >-
+      Plaintext secrets are not permitted in rendered GitOps output. Use
+      External Secrets, Sealed Secrets, SOPS, or Vault references.
+
+- name: Ensure render directory exists
+  ansible.builtin.file:
+    path: "{{ gitops_render_dir }}"
+    state: directory
+    mode: '0750'
+  when: platform_deployment_mode in ['render', 'gitops']
+
+- name: Render desired-state tree
+  ansible.builtin.copy:
+    src: "{{ gitops_source_dir }}/"
+    dest: "{{ gitops_render_dir }}/"
+    mode: preserve
+  when: platform_deployment_mode in ['render', 'gitops']
+
+- name: Apply selected environment directly
+  kubernetes.core.k8s:
+    state: present
+    src: "{{ gitops_source_dir }}/overlays/{{ gitops_environment }}"
+    apply: true
+  when: platform_deployment_mode == 'direct'
+
+- name: Bootstrap Argo CD project
+  kubernetes.core.k8s:
+    state: present
+    src: "{{ gitops_source_dir }}/bootstrap/projects/platform-project.yaml"
+    apply: true
+  when: platform_deployment_mode == 'gitops'
+
+- name: Bootstrap root Argo CD application
+  kubernetes.core.k8s:
+    state: present
+    src: "{{ gitops_source_dir }}/bootstrap/root-application/root-application.yaml"
+    apply: true
+  when: platform_deployment_mode == 'gitops'
+
+- name: Report Git write policy
+  ansible.builtin.debug:
+    msg: >-
+      Generated files remain local. Automatic Git commit/push is
+      {{ 'enabled explicitly' if gitops_git_write_enabled else 'disabled' }}.
+
+- name: Block implicit Git writes
+  ansible.builtin.assert:
+    that:
+      - not gitops_git_write_enabled or gitops_git_write_workflow_confirmed | default(false) | bool
+    fail_msg: >-
+      Git writes require gitops_git_write_enabled=true and
+      gitops_git_write_workflow_confirmed=true.
