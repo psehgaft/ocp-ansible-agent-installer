@@ -1,0 +1,8 @@
+---
+- name: Generate consolidated Day-2 reports
+  hosts: localhost
+  gather_facts: true
+  roles:
+    - role: consolidated_report
+      vars:
+        consolidated_report_results: "{{ day2_report_results | default({}) }}"
