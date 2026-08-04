@@ -1,0 +1,69 @@
+name: Quality - Static
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  static-validation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install Python quality tools
+        run: pip install -r requirements-ci.txt
+      - name: Install Ansible collections
+        run: ansible-galaxy collection install -r collections/requirements.yml
+      - name: YAML parsing and yamllint
+        run: |
+          python scripts/validate_yaml.py
+          yamllint .
+      - name: Ansible lint
+        run: ansible-lint
+      - name: Python syntax and Ruff
+        run: |
+          python -m compileall -q .
+          ruff check .
+      - name: Pytest
+        run: pytest -q
+      - name: Inventory validation
+        run: python scripts/validate_inventories.py
+      - name: Ansible syntax checks
+        run: python scripts/ansible_syntax_check.py
+      - name: Shellcheck
+        uses: ludeeus/action-shellcheck@master
+      - name: Actionlint
+        uses: raven-actions/actionlint@v2
+      - name: Install Kustomize
+        uses: imranismail/setup-kustomize@v2
+      - name: Kustomize builds
+        run: python scripts/validate_kustomize.py
+      - name: Install Helm
+        uses: azure/setup-helm@v4
+      - name: Helm lint and template
+        run: python scripts/validate_helm.py
+      - name: Install kubeconform
+        run: |
+          curl -sSLo kubeconform.tar.gz https://github.com/yannh/kubeconform/releases/download/v0.6.7/kubeconform-linux-amd64.tar.gz
+          tar -xzf kubeconform.tar.gz
+          sudo mv kubeconform /usr/local/bin/
+      - name: Kubernetes and Argo CD schema validation
+        run: python scripts/validate_kubernetes_manifests.py
+      - name: Secret scanning
+        uses: gitleaks/gitleaks-action@v2
+      - name: Build workshop
+        run: |
+          npm install -g @antora/cli @antora/site-generator
+          antora antora-playbook.yml
+      - name: Documentation link validation
+        uses: lycheeverse/lychee-action@v2
+        with:
+          args: --no-progress --exclude-mail '**/*.md' '**/*.adoc'
