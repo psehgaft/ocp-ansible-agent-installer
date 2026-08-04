@@ -1,0 +1,7 @@
+---
+- name: Configure node-level resources
+  hosts: localhost
+  gather_facts: false
+  roles:
+    - role: day2_cluster_operations
+      vars: {day2_cluster_domain: nodes, day2_cluster_resources: "{{ node_configuration_resources | default([]) }}"}
