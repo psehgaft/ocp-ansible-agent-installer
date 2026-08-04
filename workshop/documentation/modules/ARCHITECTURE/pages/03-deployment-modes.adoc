@@ -1,0 +1,38 @@
+= Direct, Render, and GitOps Deployment Modes
+
+== Direct
+
+Ansible applies resources with `kubernetes.core.k8s` and performs readiness validation.
+
+[source,bash]
+----
+ansible-playbook playbooks/install-platform-operator.yml \
+  -e operator_lifecycle_component=gitops \
+  -e operator_lifecycle_deployment_mode=direct
+----
+
+== Render
+
+Ansible produces desired-state manifests without mutating the cluster.
+
+[source,bash]
+----
+ansible-playbook playbooks/install-platform-operator.yml \
+  -e operator_lifecycle_component=acm \
+  -e operator_lifecycle_deployment_mode=render
+----
+
+Review rendered YAML with `kustomize build` and `kubeconform` before promotion.
+
+== GitOps
+
+Ansible renders desired state and bootstraps OpenShift GitOps/Argo CD resources. Git is the production source of truth. Generated files are not committed automatically unless a separate, explicit Git-write workflow is enabled.
+
+[source,bash]
+----
+ansible-playbook playbooks/gitops-foundation.yml \
+  -e platform_deployment_mode=gitops \
+  -e gitops_environment=production
+----
+
+Kustomize is the default composition mechanism. Use Helm only when chart lifecycle, templating, or upstream support provides concrete value.
