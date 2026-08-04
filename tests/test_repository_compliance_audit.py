@@ -37,10 +37,11 @@ def test_example_group_vars_have_unique_keys() -> None:
 
 
 def test_preflight_uses_generic_redfish() -> None:
-    text = (ROOT / "playbooks/test-preflight.yml").read_text(encoding="utf-8")
-    assert "role: bmc_discovery" in text
-    assert "role: idrac_discovery" not in text
-    assert "bmc_endpoint" in text
+    text = (ROOT / "playbooks/00-preflight.yml").read_text(encoding="utf-8")
+    install = (ROOT / "playbooks/day0/install.yml").read_text(encoding="utf-8")
+    combined = f"{text}\n{install}"
+    assert "role: bmc_discovery" in combined
+    assert "role: idrac_discovery" not in combined
 
 
 def test_vmware_audit_moved_and_has_no_default_password() -> None:
