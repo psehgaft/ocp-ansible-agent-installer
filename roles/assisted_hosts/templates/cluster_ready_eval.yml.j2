@@ -1,7 +1,0 @@
-{% set c = cluster | default({}) %}
-{% set status = c.status | default('') %}
-{% set fatal = status in (fatal_cluster_statuses | default([])) %}
-{% set cval = (c.validations_info | default('[]') | from_json) %}
-{% set cfail = cval | map(attribute='validations') | list | sum(start=[]) | selectattr('status','equalto','failure') | list %}
-
-ready: {{ ((status == 'ready') and (not fatal) and (cfail | length == 0)) | bool }}
