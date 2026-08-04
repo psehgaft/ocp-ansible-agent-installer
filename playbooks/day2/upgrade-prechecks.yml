@@ -6,5 +6,10 @@
     - role: day2_operational_workflow
       vars:
         day2_operation_domain: upgrade-prechecks
-        day2_operation_resources: []
-        day2_operation_checks: "{{ upgrade_precheck_commands | default([['oc','get','clusterversion','version','-o','yaml'], ['oc','get','clusteroperators']]) }}"
+        day2_operation_resources: "{{ upgrade_precheck_resources | default([]) }}"
+        day2_operation_checks: >-
+          {{ upgrade_precheck_commands |
+             default([
+               ['oc', 'get', 'clusterversion', 'version', '-o', 'yaml'],
+               ['oc', 'get', 'clusteroperators']
+             ]) }}

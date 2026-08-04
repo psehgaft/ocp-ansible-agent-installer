@@ -6,5 +6,10 @@
     - role: day2_operational_workflow
       vars:
         day2_operation_domain: etcd-health
-        day2_operation_resources: []
-        day2_operation_checks: "{{ etcd_health_commands | default([['oc','get','clusteroperator','etcd','-o','yaml'], ['oc','get','pods','-n','openshift-etcd','-o','wide']]) }}"
+        day2_operation_resources: "{{ etcd_health_resources | default([]) }}"
+        day2_operation_checks: >-
+          {{ etcd_health_commands |
+             default([
+               ['oc', 'get', 'clusteroperator', 'etcd', '-o', 'yaml'],
+               ['oc', 'get', 'pods', '-n', 'openshift-etcd', '-o', 'wide']
+             ]) }}

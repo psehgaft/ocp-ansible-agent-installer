@@ -6,7 +6,7 @@ INVENTORY="${1:-inventories/sample/hosts.yml}"
 python3 - <<'PY_VALIDATE'
 from pathlib import Path
 import py_compile
-import yaml
+yaml = __import__('yaml')
 
 root = Path('.')
 errors = []
@@ -39,6 +39,7 @@ PY_VALIDATE
 python3 tests/test_redfish_filters.py
 python3 scripts/offline_validate.py
 python3 scripts/validate_input_contracts.py
+python3 scripts/validate_repository_assets.py
 
 if command -v ansible-inventory >/dev/null 2>&1; then
   ansible-inventory -i "$INVENTORY" --list >/dev/null
