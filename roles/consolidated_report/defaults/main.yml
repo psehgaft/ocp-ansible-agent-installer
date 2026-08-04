@@ -1,0 +1,4 @@
+---
+consolidated_report_dir: "{{ playbook_dir }}/../../reports/output"
+consolidated_report_name: day2-cluster-operations
+consolidated_report_results: {}
