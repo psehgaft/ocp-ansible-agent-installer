@@ -1,158 +1,344 @@
 ---
-# Declarative framework component catalog.
-# Functional roles are implemented incrementally in subsequent pull requests.
+# Declarative platform component catalog.
+# Operator installation metadata is intentionally separated from operand roles.
 components:
-  assisted_installer:
-    category: day0
-    role: assisted_cluster
-    requires: []
-    deployment_modes: [direct]
-    gitops_path: null
-  redfish:
-    category: day0
-    role: bmc_discovery
-    requires: []
-    deployment_modes: [direct]
-    gitops_path: null
   gitops:
-    category: platform
-    role: gitops_operator
-    requires: []
-    deployment_modes: [direct, render, gitops]
-    gitops_path: gitops/operators/gitops
-  acm:
-    category: management
-    role: acm_operator
-    requires: []
-    recommends: [gitops]
-    deployment_modes: [direct, render, gitops]
-    gitops_path: gitops/operators/acm
-  acs:
-    category: security
-    role: acs_operator
-    requires: []
-    deployment_modes: [direct, render, gitops]
-    gitops_path: gitops/operators/acs
-  odf:
-    category: storage
-    role: odf_operator
-    requires: []
-    deployment_modes: [direct, render, gitops]
-    gitops_path: gitops/operators/odf
-  openshift_virtualization:
-    category: virtualization
-    role: openshift_virtualization_operator
-    requires: []
-    deployment_modes: [direct, render, gitops]
-    gitops_path: gitops/operators/openshift-virtualization
-  metallb:
-    category: networking
-    role: metallb_operator
-    requires: []
-    deployment_modes: [direct, render, gitops]
-    gitops_path: gitops/operators/metallb
-  baremetal_operator:
-    category: infrastructure
-    role: cluster_baremetal_operator
-    requires: []
-    deployment_modes: [direct, render, gitops]
-    gitops_path: gitops/platform/baremetal
-  cert_manager:
-    category: security
-    role: cert_manager_operator
-    requires: []
-    deployment_modes: [direct, render, gitops]
-    gitops_path: gitops/operators/cert-manager
-  rhoso:
-    category: openstack
-    role: rhoso_operator
-    requires: [cert_manager]
-    recommends: [odf]
-    deployment_modes: [direct, render, gitops]
-    gitops_path: gitops/operators/rhoso
-  mta:
-    category: migration
-    role: mta_operator
-    requires: []
-    deployment_modes: [direct, render, gitops]
-    gitops_path: gitops/operators/mta
-  mtv:
-    category: migration
-    role: mtv_operator
-    requires: [openshift_virtualization]
-    deployment_modes: [direct, render, gitops]
-    gitops_path: gitops/operators/mtv
-  pipelines:
+    display_name: Red Hat OpenShift GitOps
     category: cicd
+    enabled: false
+    role: gitops_operator
+    namespace: openshift-gitops-operator
+    installation_type: olm
+    olm: {package: openshift-gitops-operator, channel: latest, source: redhat-operators, source_namespace: openshift-marketplace}
+    requires: []
+    supported_openshift: ["4.18", "4.19"]
+    deployment_modes: [direct, render, gitops]
+    validation_hooks: [subscription_ready, csv_succeeded, operator_workload_ready]
+    gitops: {path: gitops/operators/gitops, sync_wave: 10}
+
+  acm:
+    display_name: Red Hat Advanced Cluster Management
+    category: management
+    enabled: false
+    role: acm_operator
+    namespace: open-cluster-management
+    installation_type: olm
+    olm: {package: advanced-cluster-management, channel: release-2.15, source: redhat-operators, source_namespace: openshift-marketplace}
+    requires: [gitops]
+    supported_openshift: ["4.18", "4.19"]
+    deployment_modes: [direct, render, gitops]
+    validation_hooks: [subscription_ready, csv_succeeded, operator_workload_ready]
+    operands: [acm_hub, acm_observability, acm_governance]
+    gitops: {path: gitops/operators/acm, sync_wave: 20}
+
+  acs:
+    display_name: Red Hat Advanced Cluster Security
+    category: security
+    enabled: false
+    role: acs_operator
+    namespace: rhacs-operator
+    installation_type: olm
+    olm: {package: rhacs-operator, channel: stable, source: redhat-operators, source_namespace: openshift-marketplace}
+    requires: []
+    supported_openshift: ["4.18", "4.19"]
+    deployment_modes: [direct, render, gitops]
+    validation_hooks: [subscription_ready, csv_succeeded, operator_workload_ready]
+    operands: [acs_central, acs_secured_cluster]
+    gitops: {path: gitops/operators/acs, sync_wave: 20}
+
+  openshift_virtualization:
+    display_name: Red Hat OpenShift Virtualization
+    category: virtualization
+    enabled: false
+    role: openshift_virtualization_operator
+    namespace: openshift-cnv
+    installation_type: olm
+    olm: {package: kubevirt-hyperconverged, channel: stable, source: redhat-operators, source_namespace: openshift-marketplace}
+    requires: []
+    supported_openshift: ["4.18", "4.19"]
+    deployment_modes: [direct, render, gitops]
+    validation_hooks: [subscription_ready, csv_succeeded, operator_workload_ready]
+    operands: [hyperconverged]
+    gitops: {path: gitops/operators/openshift-virtualization, sync_wave: 20}
+
+  odf:
+    display_name: Red Hat OpenShift Data Foundation
+    category: storage
+    enabled: false
+    role: odf_operator
+    namespace: openshift-storage
+    installation_type: olm
+    olm: {package: odf-operator, channel: stable-4.18, source: redhat-operators, source_namespace: openshift-marketplace}
+    requires: []
+    supported_openshift: ["4.18", "4.19"]
+    deployment_modes: [direct, render, gitops]
+    validation_hooks: [subscription_ready, csv_succeeded, operator_workload_ready]
+    operands: [storage_system, storage_cluster]
+    gitops: {path: gitops/operators/odf, sync_wave: 20}
+
+  metallb:
+    display_name: MetalLB Operator
+    category: networking
+    enabled: false
+    role: metallb_operator
+    namespace: metallb-system
+    installation_type: olm
+    olm: {package: metallb-operator, channel: stable, source: redhat-operators, source_namespace: openshift-marketplace}
+    requires: []
+    supported_openshift: ["4.18", "4.19"]
+    deployment_modes: [direct, render, gitops]
+    validation_hooks: [subscription_ready, csv_succeeded, operator_workload_ready]
+    operands: [metallb_instance, ip_address_pools, advertisements]
+    gitops: {path: gitops/operators/metallb, sync_wave: 20}
+
+  baremetal_operator:
+    display_name: Cluster Bare Metal Operator Configuration
+    category: infrastructure
+    enabled: false
+    role: cluster_baremetal_operator
+    namespace: openshift-machine-api
+    installation_type: cluster_payload
+    requires: []
+    supported_openshift: ["4.18", "4.19"]
+    deployment_modes: [direct, render, gitops]
+    validation_hooks: [cluster_operator_available, operator_workload_ready]
+    operands: [provisioning_configuration, bare_metal_hosts]
+    gitops: {path: gitops/platform/baremetal, sync_wave: 30}
+
+  cert_manager:
+    display_name: cert-manager Operator for Red Hat OpenShift
+    category: security
+    enabled: false
+    role: cert_manager_operator
+    namespace: cert-manager-operator
+    installation_type: olm
+    olm: {package: openshift-cert-manager-operator, channel: stable-v1, source: redhat-operators, source_namespace: openshift-marketplace}
+    requires: []
+    supported_openshift: ["4.18", "4.19"]
+    deployment_modes: [direct, render, gitops]
+    validation_hooks: [subscription_ready, csv_succeeded, operator_workload_ready]
+    operands: [cluster_issuers, issuers, certificates]
+    gitops: {path: gitops/operators/cert-manager, sync_wave: 20}
+
+  rhoso:
+    display_name: Red Hat OpenStack Services on OpenShift
+    category: openstack
+    enabled: false
+    role: rhoso_operator
+    namespace: openstack-operators
+    installation_type: olm
+    olm: {package: openstack-operator, channel: stable-v1.0, source: redhat-operators, source_namespace: openshift-marketplace}
+    requires: [cert_manager, nmstate]
+    supported_openshift: ["4.18", "4.19"]
+    deployment_modes: [direct, render, gitops]
+    validation_hooks: [subscription_ready, csv_succeeded, operator_workload_ready]
+    operands: [openstack_control_plane, openstack_data_plane]
+    gitops: {path: gitops/operators/rhoso, sync_wave: 30}
+
+  pipelines:
+    display_name: Red Hat OpenShift Pipelines
+    category: cicd
+    enabled: false
     role: pipelines_operator
+    namespace: openshift-operators
+    installation_type: olm
+    olm: {package: openshift-pipelines-operator-rh, channel: latest, source: redhat-operators, source_namespace: openshift-marketplace}
     requires: []
+    supported_openshift: ["4.18", "4.19"]
     deployment_modes: [direct, render, gitops]
-    gitops_path: gitops/operators/pipelines
+    validation_hooks: [subscription_ready, csv_succeeded, operator_workload_ready]
+    gitops: {path: gitops/operators/pipelines, sync_wave: 20}
+
   service_mesh:
+    display_name: Red Hat OpenShift Service Mesh
     category: networking
+    enabled: false
     role: service_mesh_operator
+    namespace: openshift-operators
+    installation_type: olm
+    olm: {package: servicemeshoperator3, channel: stable, source: redhat-operators, source_namespace: openshift-marketplace}
     requires: []
+    supported_openshift: ["4.18", "4.19"]
     deployment_modes: [direct, render, gitops]
-    gitops_path: gitops/operators/service-mesh
+    validation_hooks: [subscription_ready, csv_succeeded, operator_workload_ready]
+    operands: [service_mesh_control_plane]
+    gitops: {path: gitops/operators/service-mesh, sync_wave: 20}
+
   logging:
+    display_name: Red Hat OpenShift Logging
     category: observability
+    enabled: false
     role: logging_operator
-    requires: []
-    recommends: [loki]
+    namespace: openshift-logging
+    installation_type: olm
+    olm: {package: cluster-logging, channel: stable-6.2, source: redhat-operators, source_namespace: openshift-marketplace}
+    requires: [loki]
+    supported_openshift: ["4.18", "4.19"]
     deployment_modes: [direct, render, gitops]
-    gitops_path: gitops/operators/logging
+    validation_hooks: [subscription_ready, csv_succeeded, operator_workload_ready]
+    operands: [cluster_log_forwarder]
+    gitops: {path: gitops/operators/logging, sync_wave: 30}
+
   loki:
+    display_name: Loki Operator
     category: observability
+    enabled: false
     role: loki_operator
+    namespace: openshift-operators-redhat
+    installation_type: olm
+    olm: {package: loki-operator, channel: stable-6.2, source: redhat-operators, source_namespace: openshift-marketplace}
     requires: []
+    supported_openshift: ["4.18", "4.19"]
     deployment_modes: [direct, render, gitops]
-    gitops_path: gitops/operators/loki
+    validation_hooks: [subscription_ready, csv_succeeded, operator_workload_ready]
+    operands: [loki_stack]
+    gitops: {path: gitops/operators/loki, sync_wave: 20}
+
   observability:
+    display_name: Red Hat OpenShift Cluster Observability Operator
     category: observability
+    enabled: false
     role: observability_operator
+    namespace: openshift-cluster-observability-operator
+    installation_type: olm
+    olm: {package: cluster-observability-operator, channel: stable, source: redhat-operators, source_namespace: openshift-marketplace}
     requires: []
+    supported_openshift: ["4.18", "4.19"]
     deployment_modes: [direct, render, gitops]
-    gitops_path: gitops/platform/observability
+    validation_hooks: [subscription_ready, csv_succeeded, operator_workload_ready]
+    operands: [monitoring_stack, ui_plugin]
+    gitops: {path: gitops/operators/observability, sync_wave: 20}
+
   openshift_ai:
+    display_name: Red Hat OpenShift AI
     category: ai
+    enabled: false
     role: openshift_ai_operator
+    namespace: redhat-ods-operator
+    installation_type: olm
+    olm: {package: rhods-operator, channel: stable, source: redhat-operators, source_namespace: openshift-marketplace}
     requires: []
+    supported_openshift: ["4.18", "4.19"]
     deployment_modes: [direct, render, gitops]
-    gitops_path: gitops/operators/openshift-ai
+    validation_hooks: [subscription_ready, csv_succeeded, operator_workload_ready]
+    operands: [data_science_cluster]
+    gitops: {path: gitops/operators/openshift-ai, sync_wave: 20}
+
+  mta:
+    display_name: Migration Toolkit for Applications
+    category: migration
+    enabled: false
+    role: mta_operator
+    namespace: openshift-mta
+    installation_type: olm
+    olm: {package: mta-operator, channel: stable-v8.0, source: redhat-operators, source_namespace: openshift-marketplace}
+    requires: []
+    supported_openshift: ["4.18", "4.19"]
+    deployment_modes: [direct, render, gitops]
+    validation_hooks: [subscription_ready, csv_succeeded, operator_workload_ready]
+    operands: [tackle]
+    gitops: {path: gitops/operators/mta, sync_wave: 20}
+
+  mtv:
+    display_name: Migration Toolkit for Virtualization
+    category: migration
+    enabled: false
+    role: mtv_operator
+    namespace: openshift-mtv
+    installation_type: olm
+    olm: {package: mtv-operator, channel: release-v2.9, source: redhat-operators, source_namespace: openshift-marketplace}
+    requires: [openshift_virtualization]
+    supported_openshift: ["4.18", "4.19"]
+    deployment_modes: [direct, render, gitops]
+    validation_hooks: [subscription_ready, csv_succeeded, operator_workload_ready]
+    operands: [forklift_controller, providers, plans]
+    gitops: {path: gitops/operators/mtv, sync_wave: 30}
+
   sriov:
+    display_name: SR-IOV Network Operator
     category: networking
+    enabled: false
     role: sriov_operator
+    namespace: openshift-sriov-network-operator
+    installation_type: cluster_payload
     requires: []
+    supported_openshift: ["4.18", "4.19"]
     deployment_modes: [direct, render, gitops]
-    gitops_path: gitops/operators/sriov
+    validation_hooks: [cluster_operator_available, operator_workload_ready]
+    operands: [sriov_network_node_policy, sriov_network]
+    gitops: {path: gitops/operators/sriov, sync_wave: 20}
+
   nmstate:
+    display_name: Kubernetes NMState Operator
     category: networking
+    enabled: false
     role: nmstate_operator
+    namespace: openshift-nmstate
+    installation_type: olm
+    olm: {package: kubernetes-nmstate-operator, channel: stable, source: redhat-operators, source_namespace: openshift-marketplace}
     requires: []
+    supported_openshift: ["4.18", "4.19"]
     deployment_modes: [direct, render, gitops]
-    gitops_path: gitops/operators/nmstate
+    validation_hooks: [subscription_ready, csv_succeeded, operator_workload_ready]
+    operands: [nmstate, node_network_configuration_policy]
+    gitops: {path: gitops/operators/nmstate, sync_wave: 20}
+
   ptp:
+    display_name: PTP Operator
     category: telco
+    enabled: false
     role: ptp_operator
+    namespace: openshift-ptp
+    installation_type: olm
+    olm: {package: ptp-operator, channel: stable, source: redhat-operators, source_namespace: openshift-marketplace}
     requires: []
+    supported_openshift: ["4.18", "4.19"]
     deployment_modes: [direct, render, gitops]
-    gitops_path: gitops/operators/ptp
+    validation_hooks: [subscription_ready, csv_succeeded, operator_workload_ready]
+    operands: [ptp_config]
+    gitops: {path: gitops/operators/ptp, sync_wave: 20}
+
   compliance:
+    display_name: Compliance Operator
     category: security
+    enabled: false
     role: compliance_operator
+    namespace: openshift-compliance
+    installation_type: olm
+    olm: {package: compliance-operator, channel: stable, source: redhat-operators, source_namespace: openshift-marketplace}
     requires: []
+    supported_openshift: ["4.18", "4.19"]
     deployment_modes: [direct, render, gitops]
-    gitops_path: gitops/operators/compliance
+    validation_hooks: [subscription_ready, csv_succeeded, operator_workload_ready]
+    operands: [scan_setting_binding, compliance_suite]
+    gitops: {path: gitops/operators/compliance, sync_wave: 20}
+
   external_secrets:
+    display_name: External Secrets Operator
     category: security
+    enabled: false
     role: external_secrets_operator
+    namespace: external-secrets
+    installation_type: olm
+    olm: {package: external-secrets-operator, channel: stable, source: community-operators, source_namespace: openshift-marketplace}
     requires: []
+    supported_openshift: ["4.18", "4.19"]
     deployment_modes: [direct, render, gitops]
-    gitops_path: gitops/operators/external-secrets
+    validation_hooks: [subscription_ready, csv_succeeded, operator_workload_ready]
+    operands: [cluster_secret_store, external_secret]
+    gitops: {path: gitops/operators/external-secrets, sync_wave: 20}
+
   quay:
+    display_name: Red Hat Quay Operator
     category: registry
+    enabled: false
     role: quay_operator
-    requires: []
-    recommends: [cert_manager]
+    namespace: openshift-operators
+    installation_type: olm
+    olm: {package: quay-operator, channel: stable-3.14, source: redhat-operators, source_namespace: openshift-marketplace}
+    requires: [cert_manager]
+    supported_openshift: ["4.18", "4.19"]
     deployment_modes: [direct, render, gitops]
-    gitops_path: gitops/operators/quay
+    validation_hooks: [subscription_ready, csv_succeeded, operator_workload_ready]
+    operands: [quay_registry]
+    gitops: {path: gitops/operators/quay, sync_wave: 30}
