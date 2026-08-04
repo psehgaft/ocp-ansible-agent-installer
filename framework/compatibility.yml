@@ -1,0 +1,32 @@
+---
+framework_supported_openshift_versions:
+  - "4.18"
+  - "4.19"
+
+framework_component_compatibility:
+  assisted_installer:
+    openshift: ["4.18", "4.19"]
+  redfish:
+    openshift: ["4.18", "4.19"]
+  gitops:
+    openshift: ["4.18", "4.19"]
+  acm:
+    openshift: ["4.18", "4.19"]
+  acs:
+    openshift: ["4.18", "4.19"]
+  odf:
+    openshift: ["4.18", "4.19"]
+  openshift_virtualization:
+    openshift: ["4.18", "4.19"]
+  metallb:
+    openshift: ["4.18", "4.19"]
+  baremetal_operator:
+    openshift: ["4.18", "4.19"]
+  cert_manager:
+    openshift: ["4.18", "4.19"]
+  rhoso:
+    openshift: ["4.18", "4.19"]
+  mta:
+    openshift: ["4.18", "4.19"]
+  mtv:
+    openshift: ["4.18", "4.19"]
