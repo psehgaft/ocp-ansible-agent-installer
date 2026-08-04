@@ -1,0 +1,30 @@
+name: Quality - Destructive
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirmation:
+        description: Type APPROVE-DESTRUCTIVE
+        required: true
+
+permissions:
+  contents: read
+
+environment: destructive-tests
+
+jobs:
+  destructive:
+    if: ${{ inputs.confirmation == 'APPROVE-DESTRUCTIVE' && secrets.KUBECONFIG_B64 != '' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install -r requirements-ci.txt
+      - run: ansible-galaxy collection install -r collections/requirements.yml
+      - run: echo '${{ secrets.KUBECONFIG_B64 }}' | base64 -d > "$RUNNER_TEMP/kubeconfig"
+      - name: Run explicitly approved destructive tests
+        env:
+          KUBECONFIG: ${{ runner.temp }}/kubeconfig
+        run: pytest -q -m destructive
