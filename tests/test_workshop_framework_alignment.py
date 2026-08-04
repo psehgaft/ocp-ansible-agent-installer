@@ -84,7 +84,9 @@ def test_assisted_installer_regression_contract_is_retained() -> None:
         "playbooks/day0/install.yml",
         "roles/bmc_discovery/tasks/main.yml",
         "roles/bmc_virtual_media/tasks/main.yml",
-        "roles/assisted_installer/tasks/main.yml",
+        "roles/assisted_cluster/tasks/main.yml",
+        "roles/assisted_hosts/tasks/main.yml",
+        "roles/assisted_install/tasks/main.yml",
         "docs/migration-from-idrac.md",
     )
     missing = [path for path in required_paths if not (ROOT / path).exists()]
@@ -95,10 +97,11 @@ def test_assisted_installer_uses_generic_redfish_contract() -> None:
     discovery = (ROOT / "playbooks/day0/discover-bmc.yml").read_text(encoding="utf-8")
     preflight = (ROOT / "playbooks/00-preflight.yml").read_text(encoding="utf-8")
     install = (ROOT / "playbooks/day0/install.yml").read_text(encoding="utf-8")
+    bmc_defaults = (ROOT / "roles/bmc_discovery/defaults/main.yml").read_text(encoding="utf-8")
 
-    combined = "\n".join((discovery, preflight, install))
+    combined = "\n".join((discovery, preflight, install, bmc_defaults))
     assert "bmc_discovery" in combined
-    assert "bmc_endpoint" in combined or "bmc_*" in combined
+    assert "bmc_endpoint" in combined
     assert "role: idrac_discovery" not in combined
 
 
