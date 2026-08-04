@@ -1,0 +1,66 @@
+---
+# Declarative component catalog.
+# This PR introduces structure only; implementation roles are added separately.
+components:
+  assisted_installer:
+    category: day0
+    role: assisted_cluster
+    enabled_variable: platform_features.assisted_installer
+    dependencies: []
+    gitops_path: null
+
+  redfish:
+    category: day0
+    role: bmc_discovery
+    enabled_variable: platform_features.redfish
+    dependencies: []
+    gitops_path: null
+
+  gitops:
+    category: platform
+    role: gitops_operator
+    enabled_variable: platform_features.gitops
+    dependencies: []
+    gitops_path: gitops/operators/gitops
+
+  acm:
+    category: management
+    role: acm_operator
+    enabled_variable: platform_features.acm
+    dependencies: []
+    gitops_path: gitops/operators/acm
+
+  odf:
+    category: storage
+    role: odf_operator
+    enabled_variable: platform_features.odf
+    dependencies: []
+    gitops_path: gitops/operators/odf
+
+  openshift_virtualization:
+    category: virtualization
+    role: openshift_virtualization_operator
+    enabled_variable: platform_features.openshift_virtualization
+    dependencies: []
+    gitops_path: gitops/operators/openshift-virtualization
+
+  metallb:
+    category: networking
+    role: metallb_operator
+    enabled_variable: platform_features.metallb
+    dependencies: []
+    gitops_path: gitops/operators/metallb
+
+  cert_manager:
+    category: security
+    role: cert_manager_operator
+    enabled_variable: platform_features.cert_manager
+    dependencies: []
+    gitops_path: gitops/operators/cert-manager
+
+  rhoso:
+    category: openstack
+    role: rhoso_operator
+    enabled_variable: platform_features.rhoso
+    dependencies: []
+    gitops_path: gitops/operators/rhoso
