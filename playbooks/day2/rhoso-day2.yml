@@ -1,0 +1,7 @@
+---
+- name: Configure RHOSO Day-2 resources
+  hosts: localhost
+  gather_facts: false
+  roles:
+    - role: day2_operational_workflow
+      vars: {day2_operation_domain: rhoso, day2_operation_resources: "{{ rhoso_day2_resources | default([]) }}"}
