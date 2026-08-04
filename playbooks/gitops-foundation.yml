@@ -1,0 +1,8 @@
+---
+- name: Configure GitOps foundation
+  hosts: localhost
+  gather_facts: false
+  connection: local
+  roles:
+    - role: platform_validation
+    - role: gitops_foundation
