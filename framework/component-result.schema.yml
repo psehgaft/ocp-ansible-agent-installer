@@ -60,6 +60,10 @@ properties:
           enum: [command, resource, file, url, message]
         reference:
           type: string
+        command:
+          type: string
+        resource:
+          type: string
         description:
           type: string
         status:
