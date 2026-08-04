@@ -1,0 +1,13 @@
+---
+profile_name: disconnected
+profile_description: Disconnected or restricted-network OpenShift profile
+profile_features:
+  assisted_installer: true
+  redfish: true
+  gitops: true
+  cert_manager: true
+  external_registries: true
+  mirror_sets: true
+  trusted_ca: true
+  monitoring: true
+  logging: true
