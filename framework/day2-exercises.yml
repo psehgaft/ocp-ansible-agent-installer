@@ -1,0 +1,33 @@
+---
+defaults:
+  supported_modes: [direct, render, gitops]
+  gitops_root: rendered/day2
+
+exercises:
+  networking: {playbook: playbooks/day2/networking.yml, role: day2_cluster_operations, resources_variable: networking_resources, gitops_output: rendered/day2/networking}
+  metallb: {playbook: playbooks/day2/metallb.yml, role: day2_cluster_operations, resources_variable: metallb_resources, gitops_output: rendered/day2/metallb}
+  sriov: {playbook: playbooks/day2/sriov.yml, role: day2_cluster_operations, resources_variable: sriov_resources, gitops_output: rendered/day2/sriov}
+  nmstate: {playbook: playbooks/day2/nmstate.yml, role: day2_cluster_operations, resources_variable: nmstate_resources, gitops_output: rendered/day2/nmstate}
+  ptp: {playbook: playbooks/day2/ptp.yml, role: day2_cluster_operations, resources_variable: ptp_resources, gitops_output: rendered/day2/ptp}
+  storageclasses: {playbook: playbooks/day2/storageclasses.yml, role: day2_cluster_operations, resources_variable: storageclass_resources, gitops_output: rendered/day2/storageclasses}
+  volume_snapshots: {playbook: playbooks/day2/volume-snapshots.yml, role: day2_cluster_operations, resources_variable: volume_snapshot_resources, gitops_output: rendered/day2/volume-snapshots}
+  odf_day2: {playbook: playbooks/day2/odf-day2.yml, role: day2_cluster_operations, resources_variable: odf_day2_resources, gitops_output: rendered/day2/odf-day2}
+  ingress: {playbook: playbooks/day2/ingress.yml, role: day2_cluster_operations, resources_variable: ingress_resources, gitops_output: rendered/day2/ingress}
+  node_configuration: {playbook: playbooks/day2/node-configuration.yml, role: day2_cluster_operations, resources_variable: node_configuration_resources, gitops_output: rendered/day2/node-configuration}
+  machineconfig: {playbook: playbooks/day2/machineconfig.yml, role: day2_cluster_operations, resources_variable: machineconfig_resources, gitops_output: rendered/day2/machineconfig}
+  chrony: {playbook: playbooks/day2/chrony.yml, role: day2_cluster_operations, resources_variable: chrony_resources, gitops_output: rendered/day2/chrony}
+  monitoring: {playbook: playbooks/day2/monitoring.yml, role: day2_operational_workflow, resources_variable: monitoring_resources, gitops_output: rendered/day2/monitoring}
+  alertmanager: {playbook: playbooks/day2/alertmanager.yml, role: day2_operational_workflow, resources_variable: alertmanager_resources, gitops_output: rendered/day2/alertmanager}
+  user_workload_monitoring: {playbook: playbooks/day2/user-workload-monitoring.yml, role: day2_operational_workflow, resources_variable: user_workload_monitoring_resources, gitops_output: rendered/day2/user-workload-monitoring}
+  logging: {playbook: playbooks/day2/logging.yml, role: day2_operational_workflow, resources_variable: logging_resources, gitops_output: rendered/day2/logging}
+  loki: {playbook: playbooks/day2/loki.yml, role: day2_operational_workflow, resources_variable: loki_resources, gitops_output: rendered/day2/loki}
+  backup_oadp: {playbook: playbooks/day2/backup-oadp.yml, role: day2_operational_workflow, resources_variable: backup_oadp_resources, gitops_output: rendered/day2/backup-oadp}
+  upgrade_prechecks: {playbook: playbooks/day2/upgrade-prechecks.yml, role: day2_operational_workflow, resources_variable: upgrade_precheck_resources, gitops_output: rendered/day2/upgrade-prechecks}
+  certificate_audit: {playbook: playbooks/day2/certificate-audit.yml, role: day2_operational_workflow, resources_variable: certificate_audit_resources, gitops_output: rendered/day2/certificate-audit}
+  etcd_health: {playbook: playbooks/day2/etcd-health.yml, role: day2_operational_workflow, resources_variable: etcd_health_resources, gitops_output: rendered/day2/etcd-health}
+  acm_hub: {playbook: playbooks/day2/acm-hub.yml, role: day2_operational_workflow, resources_variable: acm_hub_resources, gitops_output: rendered/day2/acm-hub}
+  acs_policies: {playbook: playbooks/day2/acs-policies.yml, role: day2_operational_workflow, resources_variable: acs_policy_resources, gitops_output: rendered/day2/acs-policies}
+  rhoso_day2: {playbook: playbooks/day2/rhoso-day2.yml, role: day2_operational_workflow, resources_variable: rhoso_day2_resources, gitops_output: rendered/day2/rhoso-day2}
+  virtualization_day2: {playbook: playbooks/day2/virtualization-day2.yml, role: day2_operational_workflow, resources_variable: virtualization_day2_resources, gitops_output: rendered/day2/virtualization-day2}
+  health_checks: {playbook: playbooks/day2/health-checks.yml, role: day2_operational_workflow, resources_variable: health_check_resources, gitops_output: rendered/day2/health-checks}
+  reports: {playbook: playbooks/day2/reports.yml, role: day2_operational_workflow, resources_variable: report_resources, gitops_output: rendered/day2/reports}
