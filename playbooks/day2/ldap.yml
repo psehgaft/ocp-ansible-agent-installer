@@ -1,0 +1,6 @@
+---
+- name: Configure LDAP or Active Directory identity provider
+  hosts: localhost
+  gather_facts: false
+  roles:
+    - role: day2_identity
