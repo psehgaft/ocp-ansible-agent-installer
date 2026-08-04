@@ -1,0 +1,92 @@
+---
+# Operand configuration catalog. Operator installation roles must not create these
+# resources unless a dedicated operand role is explicitly invoked.
+operands:
+  acm_hub:
+    display_name: ACM MultiClusterHub
+    role: acm_hub
+    operator: acm
+    namespace: open-cluster-management
+    kind: MultiClusterHub
+    api_version: operator.open-cluster-management.io/v1
+    gitops: {path: gitops/platform/acm/hub, sync_wave: 40}
+  acm_observability:
+    display_name: ACM MultiClusterObservability
+    role: acm_observability
+    operator: acm
+    namespace: open-cluster-management-observability
+    kind: MultiClusterObservability
+    api_version: observability.open-cluster-management.io/v1beta2
+    gitops: {path: gitops/platform/acm/observability, sync_wave: 50}
+  acm_governance:
+    display_name: ACM Governance
+    role: acm_governance
+    operator: acm
+    namespace: open-cluster-management-global-set
+    kind: PolicySet
+    api_version: policy.open-cluster-management.io/v1beta1
+    gitops: {path: gitops/policies/acm, sync_wave: 60}
+  acs_central:
+    display_name: ACS Central
+    role: acs_central
+    operator: acs
+    namespace: stackrox
+    kind: Central
+    api_version: platform.stackrox.io/v1alpha1
+    gitops: {path: gitops/platform/acs/central, sync_wave: 40}
+  acs_secured_cluster:
+    display_name: ACS SecuredCluster
+    role: acs_secured_cluster
+    operator: acs
+    namespace: stackrox
+    kind: SecuredCluster
+    api_version: platform.stackrox.io/v1alpha1
+    gitops: {path: gitops/platform/acs/secured-cluster, sync_wave: 50}
+  hyperconverged:
+    display_name: OpenShift Virtualization HyperConverged
+    role: openshift_virtualization_operand
+    operator: openshift_virtualization
+    namespace: openshift-cnv
+    kind: HyperConverged
+    api_version: hco.kubevirt.io/v1beta1
+    gitops: {path: gitops/platform/openshift-virtualization, sync_wave: 40}
+  storage_cluster:
+    display_name: ODF StorageCluster
+    role: odf_storage_cluster
+    operator: odf
+    namespace: openshift-storage
+    kind: StorageCluster
+    api_version: ocs.openshift.io/v1
+    gitops: {path: gitops/platform/odf/storage-cluster, sync_wave: 40}
+  metallb_instance:
+    display_name: MetalLB Instance
+    role: metallb_instance
+    operator: metallb
+    namespace: metallb-system
+    kind: MetalLB
+    api_version: metallb.io/v1beta1
+    gitops: {path: gitops/platform/metallb/instance, sync_wave: 40}
+  cluster_issuers:
+    display_name: cert-manager ClusterIssuers
+    role: cert_manager_issuers
+    operator: cert_manager
+    namespace: null
+    kind: ClusterIssuer
+    api_version: cert-manager.io/v1
+    gitops: {path: gitops/platform/cert-manager/issuers, sync_wave: 40}
+  openstack_control_plane:
+    display_name: RHOSO Control Plane
+    role: rhoso_control_plane
+    operator: rhoso
+    namespace: openstack
+    kind: OpenStackControlPlane
+    api_version: core.openstack.org/v1beta1
+    gitops: {path: gitops/platform/rhoso/control-plane, sync_wave: 50}
+  openstack_data_plane:
+    display_name: RHOSO Data Plane
+    role: rhoso_data_plane
+    operator: rhoso
+    namespace: openstack
+    kind: OpenStackDataPlaneNodeSet
+    api_version: dataplane.openstack.org/v1beta1
+    gitops: {path: gitops/platform/rhoso/data-plane, sync_wave: 60}
