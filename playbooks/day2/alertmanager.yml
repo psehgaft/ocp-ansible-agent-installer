@@ -1,0 +1,7 @@
+---
+- name: Configure Alertmanager
+  hosts: localhost
+  gather_facts: false
+  roles:
+    - role: day2_operational_workflow
+      vars: {day2_operation_domain: alertmanager, day2_operation_resources: "{{ alertmanager_resources | default([]) }}"}
