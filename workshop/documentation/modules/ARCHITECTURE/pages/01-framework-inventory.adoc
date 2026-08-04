@@ -1,0 +1,54 @@
+= Framework Architecture, Inventory, and Profiles
+
+== Architecture
+
+The repository separates framework metadata, Ansible execution, GitOps desired state, inventories, tests, reports, and workshop content. The framework resolves requested features before any component role runs.
+
+[source,bash]
+----
+ansible-playbook playbooks/framework-plan.yml \
+  -e platform_profile=enterprise \
+  -e platform_deployment_mode=render
+----
+
+== Inventory precedence
+
+Values are resolved in this order:
+
+. Global defaults in `group_vars/all/`.
+. Selected profile.
+. Environment inventory variables.
+. Host-specific variables.
+. Explicit extra variables.
+
+Recommended layout:
+
+[source,text]
+----
+inventories/
+├── lab/
+│   ├── hosts.yml
+│   ├── group_vars/
+│   └── host_vars/
+├── development/
+├── testing/
+├── production/
+└── examples/
+
+group_vars/
+├── all/
+│   ├── platform.yml
+│   ├── features.yml
+│   └── versions.yml
+└── example/
+----
+
+== Exercise
+
+[source,bash]
+----
+ansible-inventory -i inventories/examples/hosts.yml --graph
+ansible-inventory -i inventories/examples/hosts.yml --host localhost
+----
+
+Never store plaintext secrets in inventory. Use Ansible Vault, External Secrets, Sealed Secrets, SOPS, or an external Vault reference.
