@@ -1,0 +1,7 @@
+---
+- name: Configure StorageClasses
+  hosts: localhost
+  gather_facts: false
+  roles:
+    - role: day2_cluster_operations
+      vars: {day2_cluster_domain: storageclasses, day2_cluster_resources: "{{ storageclass_resources | default([]) }}"}
