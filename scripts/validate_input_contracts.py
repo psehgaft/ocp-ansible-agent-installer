@@ -146,15 +146,25 @@ def main() -> int:
             errors.append(f"Day-2 exercise {name} is missing inputs: {missing}")
             continue
         playbook = ROOT / exercise["playbook"]
-        role_tasks = ROOT / "roles" / exercise["role"] / "tasks/main.yml"
+        role_dir = ROOT / "roles" / exercise["role"]
+        role_tasks = role_dir / "tasks/main.yml"
+        role_defaults = role_dir / "defaults/main.yml"
         if not playbook.is_file():
             errors.append(f"Day-2 exercise {name} playbook is missing")
             continue
         if not role_tasks.is_file():
             errors.append(f"Day-2 exercise {name} role is missing")
             continue
-        if exercise["resources_variable"] not in playbook.read_text(encoding="utf-8"):
-            errors.append(f"Day-2 exercise {name} does not bind {exercise['resources_variable']}")
+        contract_text = "\n".join(
+            path.read_text(encoding="utf-8")
+            for path in (playbook, role_tasks, role_defaults)
+            if path.is_file()
+        )
+        if exercise["resources_variable"] not in contract_text:
+            errors.append(
+                f"Day-2 exercise {name} does not declare or bind "
+                f"{exercise['resources_variable']}"
+            )
         role_text = role_tasks.read_text(encoding="utf-8")
         for mode in ("direct", "gitops"):
             if mode not in role_text:

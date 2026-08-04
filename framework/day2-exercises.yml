@@ -31,3 +31,13 @@ exercises:
   virtualization_day2: {playbook: playbooks/day2/virtualization-day2.yml, role: day2_operational_workflow, resources_variable: virtualization_day2_resources, gitops_output: rendered/day2/virtualization-day2}
   health_checks: {playbook: playbooks/day2/health-checks.yml, role: day2_operational_workflow, resources_variable: health_check_resources, gitops_output: rendered/day2/health-checks}
   reports: {playbook: playbooks/day2/reports.yml, role: day2_operational_workflow, resources_variable: report_resources, gitops_output: rendered/day2/reports}
+  oauth: {playbook: playbooks/day2/oauth.yml, role: day2_identity, resources_variable: oauth_identity_providers, gitops_output: rendered/day2/identity}
+  ldap: {playbook: playbooks/day2/ldap.yml, role: day2_identity, resources_variable: oauth_identity_providers, gitops_output: rendered/day2/identity}
+  ldap_group_sync: {playbook: playbooks/day2/ldap-group-sync.yml, role: ldap_group_sync, resources_variable: ldap_sync_config, gitops_output: rendered/day2/ldap-group-sync}
+  cert_manager: {playbook: playbooks/day2/cert-manager.yml, role: day2_pki, resources_variable: pki_cert_manager_resources, gitops_output: rendered/day2/pki}
+  certificates: {playbook: playbooks/day2/certificates.yml, role: day2_pki, resources_variable: pki_api_certificate_manifest, gitops_output: rendered/day2/pki}
+  trusted_ca: {playbook: playbooks/day2/trusted-ca.yml, role: day2_pki, resources_variable: pki_trusted_ca_manifest, gitops_output: rendered/day2/pki}
+  external_registries: {playbook: playbooks/day2/external-registries.yml, role: day2_registry, resources_variable: registry_resources, gitops_output: rendered/day2/registry}
+  registry_proxy: {playbook: playbooks/day2/registry-proxy.yml, role: day2_registry, resources_variable: registry_proxy_resource, gitops_output: rendered/day2/registry}
+  mirror_sets: {playbook: playbooks/day2/mirror-sets.yml, role: day2_registry, resources_variable: registry_resources, gitops_output: rendered/day2/registry}
+  quay: {playbook: playbooks/day2/quay.yml, role: day2_registry, resources_variable: registry_quay_resources, gitops_output: rendered/day2/registry}

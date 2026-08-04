@@ -103,7 +103,20 @@ ansible-playbook \
   playbooks/day0/discover-bmc.yml
 ```
 
-### 4. Run Assisted Installer
+### 4. Validate virtual media on one host
+
+Always constrain destructive or boot-changing tests to an explicitly selected host:
+
+```bash
+ansible-playbook \
+  -i inventories/lab-cluster/hosts.yml \
+  --ask-vault-pass \
+  playbooks/03-test-virtual-media.yml \
+  --limit worker-0 \
+  -e test_iso_url=https://mirror.example.com/agent.iso
+```
+
+### 5. Run Assisted Installer
 
 ```bash
 ansible-playbook \
@@ -112,9 +125,9 @@ ansible-playbook \
   playbooks/day0/install.yml
 ```
 
-The retained compatibility entry point is `playbooks/site.yml`. New automation should use the `playbooks/day0/` entry points.
+The canonical installation and discovery entry points are under `playbooks/day0/`. Retired wrapper paths are intentionally absent and are prohibited by repository validation.
 
-### 5. Install a platform operator
+### 6. Install a platform operator
 
 ```bash
 ansible-playbook playbooks/install-platform-operator.yml \
@@ -122,7 +135,7 @@ ansible-playbook playbooks/install-platform-operator.yml \
   -e operator_lifecycle_deployment_mode=direct
 ```
 
-### 6. Apply Day-2 configuration directly
+### 7. Apply Day-2 configuration directly
 
 ```bash
 ansible-playbook playbooks/day2/oauth.yml \
@@ -238,7 +251,7 @@ See:
 - [Architecture](docs/architecture.md)
 - [Troubleshooting](docs/troubleshooting.md)
 
-Do not delete compatibility files until the conditions documented in `docs/deprecated-files.md` are satisfied and the Assisted Installer regression tests pass.
+Do not restore retired compatibility wrappers. Canonical workflow paths and the migration conditions are enforced by `framework/workflows.yml` and CI.
 
 ## Security boundary
 

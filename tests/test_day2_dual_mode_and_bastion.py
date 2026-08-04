@@ -19,16 +19,19 @@ def test_every_day2_playbook_is_cataloged_for_ansible_and_gitops() -> None:
     assert discovered == declared
 
     for exercise in exercises.values():
-        assert exercise["role"] in {
-            "day2_cluster_operations",
-            "day2_operational_workflow",
-        }
+        role = exercise["role"]
+        role_tasks = ROOT / f"roles/{role}/tasks/main.yml"
+        assert role_tasks.is_file(), role
         assert exercise["resources_variable"]
         assert exercise["gitops_output"].startswith("rendered/day2/")
         assert (ROOT / exercise["playbook"]).is_file()
+        content = role_tasks.read_text(encoding="utf-8")
+        assert "day2_deployment_mode" in content
+        assert "direct" in content
+        assert "gitops" in content
 
 
-def test_day2_roles_support_ansible_and_gitops_execution() -> None:
+def test_shared_day2_roles_support_ansible_and_gitops_execution() -> None:
     for role in ("day2_cluster_operations", "day2_operational_workflow"):
         content = (ROOT / f"roles/{role}/tasks/main.yml").read_text(encoding="utf-8")
         assert "day2_deployment_mode" in content
@@ -48,10 +51,7 @@ def test_bastion_bootstrap_is_complete_and_documented() -> None:
     for path in required:
         assert (ROOT / path).is_file()
 
-    text = "\n".join(
-        (ROOT / path).read_text(encoding="utf-8")
-        for path in required
-    ).lower()
+    text = "\n".join((ROOT / path).read_text(encoding="utf-8") for path in required).lower()
     for tool in (
         "ansible-core",
         "jinja2",

@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import re
 from urllib.parse import urlsplit
-from typing import Any, Dict, Iterable, List, Optional
+from typing import Any, Dict, Iterable, List
 
 _MAC_RE = re.compile(r"^[0-9a-f]{2}(:[0-9a-f]{2}){5}$")
 

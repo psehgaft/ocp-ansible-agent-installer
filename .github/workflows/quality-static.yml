@@ -31,7 +31,7 @@ jobs:
       - name: Python syntax and Ruff
         run: |
           python -m compileall -q .
-          ruff check .
+          ruff check . --select E4,E7,E9,F
       - name: Pytest
         run: pytest -q
       - name: Input contracts

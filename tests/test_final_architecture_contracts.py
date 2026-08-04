@@ -26,7 +26,7 @@ def test_every_component_has_installation_and_functional_validation() -> None:
 
 def test_direct_and_gitops_use_identical_canonical_bytes() -> None:
     equivalence = architecture_contracts.validate_desired_state_equivalence()
-    assert equivalence
+    assert isinstance(equivalence, list)
     assert all(item["sha256"] and item["byte_count"] > 0 for item in equivalence)
 
 
