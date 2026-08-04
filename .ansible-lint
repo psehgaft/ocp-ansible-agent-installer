@@ -1,0 +1,9 @@
+---
+profile: production
+exclude_paths:
+  - .cache/
+  - reports/output/
+  - www/
+skip_list:
+  - yaml[line-length]
+mock_roles: []
