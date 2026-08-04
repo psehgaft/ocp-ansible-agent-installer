@@ -1,7 +1,7 @@
 ---
 site:
-  title: "OpenShift Assisted Installer with iLO and iDRAC"
-  start_page: ocp-redfish-installer::index.adoc
+  title: "OpenShift Automation Framework Workshop"
+  start_page: ocp-redfish-installer:ARCHITECTURE:index.adoc
 content:
   sources:
     - url: .
