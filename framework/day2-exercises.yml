@@ -1,7 +1,4 @@
 ---
-# Every Day-2 exercise has one Ansible entry point and one deterministic GitOps
-# output directory. Run with day2_deployment_mode=direct for Ansible apply, or
-# day2_deployment_mode=gitops to render content for Git reconciliation.
 defaults:
   supported_modes: [direct, render, gitops]
   gitops_root: rendered/day2

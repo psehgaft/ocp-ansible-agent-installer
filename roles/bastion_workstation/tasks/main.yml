@@ -8,7 +8,6 @@
       - bastion_helm_version is match('^v[0-9]+\.[0-9]+\.[0-9]+$')
       - bastion_kustomize_version is match('^v[0-9]+\.[0-9]+\.[0-9]+$')
       - bastion_architecture in ['amd64', 'arm64']
-    fail_msg: "The bastion role supports RHEL-compatible systems and requires valid tool versions."
 
 - name: Install base system packages
   ansible.builtin.dnf:
@@ -54,14 +53,12 @@
     dest: /tmp/openshift-client-linux.tar.gz
     mode: "0644"
 
-- name: Install oc and kubectl from OpenShift client archive
+- name: Install OpenShift client binaries
   ansible.builtin.unarchive:
     src: /tmp/openshift-client-linux.tar.gz
     dest: /usr/local/bin
     remote_src: true
-    include:
-      - oc
-      - kubectl
+    include: [oc, kubectl]
     mode: "0755"
 
 - name: Download Helm archive
@@ -94,30 +91,19 @@
     src: /tmp/kustomize.tar.gz
     dest: /usr/local/bin
     remote_src: true
-    include:
-      - kustomize
+    include: [kustomize]
     mode: "0755"
 
 - name: Install repository Ansible collections
   ansible.builtin.command:
-    argv:
-      - ansible-galaxy
-      - collection
-      - install
-      - -r
-      - "{{ playbook_dir }}/../collections/requirements.yml"
+    argv: [ansible-galaxy, collection, install, -r, "{{ playbook_dir }}/../collections/requirements.yml"]
   register: bastion_collection_install
   changed_when: "'was installed successfully' in bastion_collection_install.stdout"
 
 - name: Verify bastion toolchain
   ansible.builtin.command:
-    argv: ["{{ item }}", "version"]
-  loop:
-    - ansible
-    - oc
-    - kubectl
-    - helm
-    - kustomize
+    argv: ["{{ item }}", version]
+  loop: [ansible, oc, kubectl, helm, kustomize]
   register: bastion_tool_versions
   changed_when: false
 

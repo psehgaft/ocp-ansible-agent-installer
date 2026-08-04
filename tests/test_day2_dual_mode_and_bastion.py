@@ -18,15 +18,13 @@ def test_every_day2_playbook_is_cataloged_for_ansible_and_gitops() -> None:
     declared = {item["playbook"] for item in exercises.values()}
     assert discovered == declared
 
-    for name, exercise in exercises.items():
+    for exercise in exercises.values():
         assert exercise["role"] in {
             "day2_cluster_operations",
             "day2_operational_workflow",
         }
         assert exercise["resources_variable"]
-        assert exercise["gitops_output"] == f"rendered/day2/{name.replace('_', '-')}" or exercise[
-            "gitops_output"
-        ].startswith("rendered/day2/")
+        assert exercise["gitops_output"].startswith("rendered/day2/")
         assert (ROOT / exercise["playbook"]).is_file()
 
 
@@ -50,9 +48,10 @@ def test_bastion_bootstrap_is_complete_and_documented() -> None:
     for path in required:
         assert (ROOT / path).is_file()
 
-    tasks = (ROOT / "roles/bastion_workstation/tasks/main.yml").read_text(
-        encoding="utf-8"
-    )
+    text = "\n".join(
+        (ROOT / path).read_text(encoding="utf-8")
+        for path in required
+    ).lower()
     for tool in (
         "ansible-core",
         "jinja2",
@@ -66,16 +65,15 @@ def test_bastion_bootstrap_is_complete_and_documented() -> None:
         "skopeo",
         "buildah",
     ):
-        assert tool.lower() in tasks.lower() or tool.lower() in (
-            ROOT / "roles/bastion_workstation/defaults/main.yml"
-        ).read_text(encoding="utf-8").lower()
+        assert tool in text
 
 
-def test_offline_and_yaml_validators_ignore_generated_dependencies() -> None:
-    yaml_validator = (ROOT / "scripts/validate_yaml.py").read_text(encoding="utf-8")
-    offline_validator = (ROOT / "scripts/offline_validate.py").read_text(
-        encoding="utf-8"
+def test_validators_ignore_generated_dependencies() -> None:
+    paths = (
+        "scripts/validate_yaml.py",
+        "scripts/offline_validate.py",
+        ".yamllint",
     )
-    yamllint = (ROOT / ".yamllint").read_text(encoding="utf-8")
-    for content in (yaml_validator, offline_validator, yamllint):
+    for path in paths:
+        content = (ROOT / path).read_text(encoding="utf-8")
         assert ".collections" in content
