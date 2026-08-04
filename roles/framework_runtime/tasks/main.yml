@@ -1,4 +1,8 @@
 ---
+- name: Run common platform validation
+  ansible.builtin.include_role:
+    name: platform_validation
+
 - name: Load framework defaults
   ansible.builtin.include_vars:
     file: "{{ framework_defaults_file }}"
@@ -19,22 +23,44 @@
     file: "{{ framework_compatibility_file }}"
     name: framework_compatibility_data
 
-- name: Validate framework runtime inputs
+- name: Load backward-compatible aliases
+  ansible.builtin.include_vars:
+    file: "{{ framework_aliases_file }}"
+    name: framework_alias_data
+
+- name: Load global runtime schema
+  ansible.builtin.include_vars:
+    file: "{{ framework_schema_file }}"
+    name: framework_schema_data
+
+- name: Initialize legacy feature overrides
+  ansible.builtin.set_fact:
+    platform_legacy_feature_overrides: {}
+
+- name: Translate defined legacy flags into platform feature flags
+  ansible.builtin.set_fact:
+    platform_legacy_feature_overrides: >-
+      {{ platform_legacy_feature_overrides
+         | combine({item.value: vars[item.key] | bool}) }}
+  loop: "{{ framework_alias_data.framework_variable_aliases | dict2items }}"
+  when: item.key in vars
+
+- name: Validate framework metadata
   ansible.builtin.assert:
     that:
-      - platform_deployment_mode in framework_allowed_deployment_modes
-      - platform_openshift_version in framework_compatibility_data.framework_supported_openshift_versions
       - framework_profile_data.profile_features is mapping
       - framework_catalog_data.components is mapping
+      - framework_schema_data.platform_schema is mapping
     fail_msg: >-
-      Invalid framework runtime configuration. Verify deployment mode, OpenShift
-      version, profile, and component catalog metadata.
+      Invalid framework metadata. Verify the selected profile, component catalog,
+      global schema, and compatibility files.
 
 - name: Build effective feature map
   ansible.builtin.set_fact:
     platform_effective_features: >-
       {{ framework_defaults.platform_features
          | combine(framework_profile_data.profile_features | default({}), recursive=True)
+         | combine(platform_legacy_feature_overrides, recursive=True)
          | combine(platform_features | default({}), recursive=True) }}
 
 - name: Select enabled components
@@ -73,3 +99,4 @@
       openshift_version: "{{ platform_openshift_version }}"
       enabled_components: "{{ platform_enabled_components }}"
       execution_order: "{{ platform_component_execution_order }}"
+      legacy_aliases_applied: "{{ platform_legacy_feature_overrides }}"
