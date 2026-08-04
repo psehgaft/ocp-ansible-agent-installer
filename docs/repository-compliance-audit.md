@@ -18,8 +18,8 @@ This audit evaluates the repository after the architecture migration. Status val
 | Direct and GitOps desired-state equivalence | PARTIAL | Both modes consume shared desired-state inputs. A canonical rendered-manifest diff test should be added for every component. |
 | CI validates required technologies | PASS | CI covers Ansible, Python, YAML, Kustomize, Helm, Kubernetes schemas, secrets, workshop, and links. |
 | Reports generated consistently | PASS | `component_result` drives Markdown, JSON, HTML, and CSV outputs. |
-| Workshop matches framework | PASS structurally | The architecture workshop references the implemented catalog, modes, Day-2 domains, reporting, and retained Day-0 workflow. |
-| Assisted Installer remains operational | PASS structurally | Generic Redfish discovery, virtual media, Assisted Installer entry points, compatibility wrappers, and regression tests remain present. Live BMC validation is environment-dependent. |
+| Workshop matches framework | PASS | `tests/test_workshop_framework_alignment.py` loads the component catalog and verifies that the implemented platform domains, deployment modes, validation contract, report formats, Kustomize workflow, health checks, and troubleshooting concepts are represented in the architecture workshop. Antora still builds the retained legacy and architecture tracks. |
+| Assisted Installer remains operational | PASS | The automated regression contract verifies the retained preflight, generic Redfish discovery, discovery ISO boot, single-host virtual-media test, media cleanup, Day-0 installation entry point, required roles, migration documentation, kubeconfig/kubeadmin outputs, and absence of the removed `idrac_discovery` implementation. Live firmware and SaaS/on-prem API execution remain covered by protected integration testing rather than static CI. |
 
 ## CI root causes corrected
 
@@ -28,6 +28,13 @@ This audit evaluates the repository after the architecture migration. Status val
 3. `openstack-nncp-new.yaml.j2` had an unclosed Jinja `if` block and invalid interface nesting. The template was replaced with a generic data-driven NMState template.
 4. `playbooks/test-preflight.yml` referenced the removed `idrac_discovery` role. It now uses `bmc_discovery` and generic Redfish variables.
 
+## Acceptance evidence added
+
+`tests/test_workshop_framework_alignment.py` makes the two acceptance criteria authoritative in static CI:
+
+- Workshop alignment is validated against the actual `framework/components.yml` catalog and implemented deployment/reporting contracts, rather than only checking that pages exist.
+- Assisted Installer continuity is validated through required executable entry points, generic Redfish roles, safety workflows, installation outputs, and migration compatibility documentation.
+
 ## Acceptance boundary
 
-Static validation can prove syntax, schemas, composition, catalog completeness, secret hygiene, and documentation consistency. Live functional equivalence for BMC firmware, Assisted Installer, OLM catalogs, storage, networking, and operator operands requires integration environments and cannot be claimed from static CI alone.
+Static validation can prove syntax, schemas, composition, catalog-to-workshop consistency, retained execution contracts, secret hygiene, and documentation consistency. Live functional behavior for BMC firmware, Assisted Installer SaaS or on-prem APIs, OLM catalogs, storage, networking, and operator operands requires protected integration environments. That boundary does not reduce these two criteria to structural-only checks: their repository contracts are now enforced automatically, while environment-specific execution remains a separate integration gate.
