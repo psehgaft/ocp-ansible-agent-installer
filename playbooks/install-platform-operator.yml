@@ -1,0 +1,8 @@
+---
+- name: Install or render one platform operator from the catalog
+  hosts: localhost
+  gather_facts: false
+  connection: local
+  roles:
+    - role: operator_catalog_validation
+    - role: operator_lifecycle
