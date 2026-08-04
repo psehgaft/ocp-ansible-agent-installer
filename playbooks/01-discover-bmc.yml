@@ -1,4 +1,0 @@
----
-# Compatibility entry point.
-# Canonical implementation: playbooks/day0/discover-bmc.yml
-- import_playbook: day0/discover-bmc.yml
