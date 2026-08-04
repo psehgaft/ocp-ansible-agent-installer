@@ -2,11 +2,20 @@
 
 ## Summary
 
-The original workflow used Dell-specific roles and `idrac_*` variables. This version retains the Assisted Installer sequence but replaces hardware discovery, virtual media, boot override, and power control with reusable Redfish roles.
+The original workflow used Dell-specific roles and `idrac_*` variables. The canonical implementation now retains the Assisted Installer sequence while replacing hardware discovery, virtual media, boot override, and power control with reusable Redfish roles.
+
+## Canonical entry points
+
+| Purpose | Canonical playbook | Compatibility wrapper |
+|---|---|---|
+| Full Day-0 installation | `playbooks/day0/install.yml` | `playbooks/site.yml` |
+| BMC discovery and report | `playbooks/day0/discover-bmc.yml` | `playbooks/01-discover-bmc.yml` |
+
+The compatibility wrappers remain supported during the migration period and import the canonical playbooks directly, preventing behavior drift.
 
 ## Role mapping
 
-| Previous role or concept | New role or concept |
+| Previous role or concept | Canonical role or concept |
 |---|---|
 | `idrac_discovery` / `idrac_discovery_full` | `bmc_discovery` |
 | `idrac_boot_discovery_iso` | `iso_publish` + `bmc_virtual_media` |
@@ -45,25 +54,34 @@ server-1:
   bmc_password: "{{ vault_bmc_passwords[inventory_hostname] }}"
 ```
 
-The compatibility layer accepts `idrac_ip`, `idrac_user`, and `idrac_password`, but this is intended only to permit a controlled migration.
+The compatibility layer accepts `idrac_ip`, `idrac_user`, and `idrac_password`, but these aliases are intended only for controlled migration.
 
 ## Recommended migration sequence
 
 1. Copy the old inventory to a new branch.
 2. Rename `idrac_*` variables to `bmc_*` and add `bmc_type`.
 3. Move passwords into `vault_bmc_passwords`.
-4. Install `community.general` from `requirements.yml`.
-5. Run `playbooks/01-discover-bmc.yml` without changing server power state.
+4. Install the collections from `collections/requirements.yml`.
+5. Run `playbooks/day0/discover-bmc.yml` without changing server power state.
 6. Compare normalized NICs and selected provisioning MACs with switch and operating-system records.
 7. Set a per-host MAC override where necessary.
 8. Run `playbooks/03-test-virtual-media.yml --limit <one-host>` with a harmless bootable ISO on a non-production server.
 9. Validate virtual-media ejection and one-time boot behavior.
 10. Run `playbooks/02-boot-discovery-iso.yml` for a complete lab cluster.
-11. Use `playbooks/site.yml` only after all hosts pass discovery and virtual-media validation.
+11. Run `playbooks/day0/install.yml` only after all hosts pass discovery and virtual-media validation.
+
+## Removal policy
+
+Legacy files are removed only when all of the following are true:
+
+- the canonical implementation exists;
+- a compatibility entry point exists where users may still depend on the old path;
+- static tests verify the wrapper imports the canonical playbook;
+- repository search shows no active references to the obsolete implementation.
 
 ## Rollback
 
-The new roles do not alter BIOS settings, RAID configuration, or persistent boot order. To reverse a test:
+The Redfish roles do not alter BIOS settings, RAID configuration, or persistent boot order. To reverse a virtual-media test:
 
 ```bash
 ansible-playbook \
