@@ -1,0 +1,13 @@
+---
+profile_name: telco
+profile_description: Telco profile with GitOps and advanced networking foundations.
+profile_features:
+  assisted_installer: true
+  redfish: true
+  gitops: true
+  baremetal_operator: true
+  metallb: true
+  sriov: true
+  nmstate: true
+  ptp: true
+  compliance: true
