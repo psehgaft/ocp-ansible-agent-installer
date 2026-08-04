@@ -38,6 +38,7 @@ PY_VALIDATE
 
 python3 tests/test_redfish_filters.py
 python3 scripts/offline_validate.py
+python3 scripts/validate_input_contracts.py
 
 if command -v ansible-inventory >/dev/null 2>&1; then
   ansible-inventory -i "$INVENTORY" --list >/dev/null
