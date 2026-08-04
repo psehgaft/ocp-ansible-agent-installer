@@ -1,0 +1,7 @@
+---
+- name: Configure OpenShift automation bastion workstation
+  hosts: bastion
+  become: true
+  gather_facts: true
+  roles:
+    - role: bastion_workstation
