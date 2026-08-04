@@ -1,0 +1,25 @@
+---
+- name: Create consolidated report directory
+  ansible.builtin.file:
+    path: "{{ consolidated_report_dir }}"
+    state: directory
+    mode: '0750'
+
+- name: Write JSON report
+  ansible.builtin.copy:
+    dest: "{{ consolidated_report_dir }}/{{ consolidated_report_name }}.json"
+    content: "{{ consolidated_report_results | to_nice_json }}"
+    mode: '0640'
+
+- name: Write Markdown report
+  ansible.builtin.copy:
+    dest: "{{ consolidated_report_dir }}/{{ consolidated_report_name }}.md"
+    mode: '0640'
+    content: |
+      # Day-2 Cluster Operations Report
+
+      Generated: {{ ansible_date_time.iso8601 | default('runtime') }}
+
+      ```json
+      {{ consolidated_report_results | to_nice_json }}
+      ```
