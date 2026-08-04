@@ -34,6 +34,8 @@ jobs:
           ruff check .
       - name: Pytest
         run: pytest -q
+      - name: Input contracts
+        run: python scripts/validate_input_contracts.py
       - name: Final architecture contracts
         run: python scripts/validate_architecture_contracts.py
       - name: Inventory validation
