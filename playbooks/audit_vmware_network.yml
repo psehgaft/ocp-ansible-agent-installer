@@ -2,8 +2,6 @@
 - name: Audit VMware vSphere network architecture read-only
   hosts: localhost
   gather_facts: false
-  collections:
-    - community.vmware
   vars:
     validate_certs: true
     output_file: "{{ artifacts_dir | default('./artifacts') }}/VMware_Network_Audit_Report.md"
@@ -30,13 +28,22 @@
         mode: "0750"
 
   tasks:
-    - name: Gather ESXi host network information
-      community.vmware.vmware_host_network_info:
+    - name: Gather standard virtual switch information
+      community.vmware.vmware_vswitch_info:
         hostname: "{{ vcenter_hostname }}"
         username: "{{ vcenter_username }}"
         password: "{{ vcenter_password }}"
         validate_certs: "{{ validate_certs }}"
-      register: host_network_info
+      register: vswitch_info
+      no_log: true
+
+    - name: Gather standard port group information
+      community.vmware.vmware_portgroup_info:
+        hostname: "{{ vcenter_hostname }}"
+        username: "{{ vcenter_username }}"
+        password: "{{ vcenter_password }}"
+        validate_certs: "{{ validate_certs }}"
+      register: standard_portgroup_info
       no_log: true
 
     - name: Gather distributed virtual switch information
@@ -54,7 +61,7 @@
         username: "{{ vcenter_username }}"
         password: "{{ vcenter_password }}"
         validate_certs: "{{ validate_certs }}"
-      register: portgroup_info
+      register: distributed_portgroup_info
       no_log: true
 
     - name: Generate VMware network audit report
@@ -66,39 +73,41 @@
 
           Target vCenter: `{{ vcenter_hostname }}`
 
-          ## Physical host NICs and uplinks
+          ## Standard virtual switches
 
-          | Host | Physical NIC | MAC address | Driver / speed |
-          |---|---|---|---|
-          {% for host_name, host_data in host_network_info.host_network_info.items() %}
-          {% for pnic in host_data.pnic | default([]) %}
-          | {{ host_name }} | {{ pnic.device }} | {{ pnic.mac }} | {{ pnic.driver | default('N/A') }} / {{ pnic.speed | default('Unknown') }} |
+          | Host | Switch | MTU | Physical NICs | Active uplinks | Standby uplinks |
+          |---|---|---|---|---|---|
+          {% for host_name, switches in vswitch_info.hosts_vswitch_info.items() %}
+          {% for switch_name, switch in switches.items() %}
+          | {{ host_name }} | {{ switch_name }} | {{ switch.mtu | default('1500') }} | {{ switch.pnics | default([]) | join(', ') }} | {{ switch.failover_active | default([]) | join(', ') }} | {{ switch.failover_standby | default([]) | join(', ') }} |
+          {% endfor %}
+          {% endfor %}
+
+          ## Standard port groups
+
+          | Host | Port group | VLAN | vSwitch | Security |
+          |---|---|---|---|---|
+          {% for host_name, portgroups in standard_portgroup_info.hosts_portgroup_info.items() %}
+          {% for portgroup in portgroups %}
+          | {{ host_name }} | {{ portgroup.portgroup }} | {{ portgroup.vlan_id }} | {{ portgroup.vswitch }} | {{ portgroup.security | default([]) | join(', ') }} |
           {% endfor %}
           {% endfor %}
 
           ## Distributed virtual switches
 
-          | vDS name | MTU | Number of ports |
+          | vDS name | UUID | Hosts |
           |---|---|---|
-          {% for vds in vds_info.dvs_info | default([]) %}
-          | {{ vds.name }} | {{ vds.mtu | default('1500') }} | {{ vds.num_ports | default('N/A') }} |
+          {% for vds in vds_info.distributed_virtual_switches | default([]) %}
+          | {{ vds.configure.settings.properties.general.name | default('N/A') }} | {{ vds.uuid | default('N/A') }} | {{ vds.configure.hosts | default([]) | join(', ') }} |
           {% endfor %}
 
           ## Distributed port groups
 
-          | Port group | VLAN | vDS | Promiscuous | MAC changes | Forged transmits |
-          |---|---|---|---|---|---|
-          {% for pg_name, pg in portgroup_info.dvs_portgroup_info.items() %}
-          | {{ pg_name }} | {{ pg.vlan_id | default('N/A') }} | {{ pg.dvs_name | default('N/A') }} | {{ pg.security_policy.allow_promiscuous | default('Inherited') }} | {{ pg.security_policy.mac_changes | default('Inherited') }} | {{ pg.security_policy.forged_transmits | default('Inherited') }} |
-          {% endfor %}
-
-          ## VMkernel interfaces
-
-          | Host | Interface | IP address | Subnet mask | Port group | MTU |
-          |---|---|---|---|---|---|
-          {% for host_name, host_data in host_network_info.host_network_info.items() %}
-          {% for vmk in host_data.vmk | default([]) %}
-          | {{ host_name }} | {{ vmk.device }} | {{ vmk.ip }} | {{ vmk.netmask }} | {{ vmk.portgroup | default(vmk.dvs_portgroup | default('N/A')) }} | {{ vmk.mtu | default('1500') }} |
+          | vDS | Port group | VLAN | Ports | Promiscuous | MAC changes | Forged transmits |
+          |---|---|---|---|---|---|---|
+          {% for switch_name, portgroups in distributed_portgroup_info.dvs_portgroup_info.items() %}
+          {% for portgroup in portgroups %}
+          | {{ switch_name }} | {{ portgroup.portgroup_name }} | {{ portgroup.vlan_info.vlan_id | default('N/A') }} | {{ portgroup.num_ports | default('N/A') }} | {{ portgroup.network_policy.promiscuous | default('Inherited') }} | {{ portgroup.network_policy.mac_changes | default('Inherited') }} | {{ portgroup.network_policy.forged_transmits | default('Inherited') }} |
           {% endfor %}
           {% endfor %}
 
