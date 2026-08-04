@@ -77,7 +77,6 @@ def test_workshop_references_implemented_validation_and_reporting_contracts() ->
 def test_assisted_installer_regression_contract_is_retained() -> None:
     required_paths = (
         "playbooks/00-preflight.yml",
-        "playbooks/01-discover-bmc.yml",
         "playbooks/02-boot-discovery-iso.yml",
         "playbooks/03-test-virtual-media.yml",
         "playbooks/90-eject-media.yml",
@@ -93,8 +92,8 @@ def test_assisted_installer_regression_contract_is_retained() -> None:
 
 
 def test_assisted_installer_uses_generic_redfish_contract() -> None:
-    discovery = (ROOT / "playbooks/01-discover-bmc.yml").read_text(encoding="utf-8")
-    preflight = (ROOT / "playbooks/test-preflight.yml").read_text(encoding="utf-8")
+    discovery = (ROOT / "playbooks/day0/discover-bmc.yml").read_text(encoding="utf-8")
+    preflight = (ROOT / "playbooks/00-preflight.yml").read_text(encoding="utf-8")
     install = (ROOT / "playbooks/day0/install.yml").read_text(encoding="utf-8")
 
     combined = "\n".join((discovery, preflight, install))
