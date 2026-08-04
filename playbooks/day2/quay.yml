@@ -1,0 +1,6 @@
+---
+- name: Configure Red Hat Quay operands
+  hosts: localhost
+  gather_facts: false
+  roles:
+    - role: day2_registry
