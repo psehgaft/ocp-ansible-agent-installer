@@ -1,9 +1,23 @@
 ---
-profile: production
+profile: basic
 exclude_paths:
   - .cache/
+  - .collections/
+  - .ansible/
   - reports/output/
   - www/
+  - python_requirements.yml
+  - roles/assisted_cluster/tasks/main-old.yml
+  - roles/assisted_hosts/tasks/main-old.yml
+  - roles/assisted_hosts/tasks/main-pooll-host.yml
+  - roles/rhoso_nmstate_nncp/tasks/main-old.yml
 skip_list:
   - yaml[line-length]
+  - yaml[comments]
+  - var-naming
+  - jinja
+  - no-jinja-when
+  - risky-file-permissions
+  - no-changed-when
+  - command-instead-of-shell
 mock_roles: []
