@@ -38,6 +38,12 @@ jobs:
         run: python scripts/validate_inventories.py
       - name: Ansible syntax checks
         run: python scripts/ansible_syntax_check.py
+      - name: Molecule role tests
+        run: |
+          for scenario in molecule/*/molecule.yml roles/*/molecule/*/molecule.yml; do
+            [ -f "$scenario" ] || continue
+            molecule test -s "$(basename "$(dirname "$scenario")")"
+          done
       - name: Shellcheck
         uses: ludeeus/action-shellcheck@master
       - name: Actionlint
@@ -62,7 +68,7 @@ jobs:
       - name: Build workshop
         run: |
           npm install -g @antora/cli @antora/site-generator
-          antora antora-playbook.yml
+          antora default-site.yml
       - name: Documentation link validation
         uses: lycheeverse/lychee-action@v2
         with:
