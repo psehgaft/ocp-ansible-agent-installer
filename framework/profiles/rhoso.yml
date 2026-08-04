@@ -1,0 +1,14 @@
+---
+profile_name: rhoso
+profile_description: Red Hat OpenStack Services on OpenShift profile
+profile_features:
+  assisted_installer: true
+  redfish: true
+  gitops: true
+  cert_manager: true
+  nmstate: true
+  metallb: true
+  odf: true
+  rhoso: true
+  monitoring: true
+  logging: true

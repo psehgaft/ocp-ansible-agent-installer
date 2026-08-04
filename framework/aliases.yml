@@ -1,0 +1,16 @@
+---
+# Backward-compatible aliases for legacy variable names.
+# New code should use the platform_* variables exclusively.
+framework_variable_aliases:
+  install_odf: odf
+  install_openshift_virtualization: openshift_virtualization
+  install_cluster_baremetal_operator: baremetal_operator
+  install_acm: acm
+  install_acs: acs
+  install_metallb: metallb
+  install_cert_manager: cert_manager
+  install_rhoso: rhoso
+  install_mta: mta
+  install_mtv: mtv
+  enable_gitops: gitops
+  enable_pipelines: pipelines
