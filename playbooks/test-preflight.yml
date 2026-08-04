@@ -1,18 +1,17 @@
 ---
-- name: "OpenShift bare-metal install via Assisted Installer and Dell iDRAC (fully automated)"
+- name: Validate Assisted Installer and generic Redfish prerequisites
   hosts: all
   gather_facts: false
   connection: local
   vars:
-    validate_certs: false  
+    validate_certs: false
   pre_tasks:
-#TODO: Need to check disk space for iso image
-    - name: "Assert required variables exist"
+    - name: Validate required host and cluster inputs
       ansible.builtin.assert:
         that:
-          - idrac_ip is defined
-          - idrac_user is defined
-          - idrac_password is defined
+          - bmc_endpoint is defined or idrac_ip is defined
+          - bmc_username is defined or idrac_user is defined
+          - bmc_password is defined or idrac_password is defined
           - assisted_api_url is defined
           - assisted_auth_mode is defined
           - cluster_name is defined
@@ -22,15 +21,17 @@
           - ssh_public_key_file is defined
           - api_vip is defined
           - ingress_vip is defined
-          - ssh_public_key is defined
-      run_once: true
+        fail_msg: >-
+          Define the generic bmc_* variables and required Assisted Installer
+          cluster settings. Legacy idrac_* aliases remain accepted only for
+          backward compatibility.
       tags: always
 
-    - name: "Create artifacts directories"
+    - name: Create installation artifact directories
       ansible.builtin.file:
         path: "{{ item }}"
         state: directory
-        mode: "0755"
+        mode: "0750"
       loop:
         - "{{ artifacts_dir }}"
         - "{{ artifacts_dir }}/{{ cluster_name }}"
@@ -43,11 +44,12 @@
   roles:
     - role: assisted_auth
       run_once: true
-      tags: 
+      tags:
         - always
         - assisted_auth
 
-    - role: idrac_discovery
-      tags: 
+    - role: bmc_discovery
+      tags:
         - always
-        - idrac_discovery
+        - bmc_discovery
+        - redfish_discovery
