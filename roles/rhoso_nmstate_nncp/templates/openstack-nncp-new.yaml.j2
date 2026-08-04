@@ -1,322 +1,51 @@
-# External → vlan201 → id 201 → /24
-# InternalAPI → vlan401 → id 401 → /23
-# Storage → vlan402 → id 402 → /23
-# Tenant → vlan403 → id 403 → /23
-# StorageMgmt → vlan404 → id 404 → /24
-# storage_* (iSCSI) en em3/em4 con VLAN 162/164/172/174/182/184 y /23
-# br_nfs_* en br-nfs.160/.170/.180 con /24
-
 {% for node in rhoso_worker_nodes %}
+---
 apiVersion: nmstate.io/v1
 kind: NodeNetworkConfigurationPolicy
 metadata:
-  name: osp-net-{{ node }}
+  name: osp-net-{{ node | lower | replace('_', '-') }}
 spec:
   nodeSelector:
     kubernetes.io/hostname: {{ node }}
-    {{ rhoso_worker_label_key }}: ""
   desiredState:
-    {% if rhoso_dns_nameservers is defined and (rhoso_dns_nameservers | length) > 0 %}
+{% if rhoso_dns_nameservers | default([]) | length > 0 %}
     dns-resolver:
       config:
         server:
-{% for ns in rhoso_dns_nameservers %}
-          - {{ ns }}
+{% for nameserver in rhoso_dns_nameservers %}
+          - {{ nameserver }}
 {% endfor %}
-      # -------------------------------------------------------
-      # Physical NICs (up)
-      # -------------------------------------------------------
-      - name: {{ rhoso_bond_member_1 }}
+{% endif %}
+    interfaces:
+{% for interface in rhoso_interfaces | default([]) %}
+      - name: {{ interface.name }}
         type: ethernet
         state: up
-        mtu: 9000
-      - name: {{ rhoso_bond_member_2 }}
-        type: ethernet
-        state: up
-        mtu: 9000
-
-      - name: {{ rhoso_nfs_member_1 }}
-        type: ethernet
-        state: up
-        mtu: 9000
-      - name: {{ rhoso_nfs_member_2 }}
-        type: ethernet
-        state: up
-        mtu: 9000
-
-      - name: {{ rhoso_em3_iface }}
-        type: ethernet
-        state: up
-        mtu: 9000
-      - name: {{ rhoso_em4_iface }}
-        type: ethernet
-        state: up
-        mtu: 9000 
-
-      # -------------------------------------------------------
-      # bond0 (LACP) - table: Bond0 (Main)
-      # -------------------------------------------------------
-      - name: bond0
-        type: bond
-        state: up
-        mtu: 9000
-        ipv4:
-          enabled: false
-        link-aggregation:
-          mode: 802.3ad
-          options:
-            miimon: '100'
-            lacp-rate: fast
-          port:
-            - {{ rhoso_bond_member_1 }}
-            - {{ rhoso_bond_member_2 }}
-      
-      # -------------------------------------------------------
-      # br-ex (OVS bridge) 
-      # br-ex carries management/external integration in this deployment 
-      # -------------------------------------------------------
-      - name: br-ex
-        type: ovs-bridge
-        state: up
-        mtu: 9000
-        ovs-bridge:
-          ports:
-            - name: bond0
-            - name: vlan201  # External    (201)
-            - name: vlan401  # InternalAPO (401)
-            - name: vlan402  # Storage     (402)
-            - name: vlan404  # StorageMgmt (404)
-        ipv4:
-          enabled: true
-          dhcp: false
-          address:
-            - ip: "{{ ocp_worker_node_ips[node]['br-ex'] }}"
-              prefix-length: 24
-        ipv6:
-          enabled: false
-
-       # -------------------------------------------------------
-      # RHOSO VLANs on bond0 (table: External/InternalAPI/Storage/Tenant/StorageMgmt)
-      # -------------------------------------------------------
-      - name: vlan201
+        mtu: {{ interface.mtu | default(9000) }}
+{% endfor %}
+{% for network in (rhoso_isolated_networks | default([])) + (rhoso_storage_networks | default([])) %}
+      - name: >-
+          {{ network.interface | default(network.bond | default(rhoso_isolated_base_iface | default('bond0'))) }}.{{ network.vlan_id }}
         type: vlan
         state: up
-        mtu: 9000
+        mtu: {{ network.mtu | default(9000) }}
         vlan:
-          base-iface: bond0
-          id: 201
+          base-iface: {{ network.interface | default(network.bond | default(rhoso_isolated_base_iface | default('bond0'))) }}
+          id: {{ network.vlan_id }}
         ipv4:
-          enabled: true
+          enabled: {{ (ocp_worker_node_ips[node][network.name] is defined) | lower }}
           dhcp: false
+{% if ocp_worker_node_ips[node][network.name] is defined %}
           address:
-            - ip: "{{ ocp_worker_node_ips[node]['External'] }}"
-              prefix-length: 24
-
-      - name: vlan401
-        type: vlan
-        state: up
-        mtu: 9000
-        vlan:
-          base-iface: bond0
-          id: 401
-        ipv4:
-          enabled: true
-          dhcp: false
-          address:
-            - ip: "{{ ocp_worker_node_ips[node]['InternalAPI'] }}"
-              prefix-length: 23
-
-      - name: vlan402
-        type: vlan
-        state: up
-        mtu: 9000
-        vlan:
-          base-iface: bond0
-          id: 402
-        ipv4:
-          enabled: true
-          dhcp: false
-          address:
-            - ip: "{{ ocp_worker_node_ips[node]['Storage'] }}"
-              prefix-length: 23
-
-      - name: vlan403
-        type: vlan
-        state: up
-        mtu: 9000
-        vlan:
-          base-iface: bond0
-          id: 403
-        ipv4:
-          enabled: true
-          dhcp: false
-          address:
-            - ip: "{{ ocp_worker_node_ips[node]['Tenant'] }}"
-              prefix-length: 23
-
-      - name: vlan404
-        type: vlan
-        state: up
-        mtu: 9000
-        vlan:
-          base-iface: bond0
-          id: 404
-        ipv4:
-          enabled: true
-          dhcp: false
-          address:
-            - ip: "{{ ocp_worker_node_ips[node]['StorageMgmt'] }}"
-              prefix-length: 24
-
-      # Default route (table indicates br-ex as primary L3)
-      routes:
-        config:
-          - destination: 0.0.0.0/0
-            next-hop-address: "{{ rhoso_default_gw }}"
-            next-hop-interface: br-ex
-
-      # -------------------------------------------------------
-      # iSCSI Storage VLANs on dedicated NICs em3/em4 (table: storage_*)
-      # -------------------------------------------------------
-      - name: em3.162
-        type: vlan
-        state: up
-        mtu: 9000
-        vlan:
-          base-iface: {{ rhoso_em3_iface }}
-          id: 162
-        ipv4:
-          enabled: true
-          dhcp: false
-          address:
-            - ip: "{{ ocp_worker_node_ips[node]['storage_1_1'] }}"
-              prefix-length: 23
-
-      - name: em4.164
-        type: vlan
-        state: up
-        mtu: 9000
-        vlan:
-          base-iface: {{ rhoso_em4_iface }}
-          id: 164
-        ipv4:
-          enabled: true
-          dhcp: false
-          address:
-            - ip: "{{ ocp_worker_node_ips[node]['storage_1_2'] }}"
-              prefix-length: 23
-
-      - name: em3.172
-        type: vlan
-        state: up
-        mtu: 9000
-        vlan:
-          base-iface: {{ rhoso_em3_iface }}
-          id: 172
-        ipv4:
-          enabled: true
-          dhcp: false
-          address:
-            - ip: "{{ ocp_worker_node_ips[node]['storage_2_2'] }}"
-              prefix-length: 23
-
-      - name: em4.174
-        type: vlan
-        state: up
-        mtu: 9000
-        vlan:
-          base-iface: {{ rhoso_em4_iface }}
-          id: 174
-        ipv4:
-          enabled: true
-          dhcp: false
-          address:
-            - ip: "{{ ocp_worker_node_ips[node]['storage_2_1'] }}"
-              prefix-length: 23
-
-      - name: em3.182
-        type: vlan
-        state: up
-        mtu: 9000
-        vlan:
-          base-iface: {{ rhoso_em3_iface }}
-          id: 182
-        ipv4:
-          enabled: true
-          dhcp: false
-          address:
-            - ip: "{{ ocp_worker_node_ips[node]['storage_3_1'] }}"
-              prefix-length: 23
-
-      - name: em4.184
-        type: vlan
-        state: up
-        mtu: 9000
-        vlan:
-          base-iface: {{ rhoso_em4_iface }}
-          id: 184
-        ipv4:
-          enabled: true
-          dhcp: false
-          address:
-            - ip: "{{ ocp_worker_node_ips[node]['storage_3_2'] }}"
-              prefix-length: 23
-
-      # -------------------------------------------------------
-      # br-nfs (bond active-backup) + VLANs 160/170/180 (table: br_nfs_*)
-      # -------------------------------------------------------
-      - name: br-nfs
-        type: bond
-        state: up
-        mtu: 9000
-        ipv4:
-          enabled: false
-        link-aggregation:
-          mode: active-backup
-          port:
-            - {{ rhoso_nfs_member_1 }}
-            - {{ rhoso_nfs_member_2 }}
-
-      - name: br-nfs.160
-        type: vlan
-        state: up
-        mtu: 9000
-        vlan:
-          base-iface: br-nfs
-          id: 160
-        ipv4:
-          enabled: true
-          dhcp: false
-          address:
-            - ip: "{{ ocp_worker_node_ips[node]['br_nfs_1'] }}"
-              prefix-length: 24
-
-      - name: br-nfs.170
-        type: vlan
-        state: up
-        mtu: 9000
-        vlan:
-          base-iface: br-nfs
-          id: 170
-        ipv4:
-          enabled: true
-          dhcp: false
-          address:
-            - ip: "{{ ocp_worker_node_ips[node]['br_nfs_2'] }}"
-              prefix-length: 24
-
-      - name: br-nfs.180
-        type: vlan
-        state: up
-        mtu: 9000
-        vlan:
-          base-iface: br-nfs
-          id: 180
-        ipv4:
-          enabled: true
-          dhcp: false
-          address:
-            - ip: "{{ ocp_worker_node_ips[node]['br_nfs_3'] }}"
-              prefix-length: 24
----
+            - ip: "{{ ocp_worker_node_ips[node][network.name] }}"
+              prefix-length: {{ network.prefix_length }}
+{% endif %}
+{% endfor %}
+{% if rhoso_default_gw | default('') | length > 0 %}
+    routes:
+      config:
+        - destination: 0.0.0.0/0
+          next-hop-address: "{{ rhoso_default_gw }}"
+          next-hop-interface: {{ rhoso_default_route_interface | default('br-ex') }}
+{% endif %}
 {% endfor %}

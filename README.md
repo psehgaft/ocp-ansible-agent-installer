@@ -1,262 +1,245 @@
-# OpenShift Assisted Installer Automation with Vendor-Neutral Redfish
+# OpenShift Automation Framework
 
-This repository automates an OpenShift bare-metal deployment through the Red Hat Assisted Installer API and a standards-based Redfish management workflow.
+This repository provides a vendor-neutral OpenShift automation framework for bare-metal installation, platform operator lifecycle, GitOps bootstrap, Day-2 configuration, validation, reporting, and workshops.
 
-It is based on the architecture of `psehgaft/ocp-ansible-agent-installer`, but replaces the Dell-only iDRAC discovery and virtual-media implementation with a reusable BMC abstraction that supports:
+The Day-0 installation path uses the Red Hat Assisted Installer API and standards-based Redfish. HPE iLO, Dell iDRAC, and other standards-compliant BMCs use the same `bmc_*` contract. Dell-specific `idrac_*` variables remain compatibility aliases only.
 
-- HPE iLO 5/6 as the primary target; iLO 4 is best-effort when its firmware exposes the required Redfish resources and actions.
-- Dell iDRAC 8/9 with Redfish support.
-- Other standards-compliant Redfish BMCs through the `generic` driver.
-- Automatic vendor detection with `bmc_type: auto`.
+## Architecture
 
-The primary selector is the per-host variable:
+The framework separates:
 
-```yaml
-bmc_type: ilo       # ilo | idrac | generic | auto
-```
+1. **Day-0 installation** — Redfish discovery, virtual media, Assisted Installer, host matching, and installation evidence.
+2. **Platform operators** — catalog-driven installation and operator readiness.
+3. **Operands and Day-2 configuration** — identity, PKI, registries, networking, storage, observability, backup, health, and platform services.
+4. **GitOps desired state** — Kustomize-first Argo CD/OpenShift GitOps reconciliation.
+5. **Validation and reporting** — normalized component results with Markdown, JSON, HTML, and CSV outputs.
 
-The implementation uses `community.general.redfish_info` for inventory and `community.general.redfish_command` for virtual media, one-time boot, and power operations. Vendor-specific resource IDs are discovered dynamically from `/redfish/v1/`.
-
-## Capabilities
-
-1. Validate the Ansible control node and required variables.
-2. Connect to each BMC and discover its Redfish topology.
-3. Collect system, manager, chassis, NIC, CPU, memory, storage-volume, firmware, health, boot, and virtual-media data.
-4. Normalize NIC information across iLO and iDRAC responses.
-5. Select or validate the provisioning MAC address.
-6. Create the Assisted Installer cluster and InfraEnv resources.
-7. Generate static NMState configuration for single-NIC or bonded installation networks.
-8. Download or reference the Assisted Installer discovery ISO.
-9. Insert the ISO through Redfish virtual media.
-10. Set a one-time CD/DVD boot override and restart the server.
-11. Match discovered hosts by MAC address, assign roles and hostnames, and start installation.
-12. Download the kubeconfig and kubeadmin password.
-13. Generate raw JSON evidence and a Markdown installation report.
-
-## Repository layout
+Important directories:
 
 ```text
-.
-├── ansible.cfg
-├── inventories/sample/
-│   ├── hosts.yml
-│   └── group_vars/
-│       ├── all.yml
-│       └── vault.yml.example
-├── filter_plugins/redfish_filters.py
-├── playbooks/
-├── roles/
-├── scripts/
-├── docs/
-├── WORKSHOP.md
-└── workshop/                 # Antora/Showroom-style workshop source
+framework/                   Component, operand, profile, and result schemas
+gitops/                      Argo CD bootstrap and Kustomize desired state
+group_vars/                  Global defaults and examples
+inventories/                 Environment-specific inventories and overrides
+playbooks/day0/              Bare-metal discovery and Assisted Installer
+playbooks/day2/              Day-2 cluster and platform configuration
+playbooks/audit_vmware_network.yml
+roles/                       Reusable Ansible roles
+reports/                     Generated validation evidence
+workshop/                    Antora workshop source
 ```
 
 ## Requirements
 
-- RHEL 9, Fedora, or another supported Linux control node.
-- Python 3.11 or later.
-- `ansible-core` 2.18 or later.
-- `community.general` collection.
-- `oc`, `curl`, and `jq`.
-- Network access from the control node to each BMC HTTPS endpoint.
-- Network access from each BMC to the discovery ISO URL.
-- DNS, API/Ingress VIPs, load balancing, and the other bare-metal prerequisites required by OpenShift.
-- A Red Hat pull secret and SSH public key.
-- A Red Hat Assisted Installer offline token for SaaS, or an access token for an on-premises Assisted Service.
+- Python 3.11 or later
+- `ansible-core` 2.18 or later
+- `oc`, `curl`, `jq`, Git, Kustomize, and Helm
+- Access to the target BMCs, Assisted Installer, cluster API, and Git repository
+- Ansible Vault or an external secret manager
 
-Install the Python and collection dependencies:
+Install dependencies:
 
 ```bash
 python3 -m pip install -r requirements.txt
 ansible-galaxy collection install -r requirements.yml
 ```
 
-## Quick start
+## Inventory model
 
-### 1. Copy the sample inventory
-
-```bash
-cp -a inventories/sample inventories/mycluster
-```
-
-### 2. Configure hosts
-
-Edit `inventories/mycluster/hosts.yml`.
-
-For HPE iLO:
-
-```yaml
-master-0:
-  bmc_type: ilo
-  bmc_endpoint: "https://10.10.10.11"
-  bmc_username: "Administrator"
-  node_role: master
-  node_hostname: master-0
-  node_ipv4_address: "192.168.50.21"
-```
-
-For Dell iDRAC:
-
-```yaml
-worker-0:
-  bmc_type: idrac
-  bmc_endpoint: "https://10.10.10.21"
-  bmc_username: "root"
-  node_role: worker
-  node_hostname: worker-0
-  node_ipv4_address: "192.168.50.31"
-```
-
-`bmc_type: auto` can be used when the BMC exposes recognizable manufacturer information at the Redfish service root or manager resource. Explicit `ilo` or `idrac` values are recommended for production because they make inventory intent auditable.
-
-### 3. Configure cluster variables
-
-Edit `inventories/mycluster/group_vars/all.yml`. Every `CHANGE_ME` value is commented in English and must be reviewed.
-
-### 4. Configure secrets
-
-```bash
-cp inventories/mycluster/group_vars/vault.yml.example \
-   inventories/mycluster/group_vars/vault.yml
-ansible-vault encrypt inventories/mycluster/group_vars/vault.yml
-```
-
-The sample inventory references `vault_bmc_passwords`, which allows different BMC credentials per host.
-
-### 5. Validate
-
-```bash
-./scripts/preflight.sh inventories/mycluster/hosts.yml
-./scripts/validate.sh inventories/mycluster/hosts.yml
-```
-
-### 6. Discover BMC inventory only
-
-```bash
-ansible-playbook \
-  -i inventories/mycluster/hosts.yml \
-  --ask-vault-pass \
-  playbooks/01-discover-bmc.yml
-```
-
-Review:
+Global non-secret defaults live under:
 
 ```text
-artifacts/<cluster-name>/raw/bmc-<hostname>.json
-artifacts/<cluster-name>/reports/bmc-inventory.md
+group_vars/all/
+├── platform.yml
+├── features.yml
+└── versions.yml
 ```
 
-### 7. Test virtual media on one approved non-production host
+Environment values override those defaults:
+
+```text
+inventories/
+├── lab/
+├── development/
+├── testing/
+├── production/
+└── examples/
+```
+
+Recommended precedence is global defaults, environment group variables, environment host variables, and explicit command-line values. Secrets must be encrypted with Ansible Vault or resolved externally; plaintext passwords, pull secrets, tokens, private keys, and kubeconfigs must not be committed.
+
+## Ansible execution
+
+### 1. Prepare an inventory
+
+```bash
+cp -a inventories/sample inventories/lab-cluster
+ansible-vault create inventories/lab-cluster/group_vars/vault.yml
+```
+
+Use generic Redfish host variables:
+
+```yaml
+bmc_type: auto          # auto | ilo | idrac | generic
+bmc_endpoint: https://10.10.10.11
+bmc_username: Administrator
+bmc_password: "{{ vault_bmc_passwords[inventory_hostname] }}"
+```
+
+### 2. Validate the repository and inventory
+
+```bash
+./scripts/preflight.sh inventories/lab-cluster/hosts.yml
+./scripts/validate.sh inventories/lab-cluster/hosts.yml
+ansible-inventory -i inventories/lab-cluster/hosts.yml --list >/dev/null
+```
+
+### 3. Discover BMCs
 
 ```bash
 ansible-playbook \
-  -i inventories/mycluster/hosts.yml \
+  -i inventories/lab-cluster/hosts.yml \
   --ask-vault-pass \
-  --limit master-0 \
-  -e test_iso_url=https://images.example.com/test.iso \
-  -e bmc_wait_for_node_ssh=false \
-  playbooks/03-test-virtual-media.yml
+  playbooks/day0/discover-bmc.yml
 ```
 
-### 8. Run the complete installation
+### 4. Run Assisted Installer
 
 ```bash
 ansible-playbook \
-  -i inventories/mycluster/hosts.yml \
+  -i inventories/lab-cluster/hosts.yml \
   --ask-vault-pass \
-  playbooks/site.yml
+  playbooks/day0/install.yml
 ```
 
-### 9. Eject discovery media after installation
+The retained compatibility entry point is `playbooks/site.yml`. New automation should use the `playbooks/day0/` entry points.
+
+### 5. Install a platform operator
 
 ```bash
-ansible-playbook \
-  -i inventories/mycluster/hosts.yml \
+ansible-playbook playbooks/install-platform-operator.yml \
+  -e operator_lifecycle_component=acm \
+  -e operator_lifecycle_deployment_mode=direct
+```
+
+### 6. Apply Day-2 configuration directly
+
+```bash
+ansible-playbook playbooks/day2/oauth.yml \
+  -e day2_deployment_mode=direct
+```
+
+Direct mode applies validated resources with `kubernetes.core.k8s` and should be used for controlled administration, break-glass recovery, or environments not yet managed by GitOps.
+
+## GitOps execution
+
+Kustomize is the default composition mechanism. Helm is used only when a chart provides meaningful lifecycle value.
+
+### 1. Configure the Git source
+
+Review the repository URL, target revision, cluster destination, project, and environment overlay under `gitops/bootstrap/` and `gitops/overlays/`.
+
+### 2. Render desired state without cluster changes
+
+```bash
+ansible-playbook playbooks/gitops-foundation.yml \
+  -e gitops_foundation_mode=render \
+  -e gitops_foundation_environment=lab
+```
+
+### 3. Bootstrap OpenShift GitOps
+
+```bash
+ansible-playbook playbooks/gitops-foundation.yml \
+  -e gitops_foundation_mode=gitops \
+  -e gitops_foundation_environment=production
+```
+
+GitOps mode renders desired-state manifests and bootstraps standardized `AppProject`, `Application`, root application, and `ApplicationSet` resources. Generated files are never committed or pushed automatically unless the explicit Git-write workflow is enabled.
+
+### 4. Validate desired state
+
+```bash
+kustomize build gitops/overlays/production >/tmp/production.yaml
+kubeconform -strict -ignore-missing-schemas /tmp/production.yaml
+```
+
+Direct and GitOps modes must describe equivalent Kubernetes desired state. Direct mode applies that state immediately; GitOps mode publishes it for Argo CD reconciliation.
+
+## Deployment modes
+
+Components declare supported modes in `framework/components.yml`:
+
+- `direct`: apply resources with Ansible.
+- `render`: generate desired-state manifests without applying them.
+- `gitops`: render manifests and reconcile through OpenShift GitOps.
+
+The dependency resolver distinguishes mandatory dependencies, recommendations, conflicts, ordering-only constraints, and required external configuration.
+
+## Validation and reports
+
+Every component should emit the normalized `component_result` contract defined in `framework/component-result.schema.yml`.
+
+Generate reports:
+
+```bash
+ansible-playbook playbooks/generate-component-report.yml \
+  -e component_results=@reports/input/component-results.json
+```
+
+Outputs are written under `reports/output/` as Markdown, JSON, HTML, and CSV.
+
+## VMware network audit
+
+The read-only VMware network audit is located at:
+
+```text
+playbooks/audit_vmware_network.yml
+```
+
+Run it with encrypted or externally resolved credentials:
+
+```bash
+ansible-playbook playbooks/audit_vmware_network.yml \
   --ask-vault-pass \
-  playbooks/90-eject-media.yml
+  -e vcenter_hostname=vcenter.example.com \
+  -e vcenter_username=auditor@vsphere.local
 ```
 
-## ISO delivery modes
+`vcenter_password` must come from Ansible Vault or an external secret lookup. The playbook does not contain a default password.
 
-### `local_http` — recommended for controlled bare-metal networks
+## Quality gates
 
-The control node downloads the discovery ISO and serves it with a local Podman HTTP container. Configure:
+Pull requests run YAML parsing, `yamllint`, `ansible-lint`, Python compilation, Ruff, pytest, inventory validation, Ansible syntax checks, Molecule when scenarios exist, ShellCheck, actionlint, Kustomize, Helm, kubeconform, secret scanning, Antora build, and documentation link validation.
 
-```yaml
-iso_delivery_mode: local_http
-iso_http_advertise_address: "192.168.50.10"
-iso_http_port: 8080
+Cluster integration tests, destructive tests, and scheduled compatibility tests are separate workflows with explicit credentials and approval boundaries.
+
+## Workshop
+
+The Antora workshop contains:
+
+- the architecture-aligned framework learning path; and
+- the retained Redfish and Assisted Installer source material.
+
+Build it with:
+
+```bash
+npm install -g @antora/cli @antora/site-generator
+antora default-site.yml
 ```
 
-The BMC management network must be able to reach that address and port.
+## Migration and deprecation
 
-### `existing_http`
+See:
 
-Use an existing HTTP/HTTPS server:
-
-```yaml
-iso_delivery_mode: existing_http
-iso_existing_url: "https://images.example.com/ocp/discovery.iso"
-```
-
-### `direct_url`
-
-Pass the Assisted Installer image URL directly to the BMC:
-
-```yaml
-iso_delivery_mode: direct_url
-```
-
-This mode only works when the BMC can resolve, route to, and download from the generated URL.
-
-## BMC compatibility controls
-
-The following variables handle implementation differences without duplicating the playbooks:
-
-```yaml
-bmc_type: ilo
-bmc_system_id: "1"                  # Optional override; normally auto-discovered
-bmc_manager_id: "1"                 # Optional override; normally auto-discovered
-bmc_virtual_media_category: Manager  # Manager or Systems
-bmc_boot_device: Cd
-bmc_validate_certs: true
-bmc_ca_path: "/etc/pki/ca-trust/source/anchors/bmc-ca.pem"
-```
-
-Set `bmc_validate_certs: false` only for initial lab validation. Production environments should install the BMC issuing CA and enable validation.
-
-## Backward compatibility
-
-The BMC discovery role accepts these legacy Dell variables when the new variables are not defined:
-
-| Legacy variable | New variable |
-|---|---|
-| `idrac_ip` | `bmc_endpoint` |
-| `idrac_user` | `bmc_username` |
-| `idrac_password` | `bmc_password` |
-
-New inventories should use the `bmc_*` names. See [docs/migration-from-idrac.md](docs/migration-from-idrac.md).
-
-## Security notes
-
-- Store passwords and Assisted Installer tokens with Ansible Vault or an external secret manager.
-- Do not commit pull secrets, kubeconfigs, tokens, or generated artifacts.
-- Enable TLS validation and use `bmc_ca_path` in production.
-- Restrict the local ISO web server to the installation network.
-- Rotate temporary BMC credentials after the installation window.
-- Review the generated `artifacts/` directory because it contains sensitive installation state.
-
-## Documentation
-
-- [Workshop guide](WORKSHOP.md)
-- [Validation record](VALIDATION.md)
+- [Repository compliance audit](docs/repository-compliance-audit.md)
+- [Deprecation inventory](docs/deprecated-files.md)
+- [Migration from iDRAC](docs/migration-from-idrac.md)
 - [Architecture](docs/architecture.md)
-- [Variable reference](docs/variable-reference.md)
-- [Migration from the iDRAC-only repository](docs/migration-from-idrac.md)
 - [Troubleshooting](docs/troubleshooting.md)
-- [References](docs/references.md)
 
-## Important validation boundary
+Do not delete compatibility files until the conditions documented in `docs/deprecated-files.md` are satisfied and the Assisted Installer regression tests pass.
 
-The repository includes syntax, structure, and data-normalization tests. Live virtual-media behavior still depends on BMC firmware, licensing, Redfish implementation, network reachability, and ISO protocol support. Validate first with `playbooks/01-discover-bmc.yml`, then use `playbooks/03-test-virtual-media.yml` with `--limit` on one non-production server before running the cluster-wide discovery ISO or installation playbooks.
+## Security boundary
+
+Never commit plaintext credentials, pull secrets, Assisted Installer tokens, kubeconfigs, private keys, vCenter passwords, or generated secret payloads. Use Ansible Vault, External Secrets, Sealed Secrets, SOPS, or Vault references.

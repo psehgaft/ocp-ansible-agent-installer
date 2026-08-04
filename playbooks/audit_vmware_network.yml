@@ -1,0 +1,116 @@
+---
+- name: Audit VMware vSphere network architecture read-only
+  hosts: localhost
+  gather_facts: false
+  vars:
+    validate_certs: true
+    output_file: "{{ artifacts_dir | default('./artifacts') }}/VMware_Network_Audit_Report.md"
+
+  pre_tasks:
+    - name: Validate VMware audit inputs
+      ansible.builtin.assert:
+        that:
+          - vcenter_hostname is defined
+          - vcenter_hostname | length > 0
+          - vcenter_username is defined
+          - vcenter_username | length > 0
+          - vcenter_password is defined
+          - vcenter_password | length > 0
+        fail_msg: >-
+          Provide vcenter_hostname, vcenter_username, and vcenter_password through
+          an encrypted inventory, Ansible Vault, or an external secret lookup.
+      no_log: true
+
+    - name: Create report directory
+      ansible.builtin.file:
+        path: "{{ output_file | dirname }}"
+        state: directory
+        mode: "0750"
+
+  tasks:
+    - name: Gather standard virtual switch information
+      community.vmware.vmware_vswitch_info:
+        hostname: "{{ vcenter_hostname }}"
+        username: "{{ vcenter_username }}"
+        password: "{{ vcenter_password }}"
+        validate_certs: "{{ validate_certs }}"
+      register: vswitch_info
+      no_log: true
+
+    - name: Gather standard port group information
+      community.vmware.vmware_portgroup_info:
+        hostname: "{{ vcenter_hostname }}"
+        username: "{{ vcenter_username }}"
+        password: "{{ vcenter_password }}"
+        validate_certs: "{{ validate_certs }}"
+      register: standard_portgroup_info
+      no_log: true
+
+    - name: Gather distributed virtual switch information
+      community.vmware.vmware_dvswitch_info:
+        hostname: "{{ vcenter_hostname }}"
+        username: "{{ vcenter_username }}"
+        password: "{{ vcenter_password }}"
+        validate_certs: "{{ validate_certs }}"
+      register: vds_info
+      no_log: true
+
+    - name: Gather distributed port group information
+      community.vmware.vmware_dvs_portgroup_info:
+        hostname: "{{ vcenter_hostname }}"
+        username: "{{ vcenter_username }}"
+        password: "{{ vcenter_password }}"
+        validate_certs: "{{ validate_certs }}"
+      register: distributed_portgroup_info
+      no_log: true
+
+    - name: Generate VMware network audit report
+      ansible.builtin.copy:
+        dest: "{{ output_file }}"
+        mode: "0640"
+        content: |
+          # VMware vSphere Network Audit Report
+
+          Target vCenter: `{{ vcenter_hostname }}`
+
+          ## Standard virtual switches
+
+          | Host | Switch | MTU | Physical NICs | Active uplinks | Standby uplinks |
+          |---|---|---|---|---|---|
+          {% for host_name, switches in vswitch_info.hosts_vswitch_info.items() %}
+          {% for switch_name, switch in switches.items() %}
+          | {{ host_name }} | {{ switch_name }} | {{ switch.mtu | default('1500') }} | {{ switch.pnics | default([]) | join(', ') }} | {{ switch.failover_active | default([]) | join(', ') }} | {{ switch.failover_standby | default([]) | join(', ') }} |
+          {% endfor %}
+          {% endfor %}
+
+          ## Standard port groups
+
+          | Host | Port group | VLAN | vSwitch | Security |
+          |---|---|---|---|---|
+          {% for host_name, portgroups in standard_portgroup_info.hosts_portgroup_info.items() %}
+          {% for portgroup in portgroups %}
+          | {{ host_name }} | {{ portgroup.portgroup }} | {{ portgroup.vlan_id }} | {{ portgroup.vswitch }} | {{ portgroup.security | default([]) | join(', ') }} |
+          {% endfor %}
+          {% endfor %}
+
+          ## Distributed virtual switches
+
+          | vDS name | UUID | Hosts |
+          |---|---|---|
+          {% for vds in vds_info.distributed_virtual_switches | default([]) %}
+          | {{ vds.configure.settings.properties.general.name | default('N/A') }} | {{ vds.uuid | default('N/A') }} | {{ vds.configure.hosts | default([]) | join(', ') }} |
+          {% endfor %}
+
+          ## Distributed port groups
+
+          | vDS | Port group | VLAN | Ports | Promiscuous | MAC changes | Forged transmits |
+          |---|---|---|---|---|---|---|
+          {% for switch_name, portgroups in distributed_portgroup_info.dvs_portgroup_info.items() %}
+          {% for portgroup in portgroups %}
+          | {{ switch_name }} | {{ portgroup.portgroup_name }} | {{ portgroup.vlan_info.vlan_id | default('N/A') }} | {{ portgroup.num_ports | default('N/A') }} | {{ portgroup.network_policy.promiscuous | default('Inherited') }} | {{ portgroup.network_policy.mac_changes | default('Inherited') }} | {{ portgroup.network_policy.forged_transmits | default('Inherited') }} |
+          {% endfor %}
+          {% endfor %}
+
+    - name: Report audit output location
+      ansible.builtin.debug:
+        msg: "VMware network audit report written to {{ output_file }}"
