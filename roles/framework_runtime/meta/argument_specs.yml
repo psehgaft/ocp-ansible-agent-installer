@@ -1,0 +1,27 @@
+---
+argument_specs:
+  main:
+    short_description: Validate and build the OpenShift framework runtime plan.
+    options:
+      platform_profile:
+        type: str
+        default: minimal
+        choices:
+          - minimal
+          - lab
+          - enterprise
+          - telco
+          - virtualization
+      platform_deployment_mode:
+        type: str
+        default: direct
+        choices:
+          - direct
+          - render
+          - gitops
+      platform_openshift_version:
+        type: str
+        default: "4.18"
+      platform_features:
+        type: dict
+        default: {}

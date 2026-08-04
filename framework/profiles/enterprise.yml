@@ -1,0 +1,14 @@
+---
+profile_name: enterprise
+profile_description: Enterprise profile with GitOps, multicluster management, security, storage, observability, and certificate management foundations.
+profile_features:
+  assisted_installer: true
+  redfish: true
+  gitops: true
+  acm: true
+  acs: true
+  odf: true
+  cert_manager: true
+  observability: true
+  logging: true
+  compliance: true

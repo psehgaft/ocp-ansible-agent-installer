@@ -1,0 +1,11 @@
+---
+profile_name: lab
+profile_description: Lab profile with GitOps, MetalLB, certificate management, storage, and virtualization foundations.
+profile_features:
+  assisted_installer: true
+  redfish: true
+  gitops: true
+  metallb: true
+  cert_manager: true
+  odf: true
+  openshift_virtualization: true
