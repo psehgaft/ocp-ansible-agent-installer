@@ -33,7 +33,7 @@ else
 fi
 
 if [[ -f "$(dirname "$INVENTORY")/group_vars/vault.yml" ]]; then
-  if grep -q '^\$ANSIBLE_VAULT;' "$(dirname "$INVENTORY")/group_vars/vault.yml"; then
+  if grep -q "^\\\$ANSIBLE_VAULT;" "$(dirname "$INVENTORY")/group_vars/vault.yml"; then
     echo "OK: vault.yml is encrypted."
   else
     echo "WARNING: vault.yml exists but does not appear to be encrypted." >&2
