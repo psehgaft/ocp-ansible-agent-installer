@@ -1,0 +1,7 @@
+---
+day2_deployment_mode: direct
+day2_render_root: "{{ playbook_dir }}/../../rendered"
+day2_operation_domain: monitoring
+day2_operation_resources: []
+day2_operation_checks: []
+day2_operation_results: []
