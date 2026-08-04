@@ -1,0 +1,9 @@
+---
+framework_catalog_file: "{{ playbook_dir }}/../framework/components.yml"
+framework_defaults_file: "{{ playbook_dir }}/../framework/defaults.yml"
+framework_compatibility_file: "{{ playbook_dir }}/../framework/compatibility.yml"
+framework_profile_file: "{{ playbook_dir }}/../framework/profiles/{{ platform_profile }}.yml"
+framework_allowed_deployment_modes:
+  - direct
+  - render
+  - gitops
