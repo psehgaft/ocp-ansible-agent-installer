@@ -1,0 +1,16 @@
+[tool.ruff]
+target-version = "py39"
+line-length = 120
+exclude = ["www", "reports/output", ".cache"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+ignore = ["E501"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "--strict-markers"
+markers = [
+  "integration: requires access to a non-production OpenShift cluster",
+  "destructive: mutates or deletes cluster resources and requires explicit approval",
+]

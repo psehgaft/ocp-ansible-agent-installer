@@ -1,0 +1,32 @@
+name: Quality - Cluster Integration
+
+on:
+  workflow_dispatch:
+    inputs:
+      inventory:
+        description: Inventory path
+        required: true
+        default: inventories/testing/hosts.yml
+
+permissions:
+  contents: read
+
+environment: cluster-integration
+
+jobs:
+  integration:
+    if: ${{ secrets.KUBECONFIG_B64 != '' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install -r requirements-ci.txt
+      - run: ansible-galaxy collection install -r collections/requirements.yml
+      - name: Configure cluster access
+        run: echo '${{ secrets.KUBECONFIG_B64 }}' | base64 -d > "$RUNNER_TEMP/kubeconfig"
+      - name: Run non-destructive integration tests
+        env:
+          KUBECONFIG: ${{ runner.temp }}/kubeconfig
+        run: pytest -q -m integration --inventory '${{ inputs.inventory }}'

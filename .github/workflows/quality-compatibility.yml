@@ -1,0 +1,32 @@
+name: Quality - Compatibility
+
+on:
+  schedule:
+    - cron: '17 5 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  compatibility:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        openshift: ['4.18', '4.19']
+        profile: [minimal, enterprise, telco, virtualization, rhoso, disconnected]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install -r requirements-ci.txt
+      - run: ansible-galaxy collection install -r collections/requirements.yml
+      - name: Validate framework matrix
+        run: >-
+          ansible-playbook playbooks/framework-runtime.yml
+          -e platform_profile=${{ matrix.profile }}
+          -e platform_openshift_version=${{ matrix.openshift }}
+          -e platform_deployment_mode=render
+          --syntax-check
