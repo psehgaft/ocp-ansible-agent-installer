@@ -10,5 +10,6 @@
 * xref:09-day2-operations.adoc[9. Networking, Monitoring, Logging, and Backup]
 * xref:10-health-troubleshooting.adoc[10. Health, Reporting, and Troubleshooting]
 * xref:11-new-component.adoc[11. Adding a New Component]
+* xref:12-template-system.adoc[12. Template System and Rendering]
 * xref:appendix-dependencies.adoc[Dependency and Inventory Reference]
 * xref:legacy-workshop.adoc[Legacy Workshop Source Map]
