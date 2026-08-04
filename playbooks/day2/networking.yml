@@ -1,0 +1,7 @@
+---
+- name: Configure cluster networking
+  hosts: localhost
+  gather_facts: false
+  roles:
+    - role: day2_cluster_operations
+      vars: {day2_cluster_domain: networking, day2_cluster_resources: "{{ networking_resources | default([]) }}"}

@@ -1,0 +1,7 @@
+---
+- name: Configure ODF Day-2 resources
+  hosts: localhost
+  gather_facts: false
+  roles:
+    - role: day2_cluster_operations
+      vars: {day2_cluster_domain: odf, day2_cluster_resources: "{{ odf_day2_resources | default([]) }}"}

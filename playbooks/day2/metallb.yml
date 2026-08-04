@@ -1,0 +1,7 @@
+---
+- name: Configure MetalLB pools and advertisements
+  hosts: localhost
+  gather_facts: false
+  roles:
+    - role: day2_cluster_operations
+      vars: {day2_cluster_domain: metallb, day2_cluster_resources: "{{ metallb_resources | default([]) }}"}

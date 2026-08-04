@@ -1,0 +1,7 @@
+---
+- name: Configure volume snapshot classes
+  hosts: localhost
+  gather_facts: false
+  roles:
+    - role: day2_cluster_operations
+      vars: {day2_cluster_domain: volume-snapshots, day2_cluster_resources: "{{ volume_snapshot_resources | default([]) }}"}

@@ -1,0 +1,6 @@
+---
+day2_deployment_mode: direct
+day2_render_root: "{{ playbook_dir }}/../../rendered"
+day2_cluster_domain: networking
+day2_cluster_resources: []
+day2_require_resources: true

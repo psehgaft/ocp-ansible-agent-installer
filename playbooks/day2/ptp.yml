@@ -1,0 +1,7 @@
+---
+- name: Configure PTP
+  hosts: localhost
+  gather_facts: false
+  roles:
+    - role: day2_cluster_operations
+      vars: {day2_cluster_domain: ptp, day2_cluster_resources: "{{ ptp_resources | default([]) }}"}
