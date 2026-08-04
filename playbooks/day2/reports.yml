@@ -1,4 +1,14 @@
 ---
+- name: Render or apply report-related resources
+  hosts: localhost
+  gather_facts: false
+  roles:
+    - role: day2_operational_workflow
+      vars:
+        day2_operation_domain: reports
+        day2_operation_resources: "{{ report_resources | default([]) }}"
+        day2_operation_checks: []
+
 - name: Generate consolidated Day-2 reports
   hosts: localhost
   gather_facts: true
