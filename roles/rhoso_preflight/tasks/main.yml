@@ -27,6 +27,7 @@
   environment:
     KUBECONFIG: "{{ rhoso_kubeconfig | default(omit) }}"
   when: _ns_check.rc != 0
+  changed_when: true
   run_once: true
 
 - name: Check required CRDs exist (NMState NNCP)
@@ -45,7 +46,7 @@
   changed_when: false
   run_once: true
 
-- name: Check MetalLB CRDs exist (IPAddressPool, L2Advertisement) if enabled
+- name: Check MetalLB CRDs exist when enabled
   ansible.builtin.command: oc get crd ipaddresspools.metallb.io l2advertisements.metallb.io -o name
   environment:
     KUBECONFIG: "{{ rhoso_kubeconfig | default(omit) }}"
@@ -54,7 +55,7 @@
   when: rhoso_enable_metallb | bool
   run_once: true
 
-- name: Ensure MetalLB namespace exists if enabled
+- name: Ensure MetalLB namespace exists when enabled
   ansible.builtin.command: oc get ns "{{ rhoso_metallb_namespace }}" -o name
   environment:
     KUBECONFIG: "{{ rhoso_kubeconfig | default(omit) }}"
@@ -63,53 +64,58 @@
   when: rhoso_enable_metallb | bool
   run_once: true
 
-# --- TBD guardrail -----------------------------------------------------------------------------
-- name: Collect variables that must not be TBD (basic)
+- name: Initialize TBD guardrail findings
   ansible.builtin.set_fact:
-    _tbd_hits: "{{ _tbd_hits | default([]) + _new_hits }}"
-  vars:
-    _new_hits: >-
-      {{
-        []
-        + ([ 'rhoso_isolated_base_iface' ] if (rhoso_isolated_base_iface | string) == 'TBD!' else [])
-        + ([ 'rhoso_worker_nodes' ] if (rhoso_worker_nodes | length) == 0 else [])
-      }}
+    _tbd_hits: []
   changed_when: false
   run_once: true
 
-- name: Check TBD in network definitions
+- name: Check basic required values for TBD markers
   ansible.builtin.set_fact:
-    _tbd_hits: "{{ _tbd_hits + _net_hits }}"
-  vars:
-    _net_hits: >-
-      {{
-        [
-          'rhoso_isolated_networks[' ~ idx|string ~ '].' ~ key
-          for idx, net in (rhoso_isolated_networks | list | enumerate)
-          for key in ['subnet_cidr','pod_ipam_start','pod_ipam_end','vlan_id','mtu','prefix_length','metallb_pool_start','metallb_pool_end']
-          if (net.get(key) | string) == 'TBD!'
-        ]
-      }}
+    _tbd_hits: "{{ _tbd_hits + [item.name] }}"
+  loop:
+    - name: rhoso_isolated_base_iface
+      invalid: "{{ (rhoso_isolated_base_iface | string) == 'TBD!' }}"
+    - name: rhoso_worker_nodes
+      invalid: "{{ (rhoso_worker_nodes | default([]) | length) == 0 }}"
+  when: item.invalid | bool
   changed_when: false
   run_once: true
 
-- name: Check TBD in per-node IPs
+- name: Check network definitions for TBD markers
   ansible.builtin.set_fact:
-    _tbd_hits: "{{ _tbd_hits + _ip_hits }}"
+    _tbd_hits: "{{ _tbd_hits + ['rhoso_isolated_networks[' ~ item.0|string ~ '].' ~ item.1] }}"
+  loop: "{{ range(0, rhoso_isolated_networks | default([]) | length) | list | product(_rhoso_required_network_keys) | list }}"
   vars:
-    _ip_hits: >-
-      {{
-        [
-          'ocp_worker_node_ips.' ~ node ~ '.' ~ netname
-          for node in (rhoso_worker_nodes | default([]))
-          for netname in (rhoso_isolated_networks | map(attribute='name') | list)
-          if (ocp_worker_node_ips.get(node, {}).get(netname, 'TBD!') | string) == 'TBD!'
-        ]
-      }}
+    _rhoso_required_network_keys:
+      - subnet_cidr
+      - pod_ipam_start
+      - pod_ipam_end
+      - vlan_id
+      - mtu
+      - prefix_length
+      - metallb_pool_start
+      - metallb_pool_end
+  when:
+    - (rhoso_isolated_networks[item.0].get(item.1, 'TBD!') | string) == 'TBD!'
   changed_when: false
   run_once: true
 
-- name: Fail if TBD values are present (guardrail)
+- name: Check per-node network addresses for TBD markers
+  ansible.builtin.set_fact:
+    _tbd_hits: "{{ _tbd_hits + ['ocp_worker_node_ips.' ~ item.0 ~ '.' ~ item.1] }}"
+  loop: >-
+    {{
+      (rhoso_worker_nodes | default([]))
+      | product(rhoso_isolated_networks | default([]) | map(attribute='name') | list)
+      | list
+    }}
+  when:
+    - (ocp_worker_node_ips.get(item.0, {}).get(item.1, 'TBD!') | string) == 'TBD!'
+  changed_when: false
+  run_once: true
+
+- name: Fail if TBD values are present
   ansible.builtin.fail:
     msg: |
       One or more required variables are still set to "TBD!".
@@ -132,4 +138,3 @@
       - "MetalLB enabled: {{ rhoso_enable_metallb | bool }}"
       - "OVN global forwarding patch enabled: {{ rhoso_enable_ovn_global_forwarding | bool }}"
   run_once: true
-  
