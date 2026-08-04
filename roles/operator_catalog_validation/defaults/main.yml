@@ -1,0 +1,15 @@
+---
+operator_catalog_file: "{{ playbook_dir }}/../framework/components.yml"
+operator_operand_catalog_file: "{{ playbook_dir }}/../framework/operands.yml"
+operator_catalog_required_fields:
+  - display_name
+  - category
+  - enabled
+  - role
+  - namespace
+  - installation_type
+  - requires
+  - supported_openshift
+  - deployment_modes
+  - validation_hooks
+  - gitops

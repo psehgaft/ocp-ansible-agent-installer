@@ -1,0 +1,57 @@
+---
+- name: Load operator component catalog
+  ansible.builtin.include_vars:
+    file: "{{ operator_catalog_file }}"
+    name: operator_catalog_data
+
+- name: Load operand catalog
+  ansible.builtin.include_vars:
+    file: "{{ operator_operand_catalog_file }}"
+    name: operator_operand_catalog_data
+
+- name: Validate required operator catalog fields
+  ansible.builtin.assert:
+    that:
+      - item.value is mapping
+      - operator_catalog_required_fields | difference(item.value.keys() | list) | length == 0
+      - item.value.deployment_modes | difference(['direct', 'render', 'gitops']) | length == 0
+      - item.value.supported_openshift | length > 0
+      - item.value.gitops.path is defined
+      - item.value.gitops.sync_wave is defined
+      - >-
+        item.value.installation_type != 'olm' or
+        (item.value.olm is defined and
+         item.value.olm.package is defined and
+         item.value.olm.channel is defined and
+         item.value.olm.source is defined and
+         item.value.olm.source_namespace is defined)
+    fail_msg: "Operator catalog entry {{ item.key }} is incomplete or invalid."
+  loop: "{{ operator_catalog_data.components | dict2items }}"
+  loop_control:
+    label: "{{ item.key }}"
+
+- name: Validate operand references
+  ansible.builtin.assert:
+    that:
+      - item.value.operator in operator_catalog_data.components
+      - item.value.role is defined
+      - item.value.kind is defined
+      - item.value.api_version is defined
+      - item.value.gitops.path is defined
+      - item.value.gitops.sync_wave is defined
+    fail_msg: "Operand catalog entry {{ item.key }} references an invalid operator or is incomplete."
+  loop: "{{ operator_operand_catalog_data.operands | dict2items }}"
+  loop_control:
+    label: "{{ item.key }}"
+
+- name: Validate operator-to-operand separation
+  ansible.builtin.assert:
+    that:
+      - >-
+        item.value.operands | default([]) |
+        difference(operator_operand_catalog_data.operands.keys() | list) |
+        length == 0
+    fail_msg: "Operator {{ item.key }} references an operand missing from framework/operands.yml."
+  loop: "{{ operator_catalog_data.components | dict2items }}"
+  loop_control:
+    label: "{{ item.key }}"

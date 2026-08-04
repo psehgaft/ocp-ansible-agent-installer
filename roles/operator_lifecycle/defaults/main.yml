@@ -1,0 +1,8 @@
+---
+operator_lifecycle_catalog_file: "{{ playbook_dir }}/../framework/components.yml"
+operator_lifecycle_component: ""
+operator_lifecycle_deployment_mode: "{{ platform_deployment_mode | default('direct') }}"
+operator_lifecycle_render_root: "{{ playbook_dir }}/../rendered"
+operator_lifecycle_wait_retries: 60
+operator_lifecycle_wait_delay: 10
+operator_lifecycle_kubeconfig: "{{ output_kubeconfig | default(lookup('env', 'KUBECONFIG')) }}"
