@@ -1,0 +1,86 @@
+= 12. Template System and Desired-State Rendering
+
+The framework uses Jinja2 templates to transform validated inventory, catalog, profile, and role inputs into deterministic OpenShift resources.
+
+== Learning objectives
+
+After this module you can:
+
+* identify role-owned and shared templates;
+* validate template inputs before rendering;
+* render the same desired state for direct and GitOps delivery;
+* prevent secrets from appearing in generated files;
+* detect templates that are no longer used.
+
+== Rendering lifecycle
+
+. Declare inputs in inventory, role defaults, `framework/components.yml`, or a profile.
+. Run `scripts/validate_input_contracts.py`.
+. Render the `.j2` source from an Ansible task.
+. Apply directly or write the same object to the render/GitOps tree.
+. Validate YAML, Kubernetes schemas, Kustomize builds, and repository asset ownership in CI.
+
+== Example template
+
+[source,jinja2]
+----
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: {{ target_namespace }}
+  labels:
+    app.kubernetes.io/managed-by: {{ management_system | default('ansible') }}
+----
+
+The consuming task is explicit:
+
+[source,yaml]
+----
+- name: Render namespace manifest
+  ansible.builtin.template:
+    src: namespace.yml.j2
+    dest: "{{ render_root }}/namespace.yml"
+    mode: "0640"
+----
+
+== Direct and GitOps delivery
+
+The deployment mode changes delivery, not desired state:
+
+* `direct` renders and applies the object with `kubernetes.core.k8s`.
+* `render` writes the object to a deterministic path for review.
+* `gitops` writes the identical object to the Git staging tree for Argo CD reconciliation.
+
+[source,bash]
+----
+ansible-playbook -i inventories/sample/hosts.yml \
+  playbooks/install-platform-operator.yml \
+  -e component_name=gitops \
+  -e deployment_mode=render \
+  -e render_root=rendered
+----
+
+== Lab: inspect and validate templates
+
+[source,bash]
+----
+python scripts/offline_validate.py
+python scripts/validate_input_contracts.py
+python scripts/validate_repository_assets.py
+pytest -q
+----
+
+Open one role under `roles/<role>/templates/`, locate the task that consumes it, and identify every variable referenced by the template. Confirm that the variable is declared in role defaults, inventory, or the component/profile contract.
+
+== Security rules
+
+* Never embed passwords, tokens, pull secrets, private keys, or BMC credentials.
+* Use Ansible Vault, protected environment variables, Kubernetes Secret references, or External Secrets.
+* Use `no_log: true` when tasks process secret values.
+* Do not use `default()` to hide a missing mandatory credential.
+
+== Orphan prevention
+
+`scripts/validate_repository_assets.py` inventories playbooks, roles, templates, GitOps roots, documentation, and workshop pages. A template without an owning role or consuming task is reported as an orphan and fails static CI.
+
+For the complete reference, see `docs/template-system.md`.
