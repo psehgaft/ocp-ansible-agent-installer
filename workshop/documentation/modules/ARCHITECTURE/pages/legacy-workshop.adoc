@@ -1,0 +1,16 @@
+= Legacy Workshop Source Map
+
+The original workshop remains under `workshop/documentation/modules/ROOT/` and `workshop/WORKSHOP.md`. It continues to provide valuable source material for:
+
+* Environment preparation.
+* Mixed-vendor inventory.
+* Ansible Vault.
+* Redfish discovery.
+* Virtual media validation.
+* Discovery ISO generation.
+* Assisted Installer execution.
+* Final installation challenge and troubleshooting.
+
+The architecture-aligned workshop references these proven procedures instead of deleting or duplicating them blindly. Behavioral changes to Day-0 installation require equivalence tests and a separate migration pull request.
+
+Use the original track when teaching only bare-metal discovery and installation. Use the architecture track when teaching the complete framework from Day-0 through GitOps, operators, Day-2 operations, quality gates, and reporting.
