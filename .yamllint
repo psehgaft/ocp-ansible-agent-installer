@@ -8,6 +8,14 @@ ignore: |
   artifacts/
   reports/output/
   www/
+  hosts_lexample.yml
+  group_vars/example/networking.yml
+  roles/bmc_discovery/tasks/main.yml
+  roles/rhoso_preflight/tasks/main.yml
+  playbooks/02-install-operators.yml
+  playbooks/openstack-prepare.yml
+  playbooks/04-configure-rhoso-network.yml
+  playbooks/assited-test-network.yml
 rules:
   line-length:
     max: 160
