@@ -1,0 +1,44 @@
+---
+# Validation contracts are resolved for every component in framework/components.yml.
+# Generic installation checks are selected by installation_type; each component
+# must also declare at least one functional check that proves operand usefulness.
+defaults:
+  olm:
+    installation:
+      - subscription_ready
+      - installplan_complete
+      - csv_succeeded
+      - operator_workload_ready
+  cluster_payload:
+    installation:
+      - cluster_operator_available
+      - operator_workload_ready
+  manifest:
+    installation:
+      - resources_reconciled
+      - workloads_ready
+
+functional_checks:
+  gitops: [argocd_available, repository_reconciliation_ready]
+  acm: [multiclusterhub_available, managedcluster_api_available]
+  acs: [central_available, securedcluster_registration_ready]
+  openshift_virtualization: [hyperconverged_available, virt_handler_ready]
+  odf: [storagecluster_available, ceph_health_ready]
+  metallb: [metallb_controller_ready, address_pool_api_available]
+  baremetal_operator: [provisioning_configuration_available, baremetalhost_api_available]
+  cert_manager: [certmanager_controller_ready, certificate_request_api_available]
+  rhoso: [openstackcontrolplane_available, openstackdataplane_api_available]
+  pipelines: [tekton_pipelines_ready, pipeline_api_available]
+  service_mesh: [service_mesh_operator_ready, servicemeshcontrolplane_api_available]
+  logging: [clusterlogforwarder_available, collector_workload_ready]
+  loki: [lokistack_available, loki_gateway_ready]
+  observability: [monitoringstack_api_available, observability_operator_ready]
+  openshift_ai: [datasciencecluster_available, dashboard_ready]
+  mta: [tackle_available, mta_controller_ready]
+  mtv: [forklift_controller_ready, provider_api_available]
+  sriov: [sriov_cluster_operator_available, sriov_node_state_ready]
+  nmstate: [nmstate_available, nncp_api_available]
+  ptp: [ptp_operator_ready, ptpconfig_api_available]
+  compliance: [compliance_operator_ready, compliancesuite_api_available]
+  external_secrets: [external_secrets_controller_ready, secretstore_api_available]
+  quay: [quayregistry_available, quay_route_ready]

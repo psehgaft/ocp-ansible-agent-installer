@@ -1,0 +1,34 @@
+---
+workflows:
+  day0_preflight:
+    path: playbooks/00-preflight.yml
+    status: supported
+    replacement: null
+  day0_discovery:
+    path: playbooks/day0/discover-bmc.yml
+    status: supported
+    replacement: null
+  day0_install:
+    path: playbooks/day0/install.yml
+    status: supported
+    replacement: null
+  discovery_iso_boot:
+    path: playbooks/02-boot-discovery-iso.yml
+    status: supported
+    replacement: null
+  virtual_media_test:
+    path: playbooks/03-test-virtual-media.yml
+    status: supported
+    replacement: null
+  media_cleanup:
+    path: playbooks/90-eject-media.yml
+    status: supported
+    replacement: null
+
+retired_paths:
+  - path: playbooks/01-discover-bmc.yml
+    replacement: playbooks/day0/discover-bmc.yml
+  - path: playbooks/site.yml
+    replacement: playbooks/day0/install.yml
+  - path: playbooks/test-preflight.yml
+    replacement: playbooks/00-preflight.yml

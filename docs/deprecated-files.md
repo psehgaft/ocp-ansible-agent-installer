@@ -1,44 +1,48 @@
-# Deprecated and Compatibility Files
+# Workflow Lifecycle and Retired Files
 
-Do not delete compatibility files solely because a newer path exists. Removal requires a repository-wide reference check, successful static CI, and an Assisted Installer regression run.
+Workflow lifecycle is authoritative in `framework/workflows.yml` and enforced by `scripts/validate_architecture_contracts.py`.
 
-## Safe to remove after this PR merges
+## Retired compatibility entry points
 
-| File | Replacement | Reason |
-|---|---|---|
-| `audit_vmware_network.yml` | `playbooks/audit_vmware_network.yml` | The root copy has been moved, secured, documented, and removed in this PR. |
+The following compatibility wrappers have been removed. CI fails if any path is reintroduced.
 
-## Deprecated compatibility entry points
+| Retired path | Canonical replacement |
+|---|---|
+| `playbooks/01-discover-bmc.yml` | `playbooks/day0/discover-bmc.yml` |
+| `playbooks/site.yml` | `playbooks/day0/install.yml` |
+| `playbooks/test-preflight.yml` | `playbooks/00-preflight.yml` |
 
-These files should remain temporarily because external automation or the retained workshop may still call them.
+The root-level `audit_vmware_network.yml` was previously retired and replaced by `playbooks/audit_vmware_network.yml`.
 
-| Deprecated path | Preferred path | Removal condition |
-|---|---|---|
-| `playbooks/01-discover-bmc.yml` | `playbooks/day0/discover-bmc.yml` | Remove only after all documentation, CI, and consumers use the Day-0 path. |
-| `playbooks/site.yml` | `playbooks/day0/install.yml` | Remove only after an end-to-end Assisted Installer regression test confirms functional equivalence. |
-| `playbooks/test-preflight.yml` | Day-0 preflight through shared roles | Keep as a generic compatibility diagnostic until the workshop and external automation stop referencing it. |
-| `playbooks/02-boot-discovery-iso.yml` | Day-0 installation orchestration | Keep while it remains a supported standalone recovery/test operation. |
-| `playbooks/03-test-virtual-media.yml` | Day-0 test workflow | Do not remove; it is a valuable non-production BMC validation workflow. Consider relocating later, not deleting. |
-| `playbooks/90-eject-media.yml` | Day-0 media cleanup | Do not remove until an equivalent Day-0 cleanup entry point exists and is tested. |
+## Supported operational workflows
 
-## Legacy source material that is not deprecated for deletion
+These workflows are not legacy and must not be deleted merely because they are specialized:
+
+| Workflow | Purpose |
+|---|---|
+| `playbooks/00-preflight.yml` | Canonical Day-0 prerequisite validation. |
+| `playbooks/day0/discover-bmc.yml` | Canonical generic Redfish discovery. |
+| `playbooks/day0/install.yml` | Canonical Assisted Installer orchestration. |
+| `playbooks/02-boot-discovery-iso.yml` | Controlled discovery ISO creation and boot workflow. |
+| `playbooks/03-test-virtual-media.yml` | Single-host non-production Redfish virtual-media validation. |
+| `playbooks/90-eject-media.yml` | Explicit virtual-media cleanup and recovery. |
+
+## Retained source material
+
+The following content is retained as architecture and migration evidence, not as executable compatibility code:
 
 - `workshop/documentation/modules/ROOT/`
 - `workshop/WORKSHOP.md`
 - `docs/migration-from-idrac.md`
 
-These files preserve the proven Assisted Installer migration history and operational procedures. They may be reorganized later, but must not be deleted blindly.
+## Enforcement
 
-## Role-level candidates for future normalization
+The workflow lifecycle validator requires that:
 
-Legacy roles without a role-level README, argument specification, or standardized validation hook are candidates for refactoring, not immediate deletion. Generate the list mechanically during a later cleanup PR and migrate one functional domain at a time.
+1. Every supported workflow exists.
+2. Every supported workflow has a unique canonical path.
+3. Every retired path is absent.
+4. Each retired path declares its canonical replacement.
+5. Assisted Installer regression tests reference only canonical Day-0 paths.
 
-## Required deletion procedure
-
-1. Search all YAML, Python, shell, Markdown, AsciiDoc, and workflow files for references.
-2. Replace references with the preferred path.
-3. Run `./scripts/validate.sh inventories/sample/hosts.yml`.
-4. Run the complete static CI workflow.
-5. Execute Redfish discovery and virtual-media tests against an approved non-production host.
-6. Execute an Assisted Installer dry run or controlled installation regression.
-7. Remove the file in a dedicated PR with rollback instructions.
+A pull request that reintroduces a retired wrapper or removes a supported recovery workflow fails static CI.
