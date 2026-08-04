@@ -1,0 +1,26 @@
+= ODF, Virtualization, and MTV
+
+== ODF
+
+Install the ODF operator independently from `StorageSystem` and `StorageCluster` configuration. Provide `storage_topology` through environment inventory and validate nodes, devices, capacity, health, and StorageClasses.
+
+[source,bash]
+----
+ansible-playbook playbooks/install-platform-operator.yml -e operator_lifecycle_component=odf
+ansible-playbook playbooks/day2/odf-day2.yml
+----
+
+== OpenShift Virtualization
+
+Install the operator, create the HyperConverged operand, validate KubeVirt components, then configure templates, DataVolumes, networks, and storage profiles.
+
+== MTV
+
+MTV requires OpenShift Virtualization. Configure providers and migration plans only after provider connectivity, mappings, and target capacity are validated.
+
+[source,bash]
+----
+ansible-playbook playbooks/install-platform-operator.yml -e operator_lifecycle_component=openshift_virtualization
+ansible-playbook playbooks/install-platform-operator.yml -e operator_lifecycle_component=mtv
+ansible-playbook playbooks/day2/virtualization-day2.yml
+----
