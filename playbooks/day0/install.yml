@@ -1,0 +1,35 @@
+---
+- name: Install OpenShift with Assisted Installer and vendor-neutral Redfish
+  hosts: baremetal
+  gather_facts: false
+  connection: local
+  any_errors_fatal: true
+  roles:
+    - role: preflight
+      tags: [always, preflight]
+    - role: bmc_discovery
+      tags: [bmc, discovery]
+    - role: bmc_report
+      tags: [bmc, report]
+    - role: assisted_auth
+      run_once: true
+      tags: [assisted, auth]
+    - role: assisted_cluster
+      run_once: true
+      tags: [assisted, cluster]
+    - role: iso_publish
+      tags: [iso]
+    - role: bmc_virtual_media
+      tags: [bmc, iso, boot]
+    - role: assisted_hosts
+      run_once: true
+      tags: [assisted, hosts]
+    - role: assisted_install
+      run_once: true
+      tags: [assisted, install]
+    - role: post_install
+      run_once: true
+      tags: [post_install]
+    - role: report
+      run_once: true
+      tags: [report]
