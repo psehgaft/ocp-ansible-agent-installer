@@ -1,0 +1,68 @@
+---
+$schema: https://json-schema.org/draft/2020-12/schema
+$title: OpenShift Framework Component Result
+type: object
+required:
+  - name
+  - status
+  - requested_state
+  - effective_state
+  - deployment_mode
+  - version
+  - installation
+  - functional_checks
+  - warnings
+  - errors
+  - remediation_recommendation
+  - evidence
+properties:
+  name:
+    type: string
+    minLength: 1
+  status:
+    type: string
+    enum: [passed, warning, failed, skipped, pending]
+  requested_state:
+    type: string
+  effective_state:
+    type: string
+  deployment_mode:
+    type: string
+    enum: [direct, render, gitops]
+  version:
+    type: string
+  validation_result:
+    type: string
+  installation:
+    type: object
+    additionalProperties:
+      type: [string, boolean, integer, number, 'null']
+  functional_checks:
+    type: object
+    additionalProperties:
+      type: [string, boolean, integer, number, 'null']
+  warnings:
+    type: array
+    items: {type: string}
+  errors:
+    type: array
+    items: {type: string}
+  remediation_recommendation:
+    type: string
+  evidence:
+    type: array
+    items:
+      type: object
+      required: [type, reference]
+      properties:
+        type:
+          type: string
+          enum: [command, resource, file, url, message]
+        reference:
+          type: string
+        description:
+          type: string
+        status:
+          type: string
+      additionalProperties: true
+additionalProperties: true
