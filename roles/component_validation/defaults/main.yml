@@ -1,0 +1,14 @@
+---
+component_validation_name: ""
+component_validation_status: pending
+component_validation_requested_state: enabled
+component_validation_effective_state: unknown
+component_validation_deployment_mode: "{{ platform_deployment_mode | default('direct') }}"
+component_validation_version: unknown
+component_validation_installation: {}
+component_validation_functional_checks: {}
+component_validation_warnings: []
+component_validation_errors: []
+component_validation_remediation_recommendation: ""
+component_validation_evidence: []
+component_validation_append: true

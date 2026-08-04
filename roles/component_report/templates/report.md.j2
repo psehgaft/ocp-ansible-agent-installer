@@ -1,0 +1,26 @@
+# Component Validation Report
+
+Generated: {{ component_report_generated_at }}
+
+| Component | Requested | Effective | Mode | Version | Result | Warnings | Remediation | Evidence |
+|---|---|---|---|---|---|---|---|---|
+{% for item in component_report_results %}| {{ item.name }} | {{ item.requested_state }} | {{ item.effective_state }} | {{ item.deployment_mode }} | {{ item.version }} | {{ item.status }} | {{ item.warnings | join('; ') }} | {{ item.remediation_recommendation }} | {{ item.evidence | map(attribute='resource') | select('defined') | join('; ') }} |
+{% endfor %}
+
+{% for item in component_report_results %}
+## {{ item.name }}
+
+- **Status:** {{ item.status }}
+- **Installation:** `{{ item.installation | to_json }}`
+- **Functional checks:** `{{ item.functional_checks | to_json }}`
+- **Warnings:** {{ item.warnings | join('; ') if item.warnings else 'None' }}
+- **Errors:** {{ item.errors | join('; ') if item.errors else 'None' }}
+- **Remediation:** {{ item.remediation_recommendation or 'None' }}
+
+### Evidence
+{% for evidence in item.evidence %}
+- {{ evidence.command | default(evidence.resource | default(evidence | string)) }}
+{% else %}
+- No evidence recorded.
+{% endfor %}
+{% endfor %}

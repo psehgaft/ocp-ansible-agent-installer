@@ -1,0 +1,28 @@
+---
+- name: Validate component result inputs
+  ansible.builtin.assert:
+    that:
+      - component_validation_name | length > 0
+      - component_validation_status in ['passed', 'failed', 'warning', 'skipped', 'pending']
+      - component_validation_deployment_mode in ['direct', 'render', 'gitops']
+
+- name: Build normalized component result
+  ansible.builtin.set_fact:
+    component_result:
+      name: "{{ component_validation_name }}"
+      status: "{{ component_validation_status }}"
+      requested_state: "{{ component_validation_requested_state }}"
+      effective_state: "{{ component_validation_effective_state }}"
+      deployment_mode: "{{ component_validation_deployment_mode }}"
+      version: "{{ component_validation_version }}"
+      installation: "{{ component_validation_installation }}"
+      functional_checks: "{{ component_validation_functional_checks }}"
+      warnings: "{{ component_validation_warnings }}"
+      errors: "{{ component_validation_errors }}"
+      remediation_recommendation: "{{ component_validation_remediation_recommendation }}"
+      evidence: "{{ component_validation_evidence }}"
+
+- name: Append normalized result to report collection
+  ansible.builtin.set_fact:
+    component_results: "{{ (component_results | default([])) + [component_result] }}"
+  when: component_validation_append | bool

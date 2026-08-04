@@ -1,0 +1,3 @@
+component,requested_state,effective_state,deployment_mode,version,validation_result,warnings,remediation_recommendation,evidence
+{% for item in component_report_results %}"{{ item.name | replace('"','""') }}","{{ item.requested_state | string | replace('"','""') }}","{{ item.effective_state | string | replace('"','""') }}","{{ item.deployment_mode | replace('"','""') }}","{{ item.version | string | replace('"','""') }}","{{ item.status | replace('"','""') }}","{{ item.warnings | join('; ') | replace('"','""') }}","{{ item.remediation_recommendation | replace('"','""') }}","{% for evidence in item.evidence %}{{ evidence.command | default(evidence.resource | default(evidence | string)) | replace('"','""') }}{% if not loop.last %}; {% endif %}{% endfor %}"
+{% endfor %}

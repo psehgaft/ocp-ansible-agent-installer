@@ -1,0 +1,5 @@
+---
+component_report_results: "{{ component_results | default([]) }}"
+component_report_output_dir: reports/output
+component_report_basename: component-validation-report
+component_report_generated_at: "{{ lookup('pipe', 'date -u +%Y-%m-%dT%H:%M:%SZ') }}"

@@ -1,0 +1,6 @@
+---
+- name: Generate consolidated component validation reports
+  hosts: localhost
+  gather_facts: false
+  roles:
+    - role: component_report
