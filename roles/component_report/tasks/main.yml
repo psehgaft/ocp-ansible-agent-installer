@@ -1,0 +1,37 @@
+---
+- name: Validate component report collection
+  ansible.builtin.assert:
+    that:
+      - component_report_results is iterable
+
+- name: Create component report output directory
+  ansible.builtin.file:
+    path: "{{ component_report_output_dir }}"
+    state: directory
+    mode: '0750'
+
+- name: Write JSON component report
+  ansible.builtin.copy:
+    dest: "{{ component_report_output_dir }}/{{ component_report_basename }}.json"
+    mode: '0640'
+    content: >-
+      {{ {'generated_at': component_report_generated_at,
+          'components': component_report_results} | to_nice_json }}
+
+- name: Write Markdown component report
+  ansible.builtin.template:
+    src: report.md.j2
+    dest: "{{ component_report_output_dir }}/{{ component_report_basename }}.md"
+    mode: '0640'
+
+- name: Write HTML component report
+  ansible.builtin.template:
+    src: report.html.j2
+    dest: "{{ component_report_output_dir }}/{{ component_report_basename }}.html"
+    mode: '0640'
+
+- name: Write CSV component summary
+  ansible.builtin.template:
+    src: summary.csv.j2
+    dest: "{{ component_report_output_dir }}/{{ component_report_basename }}.csv"
+    mode: '0640'
