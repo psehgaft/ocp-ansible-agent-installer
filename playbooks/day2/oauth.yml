@@ -1,0 +1,6 @@
+---
+- name: Configure OpenShift OAuth and RBAC mappings
+  hosts: localhost
+  gather_facts: false
+  roles:
+    - role: day2_identity
