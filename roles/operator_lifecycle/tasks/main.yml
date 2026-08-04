@@ -1,0 +1,71 @@
+---
+- name: Load platform operator catalog
+  ansible.builtin.include_vars:
+    file: "{{ operator_lifecycle_catalog_file }}"
+    name: operator_catalog_data
+
+- name: Validate selected component
+  ansible.builtin.assert:
+    that:
+      - operator_lifecycle_component | length > 0
+      - operator_lifecycle_component in operator_catalog_data.components
+      - operator_lifecycle_deployment_mode in ['direct', 'render', 'gitops']
+    fail_msg: "Select a valid operator component and deployment mode."
+
+- name: Publish selected component metadata
+  ansible.builtin.set_fact:
+    operator_component: "{{ operator_catalog_data.components[operator_lifecycle_component] }}"
+
+- name: Validate OLM lifecycle metadata
+  ansible.builtin.assert:
+    that:
+      - operator_component.installation_type == 'olm'
+      - operator_component.olm is defined
+    fail_msg: >-
+      {{ operator_lifecycle_component }} is not installed through OLM. Use its
+      dedicated configuration role instead.
+
+- name: Render operator subscription manifest
+  ansible.builtin.template:
+    src: operator-subscription.yml.j2
+    dest: >-
+      {{ operator_lifecycle_render_root }}/{{ operator_lifecycle_component }}/operator-subscription.yml
+    mode: "0644"
+  when: operator_lifecycle_deployment_mode in ['render', 'gitops']
+
+- name: Apply operator subscription directly
+  kubernetes.core.k8s:
+    kubeconfig: "{{ operator_lifecycle_kubeconfig }}"
+    state: present
+    template: operator-subscription.yml.j2
+  when: operator_lifecycle_deployment_mode == 'direct'
+
+- name: Wait for subscription to resolve an installed CSV
+  kubernetes.core.k8s_info:
+    kubeconfig: "{{ operator_lifecycle_kubeconfig }}"
+    api_version: operators.coreos.com/v1alpha1
+    kind: Subscription
+    name: "{{ operator_lifecycle_component }}"
+    namespace: "{{ operator_component.namespace }}"
+  register: operator_subscription_result
+  until:
+    - operator_subscription_result.resources | length == 1
+    - operator_subscription_result.resources[0].status.installedCSV | default('') | length > 0
+  retries: "{{ operator_lifecycle_wait_retries }}"
+  delay: "{{ operator_lifecycle_wait_delay }}"
+  when: operator_lifecycle_deployment_mode == 'direct'
+
+- name: Wait for ClusterServiceVersion success
+  kubernetes.core.k8s_info:
+    kubeconfig: "{{ operator_lifecycle_kubeconfig }}"
+    api_version: operators.coreos.com/v1alpha1
+    kind: ClusterServiceVersion
+    name: "{{ operator_subscription_result.resources[0].status.installedCSV }}"
+    namespace: "{{ operator_component.namespace }}"
+  register: operator_csv_result
+  until:
+    - operator_csv_result.resources | length == 1
+    - operator_csv_result.resources[0].status.phase | default('') == 'Succeeded'
+  retries: "{{ operator_lifecycle_wait_retries }}"
+  delay: "{{ operator_lifecycle_wait_delay }}"
+  when: operator_lifecycle_deployment_mode == 'direct'
