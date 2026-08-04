@@ -1,66 +1,158 @@
 ---
-# Declarative component catalog.
-# This PR introduces structure only; implementation roles are added separately.
+# Declarative framework component catalog.
+# Functional roles are implemented incrementally in subsequent pull requests.
 components:
   assisted_installer:
     category: day0
     role: assisted_cluster
-    enabled_variable: platform_features.assisted_installer
-    dependencies: []
+    requires: []
+    deployment_modes: [direct]
     gitops_path: null
-
   redfish:
     category: day0
     role: bmc_discovery
-    enabled_variable: platform_features.redfish
-    dependencies: []
+    requires: []
+    deployment_modes: [direct]
     gitops_path: null
-
   gitops:
     category: platform
     role: gitops_operator
-    enabled_variable: platform_features.gitops
-    dependencies: []
+    requires: []
+    deployment_modes: [direct, render, gitops]
     gitops_path: gitops/operators/gitops
-
   acm:
     category: management
     role: acm_operator
-    enabled_variable: platform_features.acm
-    dependencies: []
+    requires: []
+    recommends: [gitops]
+    deployment_modes: [direct, render, gitops]
     gitops_path: gitops/operators/acm
-
+  acs:
+    category: security
+    role: acs_operator
+    requires: []
+    deployment_modes: [direct, render, gitops]
+    gitops_path: gitops/operators/acs
   odf:
     category: storage
     role: odf_operator
-    enabled_variable: platform_features.odf
-    dependencies: []
+    requires: []
+    deployment_modes: [direct, render, gitops]
     gitops_path: gitops/operators/odf
-
   openshift_virtualization:
     category: virtualization
     role: openshift_virtualization_operator
-    enabled_variable: platform_features.openshift_virtualization
-    dependencies: []
+    requires: []
+    deployment_modes: [direct, render, gitops]
     gitops_path: gitops/operators/openshift-virtualization
-
   metallb:
     category: networking
     role: metallb_operator
-    enabled_variable: platform_features.metallb
-    dependencies: []
+    requires: []
+    deployment_modes: [direct, render, gitops]
     gitops_path: gitops/operators/metallb
-
+  baremetal_operator:
+    category: infrastructure
+    role: cluster_baremetal_operator
+    requires: []
+    deployment_modes: [direct, render, gitops]
+    gitops_path: gitops/platform/baremetal
   cert_manager:
     category: security
     role: cert_manager_operator
-    enabled_variable: platform_features.cert_manager
-    dependencies: []
+    requires: []
+    deployment_modes: [direct, render, gitops]
     gitops_path: gitops/operators/cert-manager
-
   rhoso:
     category: openstack
     role: rhoso_operator
-    enabled_variable: platform_features.rhoso
-    dependencies: []
+    requires: [cert_manager]
+    recommends: [odf]
+    deployment_modes: [direct, render, gitops]
     gitops_path: gitops/operators/rhoso
+  mta:
+    category: migration
+    role: mta_operator
+    requires: []
+    deployment_modes: [direct, render, gitops]
+    gitops_path: gitops/operators/mta
+  mtv:
+    category: migration
+    role: mtv_operator
+    requires: [openshift_virtualization]
+    deployment_modes: [direct, render, gitops]
+    gitops_path: gitops/operators/mtv
+  pipelines:
+    category: cicd
+    role: pipelines_operator
+    requires: []
+    deployment_modes: [direct, render, gitops]
+    gitops_path: gitops/operators/pipelines
+  service_mesh:
+    category: networking
+    role: service_mesh_operator
+    requires: []
+    deployment_modes: [direct, render, gitops]
+    gitops_path: gitops/operators/service-mesh
+  logging:
+    category: observability
+    role: logging_operator
+    requires: []
+    recommends: [loki]
+    deployment_modes: [direct, render, gitops]
+    gitops_path: gitops/operators/logging
+  loki:
+    category: observability
+    role: loki_operator
+    requires: []
+    deployment_modes: [direct, render, gitops]
+    gitops_path: gitops/operators/loki
+  observability:
+    category: observability
+    role: observability_operator
+    requires: []
+    deployment_modes: [direct, render, gitops]
+    gitops_path: gitops/platform/observability
+  openshift_ai:
+    category: ai
+    role: openshift_ai_operator
+    requires: []
+    deployment_modes: [direct, render, gitops]
+    gitops_path: gitops/operators/openshift-ai
+  sriov:
+    category: networking
+    role: sriov_operator
+    requires: []
+    deployment_modes: [direct, render, gitops]
+    gitops_path: gitops/operators/sriov
+  nmstate:
+    category: networking
+    role: nmstate_operator
+    requires: []
+    deployment_modes: [direct, render, gitops]
+    gitops_path: gitops/operators/nmstate
+  ptp:
+    category: telco
+    role: ptp_operator
+    requires: []
+    deployment_modes: [direct, render, gitops]
+    gitops_path: gitops/operators/ptp
+  compliance:
+    category: security
+    role: compliance_operator
+    requires: []
+    deployment_modes: [direct, render, gitops]
+    gitops_path: gitops/operators/compliance
+  external_secrets:
+    category: security
+    role: external_secrets_operator
+    requires: []
+    deployment_modes: [direct, render, gitops]
+    gitops_path: gitops/operators/external-secrets
+  quay:
+    category: registry
+    role: quay_operator
+    requires: []
+    recommends: [cert_manager]
+    deployment_modes: [direct, render, gitops]
+    gitops_path: gitops/operators/quay
