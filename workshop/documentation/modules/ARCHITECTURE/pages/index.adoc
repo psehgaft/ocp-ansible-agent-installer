@@ -1,0 +1,24 @@
+= OpenShift Automation Framework Workshop
+:toc:
+
+== Purpose
+
+This learning path aligns the workshop with the completed framework architecture. It teaches how to discover bare-metal systems, install OpenShift, select direct or GitOps delivery, manage operators and Day-2 configuration, validate outcomes, and add new components safely.
+
+The original Redfish and Assisted Installer workshop remains available as source material. This module reuses its proven procedures without deleting or silently rewriting the legacy track.
+
+== Learning outcomes
+
+After completing the workshop, you can:
+
+* Explain the framework, profile, dependency, and inventory models.
+* Execute vendor-neutral Redfish discovery and Assisted Installer workflows.
+* Select `direct`, `render`, or `gitops` deployment mode.
+* Install platform operators separately from their operands.
+* Configure identity, PKI, registries, networking, observability, and backup.
+* Generate consistent validation evidence and reports.
+* Add a component with dependency metadata, tests, documentation, and GitOps content.
+
+== Recommended delivery
+
+Run the workshop as multiple labs or sessions. A single monolithic implementation PR is intentionally discouraged because it increases review fatigue, rollback cost, merge conflicts, and the probability of breaking the proven Assisted Installer workflow.
