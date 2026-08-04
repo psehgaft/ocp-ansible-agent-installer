@@ -69,3 +69,39 @@
   retries: "{{ operator_lifecycle_wait_retries }}"
   delay: "{{ operator_lifecycle_wait_delay }}"
   when: operator_lifecycle_deployment_mode == 'direct'
+
+- name: Publish normalized operator validation result
+  ansible.builtin.include_role:
+    name: component_validation
+  vars:
+    component_validation_name: "{{ operator_lifecycle_component }}"
+    component_validation_status: >-
+      {{ 'passed' if operator_lifecycle_deployment_mode != 'direct'
+         or (operator_csv_result.resources[0].status.phase | default('') == 'Succeeded')
+         else 'failed' }}
+    component_validation_requested_state: enabled
+    component_validation_effective_state: >-
+      {{ 'rendered' if operator_lifecycle_deployment_mode in ['render', 'gitops'] else 'installed' }}
+    component_validation_deployment_mode: "{{ operator_lifecycle_deployment_mode }}"
+    component_validation_version: >-
+      {{ operator_subscription_result.resources[0].status.installedCSV | default(operator_component.olm.channel) }}
+    component_validation_installation:
+      subscription: >-
+        {{ 'ready' if operator_lifecycle_deployment_mode != 'direct'
+           or (operator_subscription_result.resources | default([]) | length == 1) else 'failed' }}
+      csv: >-
+        {{ 'succeeded' if operator_lifecycle_deployment_mode != 'direct'
+           or (operator_csv_result.resources[0].status.phase | default('') == 'Succeeded') else 'failed' }}
+      workloads: pending
+    component_validation_functional_checks: {}
+    component_validation_warnings: >-
+      {{ ['Operator workloads and operands require component-specific functional validation.'] }}
+    component_validation_errors: []
+    component_validation_remediation_recommendation: >-
+      Review Subscription, InstallPlan, CSV conditions, and operator namespace workloads when validation fails.
+    component_validation_evidence:
+      - resource: "Subscription/{{ operator_lifecycle_component }}"
+        namespace: "{{ operator_component.namespace }}"
+      - resource: >-
+          ClusterServiceVersion/{{ operator_subscription_result.resources[0].status.installedCSV | default('render-only') }}
+        namespace: "{{ operator_component.namespace }}"
