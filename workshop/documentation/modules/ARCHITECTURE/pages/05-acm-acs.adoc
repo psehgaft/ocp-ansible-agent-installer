@@ -1,0 +1,23 @@
+= ACM and ACS
+
+== ACM
+
+Install the operator first, then configure `MultiClusterHub`, observability, governance policies, and policy sets as independent operands.
+
+[source,bash]
+----
+ansible-playbook playbooks/install-platform-operator.yml -e operator_lifecycle_component=acm
+ansible-playbook playbooks/day2/acm-hub.yml
+----
+
+Validate the Subscription, CSV, operator workloads, `MultiClusterHub` availability, managed-cluster connectivity, and policy compliance.
+
+== ACS
+
+Install RHACS separately from Central, SecuredCluster, and policy configuration. Apply policy changes through reviewed desired state and verify Central availability and sensor health.
+
+[source,bash]
+----
+ansible-playbook playbooks/install-platform-operator.yml -e operator_lifecycle_component=acs
+ansible-playbook playbooks/day2/acs-policies.yml
+----
