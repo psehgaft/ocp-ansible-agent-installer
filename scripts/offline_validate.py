@@ -15,8 +15,8 @@ from yaml.constructor import ConstructorError
 ROOT = Path(__file__).resolve().parents[1]
 ERRORS: list[str] = []
 EXCLUDED_PARTS = {
-    '.git', '.collections', '.ansible', '.venv', 'venv', 'env',
-    'node_modules', 'artifacts', 'www', '.cache', '__pycache__',
+    ".git", ".collections", ".ansible", ".venv", "venv", "env",
+    "node_modules", "artifacts", "www", ".cache", "__pycache__", "reports",
 }
 
 
@@ -50,7 +50,6 @@ UniqueKeyLoader.add_constructor(
 
 
 def is_repository_source(path: Path) -> bool:
-    """Return True only for source files owned by this repository."""
     try:
         relative = path.relative_to(ROOT)
     except ValueError:
@@ -60,7 +59,7 @@ def is_repository_source(path: Path) -> bool:
 
 def load_yaml(path: Path):
     try:
-        return yaml.load(path.read_text(), Loader=UniqueKeyLoader)
+        return yaml.load(path.read_text(encoding="utf-8"), Loader=UniqueKeyLoader)
     except Exception as exc:  # noqa: BLE001
         error(f"YAML parse failed: {path.relative_to(ROOT)}: {exc}")
         return None
@@ -74,13 +73,13 @@ for path in sorted(ROOT.rglob("*.j2")):
     if not is_repository_source(path):
         continue
     try:
-        jinja2.Environment().parse(path.read_text())
+        jinja2.Environment().parse(path.read_text(encoding="utf-8"))
     except Exception as exc:  # noqa: BLE001
         error(f"Jinja parse failed: {path.relative_to(ROOT)}: {exc}")
 
 for path in sorted((ROOT / "filter_plugins").glob("*.py")) + sorted((ROOT / "tests").glob("*.py")):
     try:
-        ast.parse(path.read_text(), filename=str(path))
+        ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
     except SyntaxError as exc:
         error(f"Python parse failed: {path.relative_to(ROOT)}: {exc}")
 
@@ -98,20 +97,36 @@ required_files = [
     "docs/migration-from-idrac.md",
     "docs/troubleshooting.md",
     "docs/references.md",
-    "playbooks/site.yml",
-    "playbooks/01-discover-bmc.yml",
+    "playbooks/00-preflight.yml",
+    "playbooks/day0/discover-bmc.yml",
+    "playbooks/day0/install.yml",
     "playbooks/03-test-virtual-media.yml",
+    "playbooks/90-eject-media.yml",
+    "playbooks/configure-bastion.yml",
+    "framework/components.yml",
+    "framework/component-validation.yml",
+    "framework/day2-exercises.yml",
+    "framework/workflows.yml",
 ]
 for relative in required_files:
     if not (ROOT / relative).is_file():
         error(f"Required file missing: {relative}")
 
+retired_files = [
+    "playbooks/site.yml",
+    "playbooks/01-discover-bmc.yml",
+    "playbooks/test-preflight.yml",
+]
+for relative in retired_files:
+    if (ROOT / relative).exists():
+        error(f"Retired workflow path was reintroduced: {relative}")
+
 role_pattern = re.compile(r"^\s*-\s+role:\s+([A-Za-z0-9_.-]+)\s*$", re.MULTILINE)
-for playbook in sorted((ROOT / "playbooks").glob("*.yml")):
-    for role in role_pattern.findall(playbook.read_text()):
+for playbook in sorted((ROOT / "playbooks").rglob("*.yml")):
+    for role in role_pattern.findall(playbook.read_text(encoding="utf-8")):
         tasks = ROOT / "roles" / role / "tasks" / "main.yml"
         if not tasks.is_file():
-            error(f"Playbook {playbook.name} references missing role tasks: {role}")
+            error(f"Playbook {playbook.relative_to(ROOT)} references missing role tasks: {role}")
 
 for tasks_file in sorted((ROOT / "roles").glob("*/tasks/main.yml")):
     data = load_yaml(tasks_file)
@@ -128,6 +143,8 @@ requirements = load_yaml(ROOT / "requirements.yml") or {}
 collection_names = {item.get("name") for item in requirements.get("collections", []) if isinstance(item, dict)}
 if "community.general" not in collection_names:
     error("requirements.yml must include community.general")
+if "kubernetes.core" not in collection_names:
+    error("requirements.yml must include kubernetes.core")
 
 inventory = load_yaml(ROOT / "inventories/sample/hosts.yml") or {}
 try:
