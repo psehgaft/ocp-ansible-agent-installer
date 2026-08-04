@@ -1,0 +1,10 @@
+---
+- name: Run etcd health checks
+  hosts: localhost
+  gather_facts: false
+  roles:
+    - role: day2_operational_workflow
+      vars:
+        day2_operation_domain: etcd-health
+        day2_operation_resources: []
+        day2_operation_checks: "{{ etcd_health_commands | default([['oc','get','clusteroperator','etcd','-o','yaml'], ['oc','get','pods','-n','openshift-etcd','-o','wide']]) }}"

@@ -1,0 +1,7 @@
+---
+- name: Configure logging and forwarding
+  hosts: localhost
+  gather_facts: false
+  roles:
+    - role: day2_operational_workflow
+      vars: {day2_operation_domain: logging, day2_operation_resources: "{{ logging_resources | default([]) }}"}

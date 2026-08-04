@@ -1,0 +1,10 @@
+---
+- name: Run consolidated cluster health checks
+  hosts: localhost
+  gather_facts: false
+  roles:
+    - role: day2_operational_workflow
+      vars:
+        day2_operation_domain: health-checks
+        day2_operation_resources: []
+        day2_operation_checks: "{{ health_check_commands | default([['oc','get','nodes'], ['oc','get','clusteroperators'], ['oc','get','clusterversion','version'], ['oc','get','pods','-A','--field-selector=status.phase!=Running,status.phase!=Succeeded']]) }}"

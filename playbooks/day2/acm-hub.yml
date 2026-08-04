@@ -1,0 +1,7 @@
+---
+- name: Configure ACM Hub
+  hosts: localhost
+  gather_facts: false
+  roles:
+    - role: day2_operational_workflow
+      vars: {day2_operation_domain: acm-hub, day2_operation_resources: "{{ acm_hub_resources | default([]) }}"}

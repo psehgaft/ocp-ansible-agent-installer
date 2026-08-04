@@ -1,0 +1,7 @@
+---
+- name: Configure user workload monitoring
+  hosts: localhost
+  gather_facts: false
+  roles:
+    - role: day2_operational_workflow
+      vars: {day2_operation_domain: user-workload-monitoring, day2_operation_resources: "{{ user_workload_monitoring_resources | default([]) }}"}

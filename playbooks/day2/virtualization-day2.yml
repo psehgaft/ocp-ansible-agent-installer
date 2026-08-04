@@ -1,0 +1,7 @@
+---
+- name: Configure OpenShift Virtualization Day-2 resources
+  hosts: localhost
+  gather_facts: false
+  roles:
+    - role: day2_operational_workflow
+      vars: {day2_operation_domain: virtualization, day2_operation_resources: "{{ virtualization_day2_resources | default([]) }}"}

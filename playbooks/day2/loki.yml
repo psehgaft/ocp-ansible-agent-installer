@@ -1,0 +1,7 @@
+---
+- name: Configure Loki
+  hosts: localhost
+  gather_facts: false
+  roles:
+    - role: day2_operational_workflow
+      vars: {day2_operation_domain: loki, day2_operation_resources: "{{ loki_resources | default([]) }}"}
