@@ -1,0 +1,30 @@
+---
+platform_schema:
+  platform_profile:
+    type: str
+    required: true
+    allowed:
+      - minimal
+      - lab
+      - enterprise
+      - telco
+      - virtualization
+      - rhoso
+      - disconnected
+  platform_deployment_mode:
+    type: str
+    required: true
+    allowed:
+      - direct
+      - render
+      - gitops
+  platform_openshift_version:
+    type: str
+    required: true
+    allowed:
+      - "4.18"
+      - "4.19"
+  platform_features:
+    type: dict
+    required: false
+    description: Explicit feature flags that override profile and framework defaults.
