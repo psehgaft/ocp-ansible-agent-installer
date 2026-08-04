@@ -1,0 +1,11 @@
+---
+profile_name: virtualization
+profile_description: Virtualization profile with GitOps, ODF, OpenShift Virtualization, MTV, and certificate management.
+profile_features:
+  assisted_installer: true
+  redfish: true
+  gitops: true
+  odf: true
+  openshift_virtualization: true
+  mtv: true
+  cert_manager: true
