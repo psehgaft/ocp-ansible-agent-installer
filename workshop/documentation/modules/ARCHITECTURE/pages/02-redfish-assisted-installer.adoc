@@ -1,0 +1,24 @@
+= Redfish Discovery and Assisted Installer
+
+== Preserve proven behavior
+
+The canonical Day-0 workflow retains vendor-neutral Redfish discovery, BMC normalization, inventory handling, and the proven Assisted Installer role sequence. Legacy entry points remain compatibility wrappers.
+
+[source,bash]
+----
+ansible-playbook -i inventories/lab/hosts.yml playbooks/day0/discover-bmc.yml
+ansible-playbook -i inventories/lab/hosts.yml playbooks/day0/install.yml
+----
+
+== Validation
+
+Confirm normalized BMC facts, virtual-media capability, discovered hosts, cluster registration, ISO generation, host readiness, installation completion, and ClusterVersion availability.
+
+[source,bash]
+----
+oc get clusterversion
+oc get nodes -o wide
+oc get clusteroperators
+----
+
+Do not replace generic Redfish behavior with vendor-only logic. Vendor extensions belong behind capability detection and must preserve the normalized interface.

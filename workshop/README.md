@@ -1,5 +1,14 @@
 # Showroom-Style Workshop Source
 
-The `documentation/modules/ROOT/pages` directory contains Antora/Showroom-style AsciiDoc pages following the structure used by the referenced Git workshop: preparation context, lab type, estimated time, learning objectives, numbered procedures, verification, and conclusion.
+The workshop now contains two Antora modules:
 
-The complete standalone Markdown version is available at `../WORKSHOP.md`.
+- `documentation/modules/ARCHITECTURE/` is the primary architecture-aligned learning path covering framework planning, deployment modes, operators, Day-2 operations, validation, reporting, troubleshooting, and component extension.
+- `documentation/modules/ROOT/` retains the original Redfish and Assisted Installer workshop as proven source material and a focused Day-0 learning track.
+
+The original standalone Markdown workshop remains available at `../WORKSHOP.md`. It is intentionally preserved and should not be removed without migration evidence and equivalent coverage.
+
+Build the workshop with:
+
+```bash
+antora default-site.yml
+```

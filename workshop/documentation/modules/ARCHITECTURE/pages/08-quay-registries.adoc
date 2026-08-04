@@ -1,0 +1,16 @@
+= Quay and Registries
+
+Install the Quay operator separately from the `QuayRegistry` operand. Configure external registry credentials, pull-secret updates, additional trust bundles, proxy settings, and mirror sets through environment-specific desired state.
+
+[source,bash]
+----
+ansible-playbook playbooks/install-platform-operator.yml -e operator_lifecycle_component=quay
+ansible-playbook playbooks/day2/quay.yml
+ansible-playbook playbooks/day2/external-registries.yml
+ansible-playbook playbooks/day2/mirror-sets.yml
+ansible-playbook playbooks/day2/registry-proxy.yml
+----
+
+Use `ImageDigestMirrorSet` for digest-based mirroring and `ImageTagMirrorSet` only when tag mirroring is required. Validate registry authentication, CA trust, proxy reachability, image pulls, Quay routes, and MachineConfigPool convergence.
+
+Rendered and GitOps output must use External Secrets, Sealed Secrets, SOPS, or Vault references instead of plaintext credentials.

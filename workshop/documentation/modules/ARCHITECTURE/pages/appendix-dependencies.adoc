@@ -1,0 +1,41 @@
+= Dependency and Inventory Reference
+
+== Dependency categories
+
+`requires`:: Mandatory component dependency. Resolution fails when unavailable.
+`recommends`:: Optional but recommended component.
+`conflicts`:: Incompatible component or configuration.
+`after`:: Ordering constraint without creating a hard dependency.
+`requires_configuration`:: Required external input that cannot be inferred safely.
+
+[source,yaml]
+----
+components:
+  acm_hub:
+    requires: [acm]
+    recommends: [gitops]
+    after: [acm]
+    conflicts: []
+
+  acm_observability:
+    requires: [acm_hub]
+    requires_configuration: [object_storage_secret]
+
+  odf:
+    recommends: [local_storage]
+    requires_configuration: [storage_topology]
+----
+
+The resolver must detect unknown components, missing mandatory dependencies, cycles, conflicts, unsupported OpenShift versions, unsupported modes, and absent required configuration before execution.
+
+== Inventory model
+
+Global defaults belong in `group_vars/all/platform.yml`, `features.yml`, and `versions.yml`. Environment directories contain only environment-specific overrides. Host variables should describe hardware or host-specific facts, not duplicate platform policy.
+
+[source,bash]
+----
+ansible-inventory -i inventories/production/hosts.yml --list
+ansible-playbook playbooks/framework-plan.yml \
+  -i inventories/production/hosts.yml \
+  -e platform_profile=enterprise
+----

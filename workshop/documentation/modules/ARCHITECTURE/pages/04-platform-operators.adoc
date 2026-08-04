@@ -1,0 +1,16 @@
+= Platform Operators
+
+The operator catalog defines display name, namespace, installation type, OLM metadata, dependencies, supported OpenShift versions, deployment modes, validation hooks, GitOps path, and sync wave.
+
+Operator installation and operand configuration are separate responsibilities. For example, `acm_operator` installs ACM, while `acm_hub`, `acm_observability`, and `acm_governance` configure operands.
+
+[source,bash]
+----
+ansible-playbook playbooks/install-platform-operator.yml \
+  -e operator_lifecycle_component=odf \
+  -e operator_lifecycle_deployment_mode=direct
+----
+
+Review the generated `component_result` for Subscription, CSV, workload readiness, warnings, remediation, and evidence.
+
+The catalog covers ACM, ACS, OpenShift Virtualization, ODF, MetalLB, Bare Metal Operator configuration, cert-manager, RHOSO, GitOps, Pipelines, Service Mesh, Logging, Loki, Cluster Observability, OpenShift AI, MTA, MTV, SR-IOV, NMState, PTP, Compliance, External Secrets, and Quay.

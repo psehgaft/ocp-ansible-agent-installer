@@ -1,0 +1,35 @@
+= Day-2 Networking, Monitoring, Logging, and Backup
+
+== Networking
+
+Use dedicated playbooks for MetalLB, SR-IOV, NMState, PTP, Ingress, node configuration, MachineConfig, and Chrony. Render and peer-review disruptive changes before direct application.
+
+[source,bash]
+----
+ansible-playbook playbooks/day2/metallb.yml
+ansible-playbook playbooks/day2/sriov.yml
+ansible-playbook playbooks/day2/nmstate.yml
+ansible-playbook playbooks/day2/ptp.yml
+----
+
+== Observability
+
+Configure cluster monitoring, Alertmanager, user workload monitoring, Logging, and Loki independently. Validate operator readiness, storage, forwarding destinations, alert delivery, and application metrics.
+
+[source,bash]
+----
+ansible-playbook playbooks/day2/monitoring.yml
+ansible-playbook playbooks/day2/alertmanager.yml
+ansible-playbook playbooks/day2/user-workload-monitoring.yml
+ansible-playbook playbooks/day2/logging.yml
+ansible-playbook playbooks/day2/loki.yml
+----
+
+== Backup
+
+Configure OADP through reviewed credentials and storage references. Test backup and restore in a non-production namespace before relying on the design for disaster recovery.
+
+[source,bash]
+----
+ansible-playbook playbooks/day2/backup-oadp.yml
+----

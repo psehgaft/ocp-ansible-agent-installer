@@ -1,0 +1,25 @@
+= Health Checks, Reporting, and Troubleshooting
+
+Run upgrade prechecks, certificate audit, etcd health, component health checks, and consolidated reporting as evidence-driven workflows.
+
+[source,bash]
+----
+ansible-playbook playbooks/day2/upgrade-prechecks.yml
+ansible-playbook playbooks/day2/certificate-audit.yml
+ansible-playbook playbooks/day2/etcd-health.yml
+ansible-playbook playbooks/day2/health-checks.yml
+ansible-playbook playbooks/generate-component-report.yml
+----
+
+Every component should publish a normalized `component_result` with requested state, effective state, deployment mode, version, installation readiness, functional checks, warnings, errors, remediation, and evidence.
+
+Troubleshooting order:
+
+. Validate inventory and profile resolution.
+. Inspect dependency plan and compatibility checks.
+. Validate rendered YAML and Kustomize output.
+. Check operator Subscription, CSV, workloads, and operand conditions.
+. Review Argo CD sync, health, waves, and project permissions.
+. Collect precise evidence before changing configuration.
+
+Reports are generated as Markdown, JSON, HTML, and CSV. Evidence must never contain credentials or unredacted Secret values.

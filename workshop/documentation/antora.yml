@@ -1,5 +1,6 @@
 name: ocp-redfish-installer
 version: main
-title: OpenShift Assisted Installer with iLO and iDRAC
+title: OpenShift Automation Framework Workshop
 nav:
+  - modules/ARCHITECTURE/nav.adoc
   - modules/ROOT/nav.adoc

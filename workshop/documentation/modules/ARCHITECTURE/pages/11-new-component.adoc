@@ -1,0 +1,38 @@
+= Adding a New Component
+
+A new component is complete only when metadata, implementation, validation, GitOps content, tests, and documentation agree.
+
+== Procedure
+
+. Add the component to `framework/components.yml`.
+. Define `requires`, `recommends`, `conflicts`, `after`, and `requires_configuration`.
+. Add OpenShift compatibility and supported deployment modes.
+. Keep operator installation separate from operand configuration.
+. Implement direct, render, and GitOps behavior where supported.
+. Add Kustomize base and overlays; use Helm only when justified.
+. Emit a normalized `component_result` with remediation and evidence.
+. Add pytest, syntax, Kustomize, kubeconform, and Molecule coverage as applicable.
+. Add workshop and operational documentation.
+
+[source,yaml]
+----
+components:
+  example:
+    display_name: Example Component
+    role: example_operator
+    requires: [gitops]
+    recommends: []
+    conflicts: []
+    after: [cert_manager]
+    requires_configuration: [example_endpoint]
+    deployment_modes: [direct, render, gitops]
+----
+
+[source,bash]
+----
+pytest -q
+ansible-lint
+kustomize build gitops/operators/example/overlays/lab
+----
+
+Do not combine unrelated architecture, migration, operator, Day-2, workshop, and quality changes into one pull request. Smaller PRs improve review quality, failure isolation, rollback, and functional-equivalence validation.
