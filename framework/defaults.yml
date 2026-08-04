@@ -1,0 +1,33 @@
+---
+platform_profile: minimal
+platform_deployment_mode: direct
+platform_openshift_version: "4.18"
+platform_fail_on_unsupported: true
+platform_render_directory: "{{ playbook_dir }}/../reports/rendered-manifests"
+
+platform_features:
+  assisted_installer: true
+  redfish: true
+  gitops: false
+  acm: false
+  acs: false
+  odf: false
+  openshift_virtualization: false
+  metallb: false
+  baremetal_operator: false
+  cert_manager: false
+  rhoso: false
+  mta: false
+  mtv: false
+  pipelines: false
+  service_mesh: false
+  logging: false
+  loki: false
+  observability: false
+  openshift_ai: false
+  sriov: false
+  nmstate: false
+  ptp: false
+  compliance: false
+  external_secrets: false
+  quay: false
