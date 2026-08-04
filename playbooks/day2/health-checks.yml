@@ -6,5 +6,12 @@
     - role: day2_operational_workflow
       vars:
         day2_operation_domain: health-checks
-        day2_operation_resources: []
-        day2_operation_checks: "{{ health_check_commands | default([['oc','get','nodes'], ['oc','get','clusteroperators'], ['oc','get','clusterversion','version'], ['oc','get','pods','-A','--field-selector=status.phase!=Running,status.phase!=Succeeded']]) }}"
+        day2_operation_resources: "{{ health_check_resources | default([]) }}"
+        day2_operation_checks: >-
+          {{ health_check_commands |
+             default([
+               ['oc', 'get', 'nodes'],
+               ['oc', 'get', 'clusteroperators'],
+               ['oc', 'get', 'clusterversion', 'version'],
+               ['oc', 'get', 'pods', '-A', '--field-selector=status.phase!=Running,status.phase!=Succeeded']
+             ]) }}
