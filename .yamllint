@@ -1,5 +1,13 @@
 ---
 extends: default
+ignore: |
+  .collections/
+  .ansible/
+  .venv/
+  node_modules/
+  artifacts/
+  reports/output/
+  www/
 rules:
   line-length:
     max: 160
