@@ -1,0 +1,6 @@
+---
+day2_deployment_mode: "{{ platform_deployment_mode | default('direct') }}"
+day2_render_root: "{{ playbook_dir }}/../rendered"
+oauth_identity_providers: []
+oauth_rbac_bindings: []
+oauth_cluster_resource_name: cluster
