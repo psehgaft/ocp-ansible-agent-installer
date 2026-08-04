@@ -1,0 +1,107 @@
+---
+- name: Audit VMware vSphere network architecture read-only
+  hosts: localhost
+  gather_facts: false
+  collections:
+    - community.vmware
+  vars:
+    validate_certs: true
+    output_file: "{{ artifacts_dir | default('./artifacts') }}/VMware_Network_Audit_Report.md"
+
+  pre_tasks:
+    - name: Validate VMware audit inputs
+      ansible.builtin.assert:
+        that:
+          - vcenter_hostname is defined
+          - vcenter_hostname | length > 0
+          - vcenter_username is defined
+          - vcenter_username | length > 0
+          - vcenter_password is defined
+          - vcenter_password | length > 0
+        fail_msg: >-
+          Provide vcenter_hostname, vcenter_username, and vcenter_password through
+          an encrypted inventory, Ansible Vault, or an external secret lookup.
+      no_log: true
+
+    - name: Create report directory
+      ansible.builtin.file:
+        path: "{{ output_file | dirname }}"
+        state: directory
+        mode: "0750"
+
+  tasks:
+    - name: Gather ESXi host network information
+      community.vmware.vmware_host_network_info:
+        hostname: "{{ vcenter_hostname }}"
+        username: "{{ vcenter_username }}"
+        password: "{{ vcenter_password }}"
+        validate_certs: "{{ validate_certs }}"
+      register: host_network_info
+      no_log: true
+
+    - name: Gather distributed virtual switch information
+      community.vmware.vmware_dvswitch_info:
+        hostname: "{{ vcenter_hostname }}"
+        username: "{{ vcenter_username }}"
+        password: "{{ vcenter_password }}"
+        validate_certs: "{{ validate_certs }}"
+      register: vds_info
+      no_log: true
+
+    - name: Gather distributed port group information
+      community.vmware.vmware_dvs_portgroup_info:
+        hostname: "{{ vcenter_hostname }}"
+        username: "{{ vcenter_username }}"
+        password: "{{ vcenter_password }}"
+        validate_certs: "{{ validate_certs }}"
+      register: portgroup_info
+      no_log: true
+
+    - name: Generate VMware network audit report
+      ansible.builtin.copy:
+        dest: "{{ output_file }}"
+        mode: "0640"
+        content: |
+          # VMware vSphere Network Audit Report
+
+          Target vCenter: `{{ vcenter_hostname }}`
+
+          ## Physical host NICs and uplinks
+
+          | Host | Physical NIC | MAC address | Driver / speed |
+          |---|---|---|---|
+          {% for host_name, host_data in host_network_info.host_network_info.items() %}
+          {% for pnic in host_data.pnic | default([]) %}
+          | {{ host_name }} | {{ pnic.device }} | {{ pnic.mac }} | {{ pnic.driver | default('N/A') }} / {{ pnic.speed | default('Unknown') }} |
+          {% endfor %}
+          {% endfor %}
+
+          ## Distributed virtual switches
+
+          | vDS name | MTU | Number of ports |
+          |---|---|---|
+          {% for vds in vds_info.dvs_info | default([]) %}
+          | {{ vds.name }} | {{ vds.mtu | default('1500') }} | {{ vds.num_ports | default('N/A') }} |
+          {% endfor %}
+
+          ## Distributed port groups
+
+          | Port group | VLAN | vDS | Promiscuous | MAC changes | Forged transmits |
+          |---|---|---|---|---|---|
+          {% for pg_name, pg in portgroup_info.dvs_portgroup_info.items() %}
+          | {{ pg_name }} | {{ pg.vlan_id | default('N/A') }} | {{ pg.dvs_name | default('N/A') }} | {{ pg.security_policy.allow_promiscuous | default('Inherited') }} | {{ pg.security_policy.mac_changes | default('Inherited') }} | {{ pg.security_policy.forged_transmits | default('Inherited') }} |
+          {% endfor %}
+
+          ## VMkernel interfaces
+
+          | Host | Interface | IP address | Subnet mask | Port group | MTU |
+          |---|---|---|---|---|---|
+          {% for host_name, host_data in host_network_info.host_network_info.items() %}
+          {% for vmk in host_data.vmk | default([]) %}
+          | {{ host_name }} | {{ vmk.device }} | {{ vmk.ip }} | {{ vmk.netmask }} | {{ vmk.portgroup | default(vmk.dvs_portgroup | default('N/A')) }} | {{ vmk.mtu | default('1500') }} |
+          {% endfor %}
+          {% endfor %}
+
+    - name: Report audit output location
+      ansible.builtin.debug:
+        msg: "VMware network audit report written to {{ output_file }}"
