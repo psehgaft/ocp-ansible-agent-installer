@@ -1,0 +1,6 @@
+---
+- name: Configure OpenShift API and Ingress certificates
+  hosts: localhost
+  gather_facts: false
+  roles:
+    - role: day2_pki

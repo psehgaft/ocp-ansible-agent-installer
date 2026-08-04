@@ -1,0 +1,6 @@
+---
+- name: Configure cluster proxy and disconnected registry settings
+  hosts: localhost
+  gather_facts: false
+  roles:
+    - role: day2_registry

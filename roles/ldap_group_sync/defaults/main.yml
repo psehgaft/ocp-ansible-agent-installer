@@ -1,0 +1,15 @@
+---
+day2_deployment_mode: "{{ platform_deployment_mode | default('direct') }}"
+day2_render_root: "{{ playbook_dir }}/../rendered"
+ldap_sync_namespace: openshift-config
+ldap_sync_service_account: ldap-group-sync
+ldap_sync_schedule: "0 */6 * * *"
+ldap_sync_concurrency_policy: Forbid
+ldap_sync_successful_jobs_history_limit: 3
+ldap_sync_failed_jobs_history_limit: 3
+ldap_sync_test_mode: false
+ldap_sync_image: registry.redhat.io/openshift4/ose-cli:latest
+ldap_sync_config: ""
+ldap_sync_bind_dn: ""
+ldap_sync_bind_password: ""
+ldap_sync_report_configmap: ldap-group-sync-report

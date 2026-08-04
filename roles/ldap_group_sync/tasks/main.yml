@@ -1,0 +1,91 @@
+---
+- name: Validate LDAP sync inputs
+  ansible.builtin.assert:
+    that:
+      - day2_deployment_mode in ['direct', 'render', 'gitops']
+      - ldap_sync_config | length > 0
+      - ldap_sync_bind_dn | length > 0
+      - ldap_sync_bind_password | length > 0
+    fail_msg: LDAP sync configuration and credentials are required.
+  no_log: true
+
+- name: Build LDAP sync resources
+  ansible.builtin.set_fact:
+    ldap_sync_resources:
+      - apiVersion: v1
+        kind: ServiceAccount
+        metadata: {name: "{{ ldap_sync_service_account }}", namespace: "{{ ldap_sync_namespace }}"}
+      - apiVersion: rbac.authorization.k8s.io/v1
+        kind: ClusterRole
+        metadata: {name: "{{ ldap_sync_service_account }}"}
+        rules:
+          - apiGroups: [user.openshift.io]
+            resources: [groups]
+            verbs: [get, list, create, update]
+          - apiGroups: ['']
+            resources: [configmaps]
+            verbs: [get, create, update, patch]
+      - apiVersion: rbac.authorization.k8s.io/v1
+        kind: ClusterRoleBinding
+        metadata: {name: "{{ ldap_sync_service_account }}"}
+        subjects:
+          - {kind: ServiceAccount, name: "{{ ldap_sync_service_account }}", namespace: "{{ ldap_sync_namespace }}"}
+        roleRef: {apiGroup: rbac.authorization.k8s.io, kind: ClusterRole, name: "{{ ldap_sync_service_account }}"}
+      - apiVersion: v1
+        kind: ConfigMap
+        metadata: {name: ldap-group-sync-config, namespace: "{{ ldap_sync_namespace }}"}
+        data: {ldap-sync.yml: "{{ ldap_sync_config }}"}
+      - apiVersion: v1
+        kind: Secret
+        metadata: {name: ldap-group-sync-credentials, namespace: "{{ ldap_sync_namespace }}"}
+        type: Opaque
+        stringData: {bindDN: "{{ ldap_sync_bind_dn }}", bindPassword: "{{ ldap_sync_bind_password }}"}
+      - apiVersion: batch/v1
+        kind: CronJob
+        metadata: {name: ldap-group-sync, namespace: "{{ ldap_sync_namespace }}"}
+        spec:
+          schedule: "{{ ldap_sync_schedule }}"
+          concurrencyPolicy: "{{ ldap_sync_concurrency_policy }}"
+          successfulJobsHistoryLimit: "{{ ldap_sync_successful_jobs_history_limit }}"
+          failedJobsHistoryLimit: "{{ ldap_sync_failed_jobs_history_limit }}"
+          jobTemplate:
+            spec:
+              template:
+                spec:
+                  serviceAccountName: "{{ ldap_sync_service_account }}"
+                  restartPolicy: Never
+                  containers:
+                    - name: sync
+                      image: "{{ ldap_sync_image }}"
+                      command: [/bin/bash, -ec]
+                      args:
+                        - >-
+                          oc adm groups sync --sync-config=/config/ldap-sync.yml
+                          {{ '--confirm' if not ldap_sync_test_mode else '' }}
+                          2>&1 | tee /tmp/sync-report.txt;
+                          oc create configmap {{ ldap_sync_report_configmap }}
+                          --from-file=report=/tmp/sync-report.txt -n {{ ldap_sync_namespace }}
+                          --dry-run=client -o yaml | oc apply -f -
+                      volumeMounts:
+                        - {name: config, mountPath: /config, readOnly: true}
+                        - {name: credentials, mountPath: /credentials, readOnly: true}
+                  volumes:
+                    - name: config
+                      configMap: {name: ldap-group-sync-config}
+                    - name: credentials
+                      secret: {secretName: ldap-group-sync-credentials}
+
+- name: Apply LDAP sync resources directly
+  kubernetes.core.k8s:
+    state: present
+    definition: "{{ item }}"
+  loop: "{{ ldap_sync_resources }}"
+  no_log: "{{ item.kind == 'Secret' }}"
+  when: day2_deployment_mode == 'direct'
+
+- name: Render LDAP sync resources without plaintext secret
+  ansible.builtin.copy:
+    dest: "{{ day2_render_root }}/day2/identity/ldap-group-sync.yml"
+    content: "{{ (ldap_sync_resources | rejectattr('kind', 'equalto', 'Secret') | list) | to_nice_yaml(indent=2, explicit_start=True) }}"
+    mode: '0640'
+  when: day2_deployment_mode in ['render', 'gitops']

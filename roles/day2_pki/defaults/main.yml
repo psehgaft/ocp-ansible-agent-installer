@@ -1,0 +1,10 @@
+---
+day2_deployment_mode: "{{ platform_deployment_mode | default('direct') }}"
+day2_render_root: "{{ playbook_dir }}/../rendered"
+pki_api_certificate_enabled: false
+pki_ingress_certificate_enabled: false
+pki_trusted_ca_enabled: false
+pki_cert_manager_resources: []
+pki_api_certificate_manifest: {}
+pki_ingress_certificate_manifest: {}
+pki_trusted_ca_manifest: {}

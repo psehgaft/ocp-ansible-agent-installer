@@ -1,0 +1,6 @@
+---
+- name: Configure LDAP group synchronization
+  hosts: localhost
+  gather_facts: false
+  roles:
+    - role: ldap_group_sync

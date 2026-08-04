@@ -1,0 +1,39 @@
+---
+- name: Validate PKI deployment mode
+  ansible.builtin.assert:
+    that:
+      - day2_deployment_mode in ['direct', 'render', 'gitops']
+      - not (pki_api_certificate_enabled and pki_api_certificate_manifest == {})
+      - not (pki_ingress_certificate_enabled and pki_ingress_certificate_manifest == {})
+      - not (pki_trusted_ca_enabled and pki_trusted_ca_manifest == {})
+
+- name: Build PKI desired-state list
+  ansible.builtin.set_fact:
+    pki_desired_state: >-
+      {{
+        (pki_cert_manager_resources | default([]))
+        + ([pki_api_certificate_manifest] if pki_api_certificate_enabled else [])
+        + ([pki_ingress_certificate_manifest] if pki_ingress_certificate_enabled else [])
+        + ([pki_trusted_ca_manifest] if pki_trusted_ca_enabled else [])
+      }}
+
+- name: Apply PKI desired state directly
+  kubernetes.core.k8s:
+    state: present
+    definition: "{{ item }}"
+  loop: "{{ pki_desired_state }}"
+  when: day2_deployment_mode == 'direct'
+
+- name: Create PKI render directory
+  ansible.builtin.file:
+    path: "{{ day2_render_root }}/day2/pki"
+    state: directory
+    mode: '0750'
+  when: day2_deployment_mode in ['render', 'gitops']
+
+- name: Render PKI desired state
+  ansible.builtin.copy:
+    dest: "{{ day2_render_root }}/day2/pki/resources.yml"
+    content: "{{ pki_desired_state | to_nice_yaml(indent=2, explicit_start=True) }}"
+    mode: '0640'
+  when: day2_deployment_mode in ['render', 'gitops']

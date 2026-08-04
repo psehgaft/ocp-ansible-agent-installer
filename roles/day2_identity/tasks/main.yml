@@ -1,0 +1,44 @@
+---
+- name: Validate identity configuration
+  ansible.builtin.assert:
+    that:
+      - day2_deployment_mode in ['direct', 'render', 'gitops']
+      - oauth_identity_providers is sequence
+      - oauth_rbac_bindings is sequence
+
+- name: Build OAuth desired state
+  ansible.builtin.set_fact:
+    oauth_desired_state:
+      apiVersion: config.openshift.io/v1
+      kind: OAuth
+      metadata:
+        name: "{{ oauth_cluster_resource_name }}"
+      spec:
+        identityProviders: "{{ oauth_identity_providers }}"
+
+- name: Apply OAuth configuration directly
+  kubernetes.core.k8s:
+    state: present
+    definition: "{{ oauth_desired_state }}"
+  when: day2_deployment_mode == 'direct'
+
+- name: Apply RBAC mappings directly
+  kubernetes.core.k8s:
+    state: present
+    definition: "{{ item }}"
+  loop: "{{ oauth_rbac_bindings }}"
+  when: day2_deployment_mode == 'direct'
+
+- name: Create identity render directory
+  ansible.builtin.file:
+    path: "{{ day2_render_root }}/day2/identity"
+    state: directory
+    mode: '0750'
+  when: day2_deployment_mode in ['render', 'gitops']
+
+- name: Render OAuth and RBAC desired state
+  ansible.builtin.copy:
+    dest: "{{ day2_render_root }}/day2/identity/resources.yml"
+    content: "{{ ([oauth_desired_state] + oauth_rbac_bindings) | to_nice_yaml(indent=2, explicit_start=True) }}"
+    mode: '0640'
+  when: day2_deployment_mode in ['render', 'gitops']

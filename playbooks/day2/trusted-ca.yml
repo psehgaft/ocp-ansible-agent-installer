@@ -1,0 +1,6 @@
+---
+- name: Configure additional OpenShift trust bundles
+  hosts: localhost
+  gather_facts: false
+  roles:
+    - role: day2_pki

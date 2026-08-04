@@ -1,0 +1,10 @@
+---
+day2_deployment_mode: "{{ platform_deployment_mode | default('direct') }}"
+day2_render_root: "{{ playbook_dir }}/../rendered"
+registry_resources: []
+registry_pull_secret_patch: {}
+registry_trusted_ca_resources: []
+registry_proxy_resource: {}
+registry_quay_resources: []
+registry_secret_strategy: external_secrets
+registry_allowed_secret_strategies: [external_secrets, sealed_secrets, sops, vault_reference]

@@ -1,0 +1,49 @@
+---
+- name: Validate registry configuration
+  ansible.builtin.assert:
+    that:
+      - day2_deployment_mode in ['direct', 'render', 'gitops']
+      - registry_secret_strategy in registry_allowed_secret_strategies
+
+- name: Build registry desired state
+  ansible.builtin.set_fact:
+    registry_desired_state: >-
+      {{
+        registry_resources
+        + registry_trusted_ca_resources
+        + registry_quay_resources
+        + ([registry_proxy_resource] if registry_proxy_resource != {} else [])
+        + ([registry_pull_secret_patch] if registry_pull_secret_patch != {} else [])
+      }}
+
+- name: Reject plaintext secrets in rendered modes
+  ansible.builtin.assert:
+    that:
+      - item.kind | default('') != 'Secret'
+      - item.stringData is not defined
+      - item.data is not defined
+    fail_msg: Rendered GitOps content must reference an approved secret provider instead of containing Secret data.
+  loop: "{{ registry_desired_state }}"
+  when: day2_deployment_mode in ['render', 'gitops']
+
+- name: Apply registry desired state directly
+  kubernetes.core.k8s:
+    state: present
+    definition: "{{ item }}"
+  loop: "{{ registry_desired_state }}"
+  no_log: "{{ item.kind | default('') == 'Secret' }}"
+  when: day2_deployment_mode == 'direct'
+
+- name: Create registry render directory
+  ansible.builtin.file:
+    path: "{{ day2_render_root }}/day2/registry"
+    state: directory
+    mode: '0750'
+  when: day2_deployment_mode in ['render', 'gitops']
+
+- name: Render registry desired state
+  ansible.builtin.copy:
+    dest: "{{ day2_render_root }}/day2/registry/resources.yml"
+    content: "{{ registry_desired_state | to_nice_yaml(indent=2, explicit_start=True) }}"
+    mode: '0640'
+  when: day2_deployment_mode in ['render', 'gitops']
