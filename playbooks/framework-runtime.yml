@@ -1,0 +1,11 @@
+---
+- name: Build and validate the OpenShift framework runtime plan
+  hosts: localhost
+  gather_facts: false
+  connection: local
+  roles:
+    - role: framework_runtime
+  post_tasks:
+    - name: Display resolved runtime plan
+      ansible.builtin.debug:
+        var: platform_runtime_plan
