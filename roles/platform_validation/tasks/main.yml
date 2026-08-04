@@ -1,0 +1,22 @@
+---
+- name: Validate global platform inputs
+  ansible.builtin.assert:
+    that:
+      - platform_profile is string
+      - platform_profile | length > 0
+      - platform_deployment_mode in platform_validation_allowed_modes
+      - platform_openshift_version in platform_validation_supported_versions
+      - platform_features is mapping
+    fail_msg: >-
+      Invalid platform configuration. Verify platform_profile,
+      platform_deployment_mode, platform_openshift_version, and platform_features.
+
+- name: Validate kubeconfig when cluster access is required
+  ansible.builtin.assert:
+    that:
+      - platform_validation_kubeconfig | length > 0
+      - platform_validation_kubeconfig is file
+    fail_msg: >-
+      A valid kubeconfig is required for this operation. Set KUBECONFIG or
+      platform_validation_kubeconfig.
+  when: platform_validation_require_kubeconfig | bool
