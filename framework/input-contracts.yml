@@ -1,0 +1,55 @@
+---
+contract_version: 1
+
+validation:
+  deployment_modes:
+    allowed: [direct, render, gitops]
+  openshift_versions:
+    pattern: '^4\.(1[6-9]|2[0-9])$'
+  channels:
+    pattern: '^[A-Za-z0-9._-]+$'
+  names:
+    pattern: '^[a-z0-9]([-a-z0-9.]*[a-z0-9])?$'
+  paths:
+    forbidden_fragments: ['..', '\u0000']
+  secret_names:
+    patterns:
+      - '(?i)(password|passwd|token|secret|pull_secret|api_key|private_key)$'
+    permitted_defaults: ['', null]
+
+scopes:
+  roles:
+    source: roles/*/defaults/main.yml
+    strategy: validate_all_declared_defaults
+    require_task_assertion_for_required_inputs: true
+  inventories:
+    source: inventories/*/hosts.yml
+    strategy: validate_inventory_structure_and_host_inputs
+  components:
+    source: framework/components.yml
+    strategy: validate_catalog_metadata
+  profiles:
+    source: profiles/*.yml
+    strategy: validate_profile_metadata
+  day2:
+    source: framework/day2-exercises.yml
+    strategy: validate_playbook_resource_bindings
+
+required_inventory_host_inputs:
+  baremetal:
+    any_of:
+      - [bmc_endpoint, bmc_username, bmc_password]
+      - [idrac_ip, idrac_user, idrac_password]
+  bastion:
+    required: [ansible_user]
+
+required_component_inputs:
+  - supported_openshift
+  - deployment_modes
+  - installation_type
+
+required_day2_inputs:
+  - playbook
+  - role
+  - resources_variable
+  - gitops_output
