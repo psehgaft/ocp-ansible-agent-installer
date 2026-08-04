@@ -1,0 +1,26 @@
+= Cert Manager, PKI, LDAP, and OAuth
+
+== PKI
+
+Use cert-manager for Issuer, ClusterIssuer, and Certificate lifecycle where appropriate. Keep API and Ingress certificate configuration separate and validate trust chains before rollout.
+
+[source,bash]
+----
+ansible-playbook playbooks/day2/cert-manager.yml
+ansible-playbook playbooks/day2/certificates.yml
+ansible-playbook playbooks/day2/trusted-ca.yml
+----
+
+== OAuth and LDAP
+
+Configure OAuth identity providers from inventory variables or external secret references. Never store bind credentials in plaintext Git content.
+
+[source,bash]
+----
+ansible-playbook playbooks/day2/oauth.yml
+ansible-playbook playbooks/day2/ldap.yml
+ansible-playbook playbooks/day2/ldap-group-sync.yml \
+  -e ldap_group_sync_test_mode=true
+----
+
+The LDAP synchronization workflow includes least-privilege RBAC, a CronJob, concurrency controls, history limits, test mode, and a synchronization report. Validate identities, group membership, RBAC mappings, and OAuth operator health after every change.
