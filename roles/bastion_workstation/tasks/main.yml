@@ -1,0 +1,132 @@
+---
+- name: Validate bastion configuration
+  ansible.builtin.assert:
+    that:
+      - ansible_facts.os_family == 'RedHat'
+      - bastion_openshift_version | length > 0
+      - bastion_kubernetes_minor is match('^v[0-9]+\.[0-9]+$')
+      - bastion_helm_version is match('^v[0-9]+\.[0-9]+\.[0-9]+$')
+      - bastion_kustomize_version is match('^v[0-9]+\.[0-9]+\.[0-9]+$')
+      - bastion_architecture in ['amd64', 'arm64']
+    fail_msg: "The bastion role supports RHEL-compatible systems and requires valid tool versions."
+
+- name: Install base system packages
+  ansible.builtin.dnf:
+    name: "{{ bastion_system_packages }}"
+    state: present
+    update_cache: true
+
+- name: Install Python automation packages
+  ansible.builtin.pip:
+    name: "{{ bastion_python_packages }}"
+    executable: pip3
+  when: bastion_install_python_packages | bool
+
+- name: Configure Kubernetes package repository
+  ansible.builtin.copy:
+    dest: /etc/yum.repos.d/kubernetes.repo
+    mode: "0644"
+    content: |
+      [kubernetes]
+      name=Kubernetes
+      baseurl=https://pkgs.k8s.io/core:/stable:/{{ bastion_kubernetes_minor }}/rpm/
+      enabled=1
+      gpgcheck=1
+      gpgkey=https://pkgs.k8s.io/core:/stable:/{{ bastion_kubernetes_minor }}/rpm/repodata/repomd.xml.key
+      exclude=kubelet kubectl cri-tools kubernetes-cni
+
+- name: Install kubectl and optional kubelet
+  ansible.builtin.dnf:
+    name: "{{ ['kubectl'] + (['kubelet'] if bastion_install_kubelet | bool else []) }}"
+    state: present
+    disable_excludes: kubernetes
+
+- name: Control kubelet service state on bastion
+  ansible.builtin.systemd:
+    name: kubelet
+    enabled: "{{ bastion_enable_kubelet | bool }}"
+    state: "{{ 'started' if bastion_enable_kubelet | bool else 'stopped' }}"
+  when: bastion_install_kubelet | bool
+
+- name: Download OpenShift client archive
+  ansible.builtin.get_url:
+    url: "https://mirror.openshift.com/pub/openshift-v4/{{ bastion_architecture }}/clients/ocp/stable-{{ bastion_openshift_version }}/openshift-client-linux.tar.gz"
+    dest: /tmp/openshift-client-linux.tar.gz
+    mode: "0644"
+
+- name: Install oc and kubectl from OpenShift client archive
+  ansible.builtin.unarchive:
+    src: /tmp/openshift-client-linux.tar.gz
+    dest: /usr/local/bin
+    remote_src: true
+    include:
+      - oc
+      - kubectl
+    mode: "0755"
+
+- name: Download Helm archive
+  ansible.builtin.get_url:
+    url: "https://get.helm.sh/helm-{{ bastion_helm_version }}-linux-{{ bastion_architecture }}.tar.gz"
+    dest: /tmp/helm.tar.gz
+    mode: "0644"
+
+- name: Extract Helm archive
+  ansible.builtin.unarchive:
+    src: /tmp/helm.tar.gz
+    dest: /tmp
+    remote_src: true
+
+- name: Install Helm binary
+  ansible.builtin.copy:
+    src: "/tmp/linux-{{ bastion_architecture }}/helm"
+    dest: /usr/local/bin/helm
+    remote_src: true
+    mode: "0755"
+
+- name: Download Kustomize archive
+  ansible.builtin.get_url:
+    url: "https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2F{{ bastion_kustomize_version }}/kustomize_{{ bastion_kustomize_version }}_linux_{{ bastion_architecture }}.tar.gz"
+    dest: /tmp/kustomize.tar.gz
+    mode: "0644"
+
+- name: Install Kustomize
+  ansible.builtin.unarchive:
+    src: /tmp/kustomize.tar.gz
+    dest: /usr/local/bin
+    remote_src: true
+    include:
+      - kustomize
+    mode: "0755"
+
+- name: Install repository Ansible collections
+  ansible.builtin.command:
+    argv:
+      - ansible-galaxy
+      - collection
+      - install
+      - -r
+      - "{{ playbook_dir }}/../collections/requirements.yml"
+  register: bastion_collection_install
+  changed_when: "'was installed successfully' in bastion_collection_install.stdout"
+
+- name: Verify bastion toolchain
+  ansible.builtin.command:
+    argv: ["{{ item }}", "version"]
+  loop:
+    - ansible
+    - oc
+    - kubectl
+    - helm
+    - kustomize
+  register: bastion_tool_versions
+  changed_when: false
+
+- name: Write bastion validation report
+  ansible.builtin.copy:
+    dest: /var/tmp/ocp-bastion-toolchain.txt
+    mode: "0644"
+    content: |
+      {% for result in bastion_tool_versions.results %}
+      ## {{ result.item }}
+      {{ result.stdout | default(result.stderr) }}
+      {% endfor %}
