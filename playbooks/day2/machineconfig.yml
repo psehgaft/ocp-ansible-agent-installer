@@ -1,0 +1,7 @@
+---
+- name: Manage MachineConfig resources
+  hosts: localhost
+  gather_facts: false
+  roles:
+    - role: day2_cluster_operations
+      vars: {day2_cluster_domain: machineconfig, day2_cluster_resources: "{{ machineconfig_resources | default([]) }}"}
