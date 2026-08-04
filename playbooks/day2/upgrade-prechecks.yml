@@ -1,0 +1,10 @@
+---
+- name: Run upgrade prechecks
+  hosts: localhost
+  gather_facts: false
+  roles:
+    - role: day2_operational_workflow
+      vars:
+        day2_operation_domain: upgrade-prechecks
+        day2_operation_resources: []
+        day2_operation_checks: "{{ upgrade_precheck_commands | default([['oc','get','clusterversion','version','-o','yaml'], ['oc','get','clusteroperators']]) }}"
