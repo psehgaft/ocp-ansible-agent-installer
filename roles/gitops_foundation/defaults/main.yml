@@ -1,0 +1,11 @@
+---
+gitops_source_dir: "{{ playbook_dir }}/../gitops"
+gitops_render_dir: "{{ playbook_dir }}/../artifacts/gitops-rendered"
+gitops_environment: production
+gitops_git_write_enabled: false
+gitops_secret_strategy: external_secrets
+gitops_allowed_secret_strategies:
+  - external_secrets
+  - sealed_secrets
+  - sops
+  - vault_reference
