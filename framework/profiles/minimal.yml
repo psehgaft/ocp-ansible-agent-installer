@@ -1,0 +1,6 @@
+---
+profile_name: minimal
+profile_description: Minimal installation preserving the existing Assisted Installer workflow.
+profile_features:
+  assisted_installer: true
+  redfish: true
