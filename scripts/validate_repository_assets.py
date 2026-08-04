@@ -32,9 +32,10 @@ day2 = (load_yaml(ROOT / "framework" / "day2-exercises.yml") or {}).get("exercis
 
 playbooks = sorted((ROOT / "playbooks").rglob("*.yml"))
 framework_files = sorted((ROOT / "framework").glob("*.yml"))
+role_task_files = sorted((ROOT / "roles").rglob("tasks/*.yml"))
 documentation_files = sorted((ROOT / "docs").glob("*.md"))
 workshop_files = sorted((ROOT / "workshop").rglob("*.adoc"))
-implementation_text = repository_text(playbooks + framework_files)
+implementation_text = repository_text(playbooks + framework_files + role_task_files)
 documentation_text = repository_text(documentation_files + workshop_files + [ROOT / "README.md"])
 
 catalog_roles = {
@@ -66,8 +67,10 @@ for role_dir in sorted(path for path in (ROOT / "roles").iterdir() if path.is_di
         role in catalog_roles
         or role in workflow_roles
         or role in day2_roles
-        or re.search(rf"(?:role:|include_role:|import_role:)[^\n]*\b{re.escape(role)}\b", implementation_text)
-        or re.search(rf"\b{re.escape(role)}\b", implementation_text)
+        or re.search(rf"\brole\s*:\s*{re.escape(role)}\b", implementation_text)
+        or re.search(rf"\bname\s*:\s*{re.escape(role)}\b", implementation_text)
+        or re.search(rf"\b(include_role|import_role)\b[\s\S]{{0,160}}\b{re.escape(role)}\b", implementation_text)
+        or re.search(rf"\b{re.escape(role)}\b", documentation_text)
     )
     documented = (role_dir / "README.md").is_file() or bool(re.search(rf"\b{re.escape(role)}\b", documentation_text))
     usable = tasks.is_file() and referenced
@@ -91,7 +94,6 @@ for role_dir in sorted(path for path in (ROOT / "roles").iterdir() if path.is_di
         }
     )
 
-# Shared top-level templates must be referenced by file name in active sources.
 for template in sorted((ROOT / "templates").rglob("*")) if (ROOT / "templates").is_dir() else []:
     if template.is_file() and template.name not in implementation_text:
         orphan_templates.append(str(template.relative_to(ROOT)))
