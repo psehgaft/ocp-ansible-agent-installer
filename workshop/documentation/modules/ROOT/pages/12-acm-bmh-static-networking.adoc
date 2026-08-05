@@ -1,0 +1,317 @@
+= 6.3 Configure BareMetalHost Static LACP Networking
+
+This lesson generates the per-node network resources required when ACM and Metal3 provision bare-metal nodes with static IPv4 addressing and an 802.3ad LACP bond.
+
+The workflow intentionally separates the configuration into two lifecycle phases:
+
+* *Day 0 on the hub cluster:* a network-data `Secret` and an optional `BareMetalHost` for Metal3/Ironic provisioning.
+* *Day 2 on the managed cluster:* one hostname-scoped `NodeNetworkConfigurationPolicy` for permanent `bond0` and `br-ex` configuration.
+
+== Learning objectives
+
+After completing this lesson, you can:
+
+* Define static networking for multiple bare-metal nodes from one variables file.
+* Generate one network-data Secret and BareMetalHost per node.
+* Generate one NNCP per managed-cluster node.
+* Keep hub and managed-cluster kubeconfigs separate.
+* Render manifests for review before applying disruptive network changes.
+* Validate LACP, bridge, IP, route, DNS, and node-policy convergence.
+
+== Prerequisites
+
+Before running the playbook, confirm:
+
+* The hub cluster has ACM, Metal3, and the Bare Metal Operator resources required by the deployment workflow.
+* The managed cluster has Kubernetes NMState available before Day-2 NNCP application.
+* Switch ports are configured in the same LACP port channel.
+* The selected physical interfaces exist on the target nodes.
+* Static IP addresses, gateways, DNS servers, and boot MAC addresses are unique and reserved.
+* The hostnames in `nodeSelector` exactly match `kubernetes.io/hostname` on the managed cluster.
+* BMC credential Secrets already exist in the cluster namespace.
+
+[WARNING]
+====
+An incorrect NNCP can disconnect a node. Always render and review the manifests first. Apply policies one node at a time and retain out-of-band BMC access.
+====
+
+== Variables
+
+Use the supplied example as a starting point:
+
+[source,bash]
+----
+cp inventories/examples/group_vars/all/acm-bmh-static-networking.yml \
+  inventories/lab/group_vars/all/acm-bmh-static-networking.yml
+----
+
+A node definition contains the hub namespace, BMH identity, managed-cluster hostname, bond members, static IP, gateway, DNS, and BMC reference:
+
+[source,yaml]
+----
+acm_bmh_networking_mode: render
+acm_bmh_create_baremetalhost: true
+
+acm_bmh_nodes:
+  - name: worker-1
+    namespace: my-cluster-namespace
+    hostname: worker-1.example.com
+
+    boot_mac: '52:54:00:11:22:33'
+    bmc_address: >-
+      redfish-virtualmedia://10.5.200.10/redfish/v1/Systems/System.Embedded.1
+    bmc_credentials_name: worker-1-bmc-secret
+
+    bond_name: bond0
+    bridge_name: br-ex
+    bond_interfaces:
+      - eno1
+      - eno2
+
+    ip_address: 10.5.128.51
+    prefix_length: 24
+    gateway: 10.5.128.1
+    dns_servers:
+      - 10.5.128.10
+      - 10.5.128.11
+----
+
+Each node must use a unique:
+
+* `name`
+* `hostname`
+* `ip_address`
+* `boot_mac`
+
+For LACP, `bond_interfaces` must contain at least two physical NICs.
+
+== Exercise 1: Render the manifests
+
+Run the playbook in its default safe mode:
+
+[source,bash]
+----
+ansible-playbook \
+  -i inventories/lab/hosts.yml \
+  playbooks/day2/acm-bmh-static-networking.yml \
+  -e @inventories/lab/group_vars/all/acm-bmh-static-networking.yml
+----
+
+The playbook writes two separate manifest sets:
+
+[source,text]
+----
+rendered/acm-bmh-static-networking/hub/day0/resources.yml
+rendered/acm-bmh-static-networking/managed/day2/resources.yml
+----
+
+Review the hub file for:
+
+* One `Secret` per node with `stringData.networkData`.
+* One optional `BareMetalHost` per node.
+* Correct namespace, boot MAC, BMC Secret reference, and `preprovisioningNetworkDataName`.
+* Static IP assigned to the Day-0 bond.
+* Default route through the Day-0 bond.
+
+Review the managed-cluster file for:
+
+* One NNCP per node.
+* Exact hostname selector.
+* `bond0` using mode `802.3ad`.
+* Correct physical bond members.
+* `bond0` attached to `br-ex`.
+* Static IP assigned to `br-ex`, not to the physical interfaces.
+* Default route using `br-ex`.
+* Correct DNS servers.
+
+== Exercise 2: Validate generated YAML
+
+[source,bash]
+----
+python scripts/validate_yaml.py
+
+grep -nE \
+  'kind: (Secret|BareMetalHost|NodeNetworkConfigurationPolicy)' \
+  rendered/acm-bmh-static-networking/{hub/day0,managed/day2}/resources.yml
+----
+
+When the APIs are already installed, use server-side dry runs against the correct cluster:
+
+[source,bash]
+----
+oc --kubeconfig "$HUB_KUBECONFIG" apply \
+  --dry-run=server \
+  -f rendered/acm-bmh-static-networking/hub/day0/resources.yml
+
+oc --kubeconfig "$MANAGED_KUBECONFIG" apply \
+  --dry-run=server \
+  -f rendered/acm-bmh-static-networking/managed/day2/resources.yml
+----
+
+== Exercise 3: Apply Day-0 resources to the hub
+
+Export the hub kubeconfig separately:
+
+[source,bash]
+----
+export HUB_KUBECONFIG="$HOME/.kube/hub-config"
+----
+
+Apply only the Day-0 resources:
+
+[source,bash]
+----
+ansible-playbook \
+  -i inventories/lab/hosts.yml \
+  playbooks/day2/acm-bmh-static-networking.yml \
+  -e @inventories/lab/group_vars/all/acm-bmh-static-networking.yml \
+  -e acm_bmh_networking_mode=apply \
+  -e acm_bmh_apply_day0=true \
+  -e acm_bmh_apply_day2=false
+----
+
+Validate on the hub:
+
+[source,bash]
+----
+oc --kubeconfig "$HUB_KUBECONFIG" \
+  get secret,baresmetalhost -n my-cluster-namespace
+
+oc --kubeconfig "$HUB_KUBECONFIG" \
+  get baremetalhost worker-1 \
+  -n my-cluster-namespace \
+  -o yaml
+----
+
+NOTE: The correct BareMetalHost resource name for validation is `baremetalhost`. Verify the Secret name under `spec.preprovisioningNetworkDataName`.
+
+Monitor inspection and provisioning:
+
+[source,bash]
+----
+oc --kubeconfig "$HUB_KUBECONFIG" \
+  get baremetalhost -n my-cluster-namespace -w
+----
+
+Do not apply the managed-cluster NNCP until the node has joined the cluster and the expected hostname is visible.
+
+== Exercise 4: Verify managed-cluster node identity
+
+[source,bash]
+----
+export MANAGED_KUBECONFIG="$HOME/.kube/managed-config"
+
+oc --kubeconfig "$MANAGED_KUBECONFIG" get nodes \
+  -L kubernetes.io/hostname
+
+oc --kubeconfig "$MANAGED_KUBECONFIG" get nncp
+----
+
+Confirm that every variable-file hostname matches the node label exactly.
+
+== Exercise 5: Apply the Day-2 NNCPs
+
+Apply the policies only to the managed cluster:
+
+[source,bash]
+----
+ansible-playbook \
+  -i inventories/lab/hosts.yml \
+  playbooks/day2/acm-bmh-static-networking.yml \
+  -e @inventories/lab/group_vars/all/acm-bmh-static-networking.yml \
+  -e acm_bmh_networking_mode=apply \
+  -e acm_bmh_apply_day0=false \
+  -e acm_bmh_apply_day2=true
+----
+
+For production, introduce one NNCP at a time. Observe the enactment before moving to the next node:
+
+[source,bash]
+----
+oc --kubeconfig "$MANAGED_KUBECONFIG" get nncp
+oc --kubeconfig "$MANAGED_KUBECONFIG" get nnce
+oc --kubeconfig "$MANAGED_KUBECONFIG" get nnce -w
+----
+
+Inspect policy status and error messages:
+
+[source,bash]
+----
+oc --kubeconfig "$MANAGED_KUBECONFIG" \
+  describe nncp nncp-worker-1
+
+oc --kubeconfig "$MANAGED_KUBECONFIG" \
+  get nnce -o wide
+----
+
+== Post-change validation
+
+Validate the node remains Ready and reachable:
+
+[source,bash]
+----
+oc --kubeconfig "$MANAGED_KUBECONFIG" get node worker-1.example.com
+oc --kubeconfig "$MANAGED_KUBECONFIG" debug node/worker-1.example.com
+----
+
+Inside the debug shell:
+
+[source,bash]
+----
+chroot /host
+nmstatectl show
+nmcli connection show
+ip -br address
+ip route
+cat /etc/resolv.conf
+cat /proc/net/bonding/bond0
+ovs-vsctl show
+----
+
+Confirm:
+
+* Both physical links are active members of `bond0`.
+* The bond reports 802.3ad mode and an active aggregator.
+* `br-ex` owns the static IPv4 address.
+* The default route uses `br-ex`.
+* DNS resolution succeeds.
+* API, ingress, machine-network, and required external endpoints remain reachable.
+
+== Relationship to OVN localnet networks
+
+The management or machine-network VLAN can remain untagged on `br-ex`. Additional VLANs used by OpenShift Virtualization continue to use OVN-Kubernetes localnet `NetworkAttachmentDefinition` resources. Those NADs do not need to be recreated by this workflow, provided the physical switch trunk and bridge mappings permit the VLANs.
+
+== Rollback strategy
+
+Before applying a policy, capture the current state:
+
+[source,bash]
+----
+oc --kubeconfig "$MANAGED_KUBECONFIG" debug node/worker-1.example.com -- \
+  chroot /host nmstatectl show
+----
+
+If a policy fails but the API remains reachable:
+
+[source,bash]
+----
+oc --kubeconfig "$MANAGED_KUBECONFIG" delete nncp nncp-worker-1
+----
+
+Deletion alone might not restore the previous network state. Maintain an explicit rollback NNCP or use BMC console access to restore connectivity. Never roll out the same untested NNCP to all control-plane or worker nodes simultaneously.
+
+== Completion criteria
+
+The exercise is complete when:
+
+* All Day-0 Secrets reference valid per-node NMState data.
+* Every BMH references the correct network-data and BMC credential Secrets.
+* Nodes provision successfully through ACM/Metal3.
+* Every managed node has a matching hostname-scoped NNCP.
+* All NNCP enactments report success.
+* Nodes remain Ready after the network transition.
+* LACP, `br-ex`, IP, route, DNS, and OVN localnet connectivity are verified.
+
+++++
+<a class="button" href="../ARCHITECTURE/13-acm-cluster-deployment.html">Next: Validate and Deploy the ACM Cluster</a>
+++++
