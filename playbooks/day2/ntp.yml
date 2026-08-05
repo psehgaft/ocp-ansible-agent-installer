@@ -1,0 +1,6 @@
+---
+- name: Configure OpenShift NTP with MachineConfig
+  hosts: localhost
+  gather_facts: false
+  roles:
+    - role: day2_ntp
