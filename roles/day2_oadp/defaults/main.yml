@@ -1,0 +1,27 @@
+---
+day2_deployment_mode: direct
+day2_render_root: "{{ playbook_dir }}/../../rendered"
+oadp_namespace: openshift-adp
+oadp_operator_group_name: redhat-oadp-operator
+oadp_subscription_name: redhat-oadp-operator
+oadp_subscription_channel: stable-1.5
+oadp_subscription_source: redhat-operators
+oadp_subscription_source_namespace: openshift-marketplace
+oadp_install_plan_approval: Automatic
+oadp_dpa_name: cluster-dpa
+oadp_backup_location_name: default
+oadp_backup_provider: aws
+oadp_backup_bucket: ""
+oadp_backup_prefix: velero
+oadp_backup_region: minio
+oadp_backup_endpoint: ""
+oadp_backup_force_path_style: true
+oadp_credentials_secret_name: cloud-credentials
+oadp_credentials_secret_key: cloud
+oadp_velero_plugins:
+  - openshift
+  - aws
+oadp_snapshot_locations: []
+oadp_restic_enabled: true
+oadp_node_agent_enabled: true
+oadp_require_backup_location: true
