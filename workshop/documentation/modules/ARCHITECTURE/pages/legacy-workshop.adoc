@@ -1,16 +1,21 @@
-= Legacy Workshop Source Map
+= Workshop Source Map
 
-The original workshop remains under `workshop/documentation/modules/ROOT/` and `workshop/WORKSHOP.md`. It continues to provide valuable source material for:
+This page maps the complete workshop into one sequential learning path. The original Day-0 procedures remain under `workshop/documentation/modules/ROOT/`, while architecture, platform-operator, GitOps, health-check, and extensibility content remains under `workshop/documentation/modules/ARCHITECTURE/`.
 
-* Environment preparation.
-* Mixed-vendor inventory.
-* Ansible Vault.
-* Redfish discovery.
-* Virtual media validation.
-* Discovery ISO generation.
-* Assisted Installer execution.
-* Final installation challenge and troubleshooting.
+The sequence is intentional:
 
-The architecture-aligned workshop references these proven procedures instead of deleting or duplicating them blindly. Behavioral changes to Day-0 installation require equivalence tests and a separate migration pull request.
+. Prepare the workstation, inventory, dependencies, and credentials.
+. Validate Redfish discovery and virtual media.
+. Install and verify OpenShift.
+. Apply ordered Day-2 foundations: NTP, node labels, identity, operators, storage, networking, observability, and backup.
+. Run health checks and learn how to add components and templates.
+. Generate, validate, and deploy a managed cluster from ACM.
+. Complete the integrated final challenge.
 
-Use the original track when teaching only bare-metal discovery and installation. Use the architecture track when teaching the complete framework from Day-0 through GitOps, operators, Day-2 operations, quality gates, and reporting.
+Use the `ROOT` pages for executable bare-metal procedures and the `ARCHITECTURE` pages for framework design, deployment modes, component catalogs, policies, and extension guidance.
+
+All numbered pages are exposed through the workshop navigation. Each lab ends with a link to the next sequential module so participants can follow the complete path without returning to the navigation menu.
+
+++++
+<a class="button" href="../ROOT/index.html">Next: Workshop Overview</a>
+++++
