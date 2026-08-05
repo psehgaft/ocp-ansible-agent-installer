@@ -32,13 +32,22 @@ def test_legacy_workshop_is_preserved() -> None:
     assert (LEGACY / "pages/07-install.adoc").exists()
 
 
-def test_antora_registers_both_tracks() -> None:
-    content = (ROOT / "workshop/documentation/antora.yml").read_text()
-    assert "modules/ARCHITECTURE/nav.adoc" in content
+def test_antora_registers_single_canonical_navigation() -> None:
+    content = (ROOT / "workshop/documentation/antora.yml").read_text(
+        encoding="utf-8"
+    )
     assert "modules/ROOT/nav.adoc" in content
+    assert "modules/ARCHITECTURE/nav.adoc" not in content
+
+
+def test_root_navigation_links_architecture_content() -> None:
+    content = (LEGACY / "nav.adoc").read_text(encoding="utf-8")
+    assert "xref:ARCHITECTURE:" in content
 
 
 def test_dependency_model_is_taught() -> None:
-    content = (ARCH / "pages/appendix-dependencies.adoc").read_text()
+    content = (ARCH / "pages/appendix-dependencies.adoc").read_text(
+        encoding="utf-8"
+    )
     for key in ("requires", "recommends", "conflicts", "after", "requires_configuration"):
         assert key in content
