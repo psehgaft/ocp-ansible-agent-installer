@@ -175,7 +175,7 @@ Validate on the hub:
 [source,bash]
 ----
 oc --kubeconfig "$HUB_KUBECONFIG" \
-  get secret,baresmetalhost -n my-cluster-namespace
+  get secret,baremetalhost -n my-cluster-namespace
 
 oc --kubeconfig "$HUB_KUBECONFIG" \
   get baremetalhost worker-1 \
@@ -183,7 +183,7 @@ oc --kubeconfig "$HUB_KUBECONFIG" \
   -o yaml
 ----
 
-NOTE: The correct BareMetalHost resource name for validation is `baremetalhost`. Verify the Secret name under `spec.preprovisioningNetworkDataName`.
+Verify the network-data Secret referenced by `spec.preprovisioningNetworkDataName`.
 
 Monitor inspection and provisioning:
 
