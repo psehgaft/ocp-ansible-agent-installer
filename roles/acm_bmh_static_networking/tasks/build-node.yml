@@ -1,0 +1,114 @@
+---
+- name: Build NMState networkData payload for {{ acm_bmh_node.name }}
+  ansible.builtin.set_fact:
+    acm_bmh_network_data:
+      interfaces:
+        - name: "{{ acm_bmh_node.bond_name | default(acm_bmh_bond_name) }}"
+          type: bond
+          state: up
+          link-aggregation:
+            mode: "{{ acm_bmh_bond_mode }}"
+            options:
+              miimon: "{{ acm_bmh_miimon }}"
+            port: "{{ acm_bmh_node.bond_interfaces }}"
+          ipv4:
+            enabled: true
+            dhcp: false
+            address:
+              - ip: "{{ acm_bmh_node.ip_address }}"
+                prefix-length: "{{ acm_bmh_node.prefix_length | int }}"
+      routes:
+        config:
+          - destination: 0.0.0.0/0
+            next-hop-address: "{{ acm_bmh_node.gateway }}"
+            next-hop-interface: "{{ acm_bmh_node.bond_name | default(acm_bmh_bond_name) }}"
+      dns-resolver:
+        config:
+          server: "{{ acm_bmh_node.dns_servers }}"
+
+- name: Build Day-0 Secret for {{ acm_bmh_node.name }}
+  ansible.builtin.set_fact:
+    acm_bmh_network_secret:
+      apiVersion: v1
+      kind: Secret
+      metadata:
+        name: "{{ acm_bmh_node.network_data_secret_name | default(acm_bmh_node.name ~ '-network-data') }}"
+        namespace: "{{ acm_bmh_node.namespace }}"
+      type: Opaque
+      stringData:
+        "{{ acm_bmh_network_data_key }}": "{{ acm_bmh_network_data | to_nice_yaml(indent=2) }}"
+  no_log: true
+
+- name: Build BareMetalHost for {{ acm_bmh_node.name }}
+  ansible.builtin.set_fact:
+    acm_bmh_host_resource:
+      apiVersion: metal3.io/v1alpha1
+      kind: BareMetalHost
+      metadata:
+        name: "{{ acm_bmh_node.name }}"
+        namespace: "{{ acm_bmh_node.namespace }}"
+        labels: "{{ acm_bmh_node.labels | default({}) }}"
+      spec:
+        online: "{{ acm_bmh_node.online | default(true) | bool }}"
+        bootMACAddress: "{{ acm_bmh_node.boot_mac }}"
+        bmc:
+          address: "{{ acm_bmh_node.bmc_address }}"
+          credentialsName: "{{ acm_bmh_node.bmc_credentials_name }}"
+          disableCertificateVerification: >-
+            {{ acm_bmh_node.bmc_disable_certificate_verification | default(false) | bool }}
+        preprovisioningNetworkDataName: >-
+          {{ acm_bmh_node.network_data_secret_name | default(acm_bmh_node.name ~ '-network-data') }}
+
+- name: Build Day-2 NNCP for {{ acm_bmh_node.name }}
+  ansible.builtin.set_fact:
+    acm_bmh_nncp_resource:
+      apiVersion: nmstate.io/v1
+      kind: NodeNetworkConfigurationPolicy
+      metadata:
+        name: "{{ acm_bmh_node.nncp_name | default('nncp-' ~ acm_bmh_node.name) }}"
+      spec:
+        nodeSelector:
+          kubernetes.io/hostname: "{{ acm_bmh_node.hostname }}"
+        desiredState:
+          interfaces:
+            - name: "{{ acm_bmh_node.bond_name | default(acm_bmh_bond_name) }}"
+              type: bond
+              state: up
+              link-aggregation:
+                mode: "{{ acm_bmh_bond_mode }}"
+                options:
+                  miimon: "{{ acm_bmh_miimon }}"
+                port: "{{ acm_bmh_node.bond_interfaces }}"
+            - name: "{{ acm_bmh_node.bridge_name | default(acm_bmh_bridge_name) }}"
+              type: ovs-bridge
+              state: up
+              ipv4:
+                enabled: true
+                dhcp: false
+                address:
+                  - ip: "{{ acm_bmh_node.ip_address }}"
+                    prefix-length: "{{ acm_bmh_node.prefix_length | int }}"
+              ipv6:
+                enabled: "{{ acm_bmh_ipv6_enabled | bool }}"
+              bridge:
+                options:
+                  stp:
+                    enabled: false
+                port:
+                  - name: "{{ acm_bmh_node.bond_name | default(acm_bmh_bond_name) }}"
+          routes:
+            config:
+              - destination: 0.0.0.0/0
+                next-hop-address: "{{ acm_bmh_node.gateway }}"
+                next-hop-interface: "{{ acm_bmh_node.bridge_name | default(acm_bmh_bridge_name) }}"
+          dns-resolver:
+            config:
+              server: "{{ acm_bmh_node.dns_servers }}"
+
+- name: Append generated resources for {{ acm_bmh_node.name }}
+  ansible.builtin.set_fact:
+    acm_bmh_day0_resources: >-
+      {{ acm_bmh_day0_resources + [acm_bmh_network_secret]
+         + ([acm_bmh_host_resource] if acm_bmh_create_baremetalhost | bool else []) }}
+    acm_bmh_day2_resources: "{{ acm_bmh_day2_resources + [acm_bmh_nncp_resource] }}"
+  no_log: true

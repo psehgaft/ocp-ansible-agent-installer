@@ -1,0 +1,108 @@
+---
+- name: Validate global ACM BareMetalHost networking inputs
+  ansible.builtin.assert:
+    that:
+      - acm_bmh_networking_mode in ['render', 'apply']
+      - acm_bmh_nodes is sequence
+      - acm_bmh_nodes | length > 0
+      - acm_bmh_bond_mode == '802.3ad'
+      - not acm_bmh_apply_day0 or acm_bmh_hub_kubeconfig | length > 0
+      - not acm_bmh_apply_day2 or acm_bmh_managed_kubeconfig | length > 0
+    fail_msg: >-
+      Define at least one node. Apply mode requires the hub kubeconfig for Day 0
+      and the managed-cluster kubeconfig for Day 2.
+
+- name: Validate each node definition
+  ansible.builtin.assert:
+    that:
+      - item.name | default('') | length > 0
+      - item.namespace | default('') | length > 0
+      - item.hostname | default('') | length > 0
+      - item.ip_address | default('') | ansible.utils.ipaddr
+      - item.prefix_length | int >= 1
+      - item.prefix_length | int <= 32
+      - item.gateway | default('') | ansible.utils.ipaddr
+      - item.dns_servers | default([]) | length > 0
+      - item.bond_interfaces | default([]) | length >= 2
+      - item.boot_mac | default('') | length > 0
+      - item.bmc_address | default('') | length > 0
+      - item.bmc_credentials_name | default('') | length > 0
+    fail_msg: "Invalid static-network definition for node {{ item.name | default('unknown') }}."
+  loop: "{{ acm_bmh_nodes }}"
+  loop_control:
+    label: "{{ item.name | default('unknown') }}"
+
+- name: Validate unique node names, hostnames, IP addresses, and boot MACs
+  ansible.builtin.assert:
+    that:
+      - acm_bmh_nodes | map(attribute='name') | list | unique | length == acm_bmh_nodes | length
+      - acm_bmh_nodes | map(attribute='hostname') | list | unique | length == acm_bmh_nodes | length
+      - acm_bmh_nodes | map(attribute='ip_address') | list | unique | length == acm_bmh_nodes | length
+      - acm_bmh_nodes | map(attribute='boot_mac') | map('lower') | list | unique | length == acm_bmh_nodes | length
+    fail_msg: Node names, hostnames, static IP addresses, and boot MAC addresses must be unique.
+
+- name: Initialize generated resource lists
+  ansible.builtin.set_fact:
+    acm_bmh_day0_resources: []
+    acm_bmh_day2_resources: []
+
+- name: Build Day-0 and Day-2 resources for each node
+  ansible.builtin.include_tasks: build-node.yml
+  loop: "{{ acm_bmh_nodes }}"
+  loop_control:
+    loop_var: acm_bmh_node
+    label: "{{ acm_bmh_node.name }}"
+
+- name: Create render directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: '0750'
+  loop:
+    - "{{ acm_bmh_render_root }}/hub/day0"
+    - "{{ acm_bmh_render_root }}/managed/day2"
+
+- name: Render Day-0 Secret and BareMetalHost resources
+  ansible.builtin.copy:
+    dest: "{{ acm_bmh_render_root }}/hub/day0/resources.yml"
+    content: "{{ acm_bmh_day0_resources | to_nice_yaml(indent=2, explicit_start=True) }}"
+    mode: '0640'
+
+- name: Render Day-2 NodeNetworkConfigurationPolicy resources
+  ansible.builtin.copy:
+    dest: "{{ acm_bmh_render_root }}/managed/day2/resources.yml"
+    content: "{{ acm_bmh_day2_resources | to_nice_yaml(indent=2, explicit_start=True) }}"
+    mode: '0640'
+
+- name: Apply Day-0 resources to the ACM hub cluster
+  kubernetes.core.k8s:
+    state: present
+    kubeconfig: "{{ acm_bmh_hub_kubeconfig }}"
+    definition: "{{ item }}"
+  loop: "{{ acm_bmh_day0_resources }}"
+  loop_control:
+    label: "{{ item.kind }}/{{ item.metadata.namespace }}/{{ item.metadata.name }}"
+  when:
+    - acm_bmh_networking_mode == 'apply'
+    - acm_bmh_apply_day0 | bool
+  no_log: "{{ item.kind == 'Secret' }}"
+
+- name: Apply Day-2 NNCP resources to the managed cluster
+  kubernetes.core.k8s:
+    state: present
+    kubeconfig: "{{ acm_bmh_managed_kubeconfig }}"
+    definition: "{{ item }}"
+  loop: "{{ acm_bmh_day2_resources }}"
+  loop_control:
+    label: "{{ item.kind }}/{{ item.metadata.name }}"
+  when:
+    - acm_bmh_networking_mode == 'apply'
+    - acm_bmh_apply_day2 | bool
+
+- name: Report generated ACM BareMetalHost networking resources
+  ansible.builtin.debug:
+    msg:
+      day0_resource_count: "{{ acm_bmh_day0_resources | length }}"
+      day2_resource_count: "{{ acm_bmh_day2_resources | length }}"
+      day0_manifest: "{{ acm_bmh_render_root }}/hub/day0/resources.yml"
+      day2_manifest: "{{ acm_bmh_render_root }}/managed/day2/resources.yml"

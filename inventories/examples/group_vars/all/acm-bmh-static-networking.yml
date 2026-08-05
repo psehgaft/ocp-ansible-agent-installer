@@ -1,0 +1,43 @@
+---
+acm_bmh_networking_mode: render
+acm_bmh_render_root: rendered/acm-bmh-static-networking
+acm_bmh_apply_day0: false
+acm_bmh_apply_day2: false
+acm_bmh_hub_kubeconfig: "{{ lookup('env', 'HUB_KUBECONFIG') }}"
+acm_bmh_managed_kubeconfig: "{{ lookup('env', 'MANAGED_KUBECONFIG') }}"
+
+acm_bmh_nodes:
+  - name: worker-1
+    namespace: my-cluster-namespace
+    hostname: worker-1.example.com
+    boot_mac: '52:54:00:11:22:33'
+    bmc_address: redfish-virtualmedia://10.5.200.10/redfish/v1/Systems/System.Embedded.1
+    bmc_credentials_name: worker-1-bmc-secret
+    bmc_disable_certificate_verification: false
+    bond_interfaces:
+      - eno1
+      - eno2
+    ip_address: 10.5.128.51
+    prefix_length: 24
+    gateway: 10.5.128.1
+    dns_servers:
+      - 10.5.128.10
+      - 10.5.128.11
+    labels:
+      infraenvs.agent-install.openshift.io: my-cluster
+
+  - name: worker-2
+    namespace: my-cluster-namespace
+    hostname: worker-2.example.com
+    boot_mac: '52:54:00:11:22:44'
+    bmc_address: redfish-virtualmedia://10.5.200.11/redfish/v1/Systems/System.Embedded.1
+    bmc_credentials_name: worker-2-bmc-secret
+    bond_interfaces:
+      - eno1
+      - eno2
+    ip_address: 10.5.128.52
+    prefix_length: 24
+    gateway: 10.5.128.1
+    dns_servers:
+      - 10.5.128.10
+      - 10.5.128.11
