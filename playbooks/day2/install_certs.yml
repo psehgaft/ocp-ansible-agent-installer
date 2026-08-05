@@ -1,0 +1,318 @@
+---
+- name: Validate and install custom API and Ingress certificates
+  hosts: localhost
+  gather_facts: false
+  connection: local
+  vars:
+    cert_install_mode: "{{ CERT_INSTALL_MODE | default('validate') }}"
+
+    wildcard_cer_path: "{{ WILDCARD_CER | default('./certs/wildcard.cer') }}"
+    wildcard_key_path: "{{ WILDCARD_KEY | default('./certs/wildcard.key') }}"
+    api_cer_path: "{{ API_CER | default('./certs/api.cer') }}"
+    api_key_path: "{{ API_KEY | default('./certs/api.key') }}"
+
+    api_domain_name: "{{ API_DOMAIN | default('api.ocp.example.com') }}"
+    ingress_domain_name: "{{ INGRESS_DOMAIN | default('*.apps.ocp.example.com') }}"
+
+    ingress_secret_name: "{{ INGRESS_SECRET_NAME | default('custom-wildcard-ingress-certs') }}"
+    api_secret_name: "{{ API_SECRET_NAME | default('custom-api-certs') }}"
+    cert_render_dir: "{{ CERT_RENDER_DIR | default(playbook_dir ~ '/../../rendered/day2/certificates') }}"
+    cert_minimum_validity_days: "{{ CERT_MINIMUM_VALIDITY_DAYS | default(30) | int }}"
+    cert_wait_timeout: "{{ CERT_WAIT_TIMEOUT | default(1200) | int }}"
+
+  pre_tasks:
+    - name: Validate certificate workflow inputs
+      ansible.builtin.assert:
+        that:
+          - cert_install_mode in ['validate', 'render', 'apply']
+          - api_domain_name | length > 0
+          - ingress_domain_name | length > 0
+          - cert_minimum_validity_days | int >= 0
+          - cert_wait_timeout | int > 0
+        fail_msg: >-
+          CERT_INSTALL_MODE must be validate, render, or apply and all domain,
+          validity, and timeout values must be valid.
+
+    - name: Check local certificate and private-key files
+      ansible.builtin.stat:
+        path: "{{ cert_input_file }}"
+      loop:
+        - "{{ wildcard_cer_path }}"
+        - "{{ wildcard_key_path }}"
+        - "{{ api_cer_path }}"
+        - "{{ api_key_path }}"
+      loop_control:
+        loop_var: cert_input_file
+        label: "{{ cert_input_file }}"
+      register: cert_input_stats
+
+    - name: Fail when a certificate input file is missing or empty
+      ansible.builtin.assert:
+        that:
+          - cert_input_result.stat.exists
+          - cert_input_result.stat.isreg
+          - cert_input_result.stat.size | int > 0
+        fail_msg: "Certificate input is missing, empty, or not a regular file: {{ cert_input_result.cert_input_file }}"
+      loop: "{{ cert_input_stats.results }}"
+      loop_control:
+        loop_var: cert_input_result
+        label: "{{ cert_input_result.cert_input_file }}"
+
+    - name: Validate PEM certificate files
+      ansible.builtin.command:
+        argv:
+          - openssl
+          - x509
+          - -in
+          - "{{ cert_file }}"
+          - -noout
+          - -subject
+          - -issuer
+          - -dates
+      loop:
+        - "{{ wildcard_cer_path }}"
+        - "{{ api_cer_path }}"
+      loop_control:
+        loop_var: cert_file
+        label: "{{ cert_file }}"
+      changed_when: false
+
+    - name: Validate private-key files
+      ansible.builtin.command:
+        argv:
+          - openssl
+          - pkey
+          - -in
+          - "{{ key_file }}"
+          - -noout
+          - -check
+      loop:
+        - "{{ wildcard_key_path }}"
+        - "{{ api_key_path }}"
+      loop_control:
+        loop_var: key_file
+        label: "{{ key_file }}"
+      changed_when: false
+      no_log: true
+
+    - name: Validate minimum certificate lifetime
+      ansible.builtin.command:
+        argv:
+          - openssl
+          - x509
+          - -in
+          - "{{ cert_file }}"
+          - -noout
+          - -checkend
+          - "{{ cert_minimum_validity_days | int * 86400 }}"
+      loop:
+        - "{{ wildcard_cer_path }}"
+        - "{{ api_cer_path }}"
+      loop_control:
+        loop_var: cert_file
+        label: "{{ cert_file }}"
+      changed_when: false
+
+    - name: Validate API certificate hostname coverage
+      ansible.builtin.command:
+        argv:
+          - openssl
+          - x509
+          - -in
+          - "{{ api_cer_path }}"
+          - -noout
+          - -checkhost
+          - "{{ api_domain_name }}"
+      changed_when: false
+
+    - name: Validate Ingress certificate hostname coverage
+      ansible.builtin.command:
+        argv:
+          - openssl
+          - x509
+          - -in
+          - "{{ wildcard_cer_path }}"
+          - -noout
+          - -checkhost
+          - "{{ ingress_domain_name | regex_replace('^\\*\\.', 'console-openshift-console.') }}"
+      changed_when: false
+
+    - name: Calculate certificate and key public-key fingerprints
+      ansible.builtin.shell: |
+        set -o pipefail
+        cert_hash="$(openssl x509 -in {{ pair.cert | quote }} -pubkey -noout \
+          | openssl pkey -pubin -outform DER \
+          | openssl dgst -sha256 | awk '{print $2}')"
+        key_hash="$(openssl pkey -in {{ pair.key | quote }} -pubout -outform DER \
+          | openssl dgst -sha256 | awk '{print $2}')"
+        test "${cert_hash}" = "${key_hash}"
+      args:
+        executable: /bin/bash
+      loop:
+        - name: ingress
+          cert: "{{ wildcard_cer_path }}"
+          key: "{{ wildcard_key_path }}"
+        - name: api
+          cert: "{{ api_cer_path }}"
+          key: "{{ api_key_path }}"
+      loop_control:
+        loop_var: pair
+        label: "{{ pair.name }}"
+      changed_when: false
+      no_log: true
+
+    - name: Read certificate and private-key content
+      ansible.builtin.set_fact:
+        wildcard_cer_data: "{{ lookup('ansible.builtin.file', wildcard_cer_path) }}"
+        wildcard_key_data: "{{ lookup('ansible.builtin.file', wildcard_key_path) }}"
+        api_cer_data: "{{ lookup('ansible.builtin.file', api_cer_path) }}"
+        api_key_data: "{{ lookup('ansible.builtin.file', api_key_path) }}"
+      no_log: true
+
+    - name: Read existing API server configuration
+      kubernetes.core.k8s_info:
+        api_version: config.openshift.io/v1
+        kind: APIServer
+        name: cluster
+      register: current_api_server
+      when: cert_install_mode == 'apply'
+
+    - name: Initialize preserved API named certificates
+      ansible.builtin.set_fact:
+        preserved_api_named_certificates: []
+      when: cert_install_mode == 'apply'
+
+    - name: Preserve unrelated API named certificates
+      ansible.builtin.set_fact:
+        preserved_api_named_certificates: >-
+          {{ preserved_api_named_certificates + [existing_named_certificate] }}
+      loop: >-
+        {{ current_api_server.resources[0].spec.servingCerts.namedCertificates
+           | default([]) }}
+      loop_control:
+        loop_var: existing_named_certificate
+        label: "{{ existing_named_certificate.names | default([]) | join(',') }}"
+      when:
+        - cert_install_mode == 'apply'
+        - api_domain_name not in (existing_named_certificate.names | default([]))
+
+  tasks:
+    - name: Build certificate resources
+      ansible.builtin.set_fact:
+        certificate_resources:
+          - apiVersion: v1
+            kind: Secret
+            metadata:
+              name: "{{ ingress_secret_name }}"
+              namespace: openshift-ingress
+            type: kubernetes.io/tls
+            stringData:
+              tls.crt: "{{ wildcard_cer_data }}"
+              tls.key: "{{ wildcard_key_data }}"
+          - apiVersion: operator.openshift.io/v1
+            kind: IngressController
+            metadata:
+              name: default
+              namespace: openshift-ingress-operator
+            spec:
+              defaultCertificate:
+                name: "{{ ingress_secret_name }}"
+          - apiVersion: v1
+            kind: Secret
+            metadata:
+              name: "{{ api_secret_name }}"
+              namespace: openshift-config
+            type: kubernetes.io/tls
+            stringData:
+              tls.crt: "{{ api_cer_data }}"
+              tls.key: "{{ api_key_data }}"
+          - apiVersion: config.openshift.io/v1
+            kind: APIServer
+            metadata:
+              name: cluster
+            spec:
+              servingCerts:
+                namedCertificates: >-
+                  {{ (preserved_api_named_certificates | default([])) + [
+                    {
+                      'names': [api_domain_name],
+                      'servingCertificate': {'name': api_secret_name}
+                    }
+                  ] }}
+      no_log: true
+
+    - name: Create secure render directory
+      ansible.builtin.file:
+        path: "{{ cert_render_dir }}"
+        state: directory
+        mode: '0700'
+      when: cert_install_mode == 'render'
+
+    - name: Render certificate resources for controlled review
+      ansible.builtin.copy:
+        dest: "{{ cert_render_dir }}/api-ingress-certificates.yml"
+        content: "{{ certificate_resources | to_nice_yaml(indent=2, explicit_start=True) }}"
+        mode: '0600'
+      when: cert_install_mode == 'render'
+      no_log: true
+
+    - name: Apply TLS Secrets
+      kubernetes.core.k8s:
+        state: present
+        definition: "{{ certificate_resource }}"
+      loop: "{{ certificate_resources | selectattr('kind', 'equalto', 'Secret') | list }}"
+      loop_control:
+        loop_var: certificate_resource
+        label: "{{ certificate_resource.metadata.namespace }}/{{ certificate_resource.metadata.name }}"
+      when: cert_install_mode == 'apply'
+      no_log: true
+
+    - name: Apply API and Ingress certificate references
+      kubernetes.core.k8s:
+        state: present
+        apply: true
+        field_manager: openshift-automation-framework-certificates
+        definition: "{{ certificate_resource }}"
+      loop: "{{ certificate_resources | rejectattr('kind', 'equalto', 'Secret') | list }}"
+      loop_control:
+        loop_var: certificate_resource
+        label: "{{ certificate_resource.kind }}/{{ certificate_resource.metadata.name }}"
+      when: cert_install_mode == 'apply'
+
+    - name: Wait for API server and Ingress operators to recover
+      kubernetes.core.k8s_info:
+        api_version: config.openshift.io/v1
+        kind: ClusterOperator
+        name: "{{ cluster_operator_name }}"
+      loop:
+        - kube-apiserver
+        - ingress
+      loop_control:
+        loop_var: cluster_operator_name
+        label: "{{ cluster_operator_name }}"
+      register: certificate_operator_status
+      until: >-
+        certificate_operator_status.resources | length == 1 and
+        (certificate_operator_status.resources[0].status.conditions
+          | selectattr('type', 'equalto', 'Available')
+          | selectattr('status', 'equalto', 'True')
+          | list | length) == 1 and
+        (certificate_operator_status.resources[0].status.conditions
+          | selectattr('type', 'equalto', 'Degraded')
+          | selectattr('status', 'equalto', 'True')
+          | list | length) == 0
+      retries: "{{ [1, (cert_wait_timeout | int // 10)] | max }}"
+      delay: 10
+      when: cert_install_mode == 'apply'
+
+    - name: Display certificate workflow result
+      ansible.builtin.debug:
+        msg:
+          mode: "{{ cert_install_mode }}"
+          api_domain: "{{ api_domain_name }}"
+          ingress_domain: "{{ ingress_domain_name }}"
+          api_secret: "openshift-config/{{ api_secret_name }}"
+          ingress_secret: "openshift-ingress/{{ ingress_secret_name }}"
+          rendered_manifest: >-
+            {{ cert_render_dir ~ '/api-ingress-certificates.yml'
+               if cert_install_mode == 'render' else '' }}

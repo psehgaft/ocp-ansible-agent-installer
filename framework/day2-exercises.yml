@@ -44,3 +44,13 @@ exercises:
   registry_proxy: {playbook: playbooks/day2/registry-proxy.yml, role: day2_registry, resources_variable: registry_proxy_resource, gitops_output: rendered/day2/registry}
   mirror_sets: {playbook: playbooks/day2/mirror-sets.yml, role: day2_registry, resources_variable: registry_resources, gitops_output: rendered/day2/registry}
   quay: {playbook: playbooks/day2/quay.yml, role: day2_registry, resources_variable: registry_quay_resources, gitops_output: rendered/day2/registry}
+  cluster_health: {playbook: playbooks/day2/cluster-health.yml, role: day2_operational_workflow, resources_variable: health_check_resources, gitops_output: rendered/day2/cluster-health}
+  etcd_backup: {playbook: playbooks/day2/etcd-backup.yml, role: operational_command, resources_variable: etcd_backup_confirm, gitops_output: reports/etcd-backup}
+  must_gather: {playbook: playbooks/day2/must-gather.yml, role: operational_command, resources_variable: must_gather_images, gitops_output: reports/must-gather}
+  cluster_admin_rbac: {playbook: playbooks/day2/cluster-admin-rbac.yml, role: kubernetes_resources, resources_variable: cluster_admin_groups, gitops_output: rendered/day2/rbac}
+  compliance: {playbook: playbooks/day2/compliance.yml, role: platform_operator_bundle, resources_variable: compliance_resources, gitops_output: rendered/day2/security/compliance}
+  file_integrity: {playbook: playbooks/day2/file-integrity.yml, role: platform_operator_bundle, resources_variable: file_integrity_resources, gitops_output: rendered/day2/security/file-integrity}
+  multicluster_observability: {playbook: playbooks/day2/multicluster-observability.yml, role: platform_operator_bundle, resources_variable: multicluster_observability_resources, gitops_output: rendered/day2/acm/multicluster-observability}
+  gitops_application_lifecycle: {playbook: playbooks/day2/gitops-application-lifecycle.yml, role: platform_operator_bundle, resources_variable: gitops_application_resources, gitops_output: rendered/day2/gitops/application-lifecycle}
+  submariner: {playbook: playbooks/day2/submariner.yml, role: platform_operator_bundle, resources_variable: submariner_resources, gitops_output: rendered/day2/acm/submariner}
+  platform_observability_stack: {playbook: playbooks/day2/platform-observability-stack.yml, role: orchestrator, resources_variable: monitoring_resources, gitops_output: rendered/day2/observability}

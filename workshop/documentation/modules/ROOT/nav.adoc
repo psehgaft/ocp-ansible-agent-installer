@@ -36,6 +36,7 @@
 *** xref:ARCHITECTURE:04-platform-operators.adoc#aap[4.4.6 Ansible Automation Platform]
 *** xref:ARCHITECTURE:04-platform-operators.adoc#cert-manager[4.4.7 cert-manager Operator]
 *** xref:ARCHITECTURE:04-platform-operators.adoc#pki[4.4.8 Platform PKI and Trust]
+**** xref:13-install-api-ingress-certificates.adoc[4.4.8.1 Custom API and Ingress Certificates]
 *** xref:ARCHITECTURE:04-platform-operators.adoc#quay[4.4.9 Quay and Registry Services]
 *** xref:ARCHITECTURE:04-platform-operators.adoc#networking[4.4.10 Network Foundation Operators]
 *** xref:ARCHITECTURE:04-platform-operators.adoc#monitoring[4.4.11 Platform Monitoring]
@@ -46,10 +47,11 @@
 *** xref:ARCHITECTURE:04-platform-operators.adoc#baremetal[4.4.16 Bare Metal Operator]
 *** xref:ARCHITECTURE:04-platform-operators.adoc#load-balancer[4.4.17 MetalLB Load Balancing]
 *** xref:ARCHITECTURE:04-platform-operators.adoc#rhoso[4.4.18 Red Hat OpenStack Services on OpenShift]
-* Module 5: Health Check
+* Module 5: Health Check and Day-2 Operations
 ** xref:ARCHITECTURE:10-health-troubleshooting.adoc[5.1 Health, Reporting, and Troubleshooting]
 ** xref:ARCHITECTURE:11-new-component.adoc[5.2 Adding a New Component]
 ** xref:ARCHITECTURE:12-template-system.adoc[5.3 Template System and Rendering]
+** xref:14-day2-implementation-catalog.adoc[5.4 Complete Day-2 Implementation Catalog]
 * Module 6: Deploy a Cluster from ACM
 ** xref:ARCHITECTURE:13-acm-cluster-deployment.adoc#generate-cluster-template[6.1 Generate Cluster Template]
 ** xref:ARCHITECTURE:13-acm-cluster-deployment.adoc#generate-network-definition[6.2 Generate Cluster Network Definition]
