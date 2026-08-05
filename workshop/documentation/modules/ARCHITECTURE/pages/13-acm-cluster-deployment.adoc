@@ -1,6 +1,6 @@
 = Module 6: Deploy a Cluster from ACM
 
-This module converts the validated framework inputs into an ACM-managed cluster deployment.
+This module converts validated framework inputs into an ACM-managed cluster deployment and separates hub-side provisioning resources from managed-cluster Day-2 configuration.
 
 == Required variables
 
@@ -20,6 +20,7 @@ acm_cluster_network_cidr: 10.128.0.0/14
 acm_service_network_cidr: 172.30.0.0/16
 ----
 
+[#generate-cluster-template]
 == 6.1 Generate cluster template
 
 Render the cluster definition before committing or applying it:
@@ -31,8 +32,9 @@ ansible-playbook playbooks/acm/generate-cluster-template.yml \
   -e day2_deployment_mode=render
 ----
 
-Verify the generated cluster name, OpenShift release image, replicas, pull-secret reference, and SSH key reference.
+Verify the generated cluster name, OpenShift release image, replicas, pull-secret reference, SSH key reference, and target namespace.
 
+[#generate-network-definition]
 == 6.2 Generate cluster network definition
 
 [source,bash]
@@ -44,18 +46,46 @@ ansible-playbook playbooks/acm/generate-network-definition.yml \
 
 Confirm that API, ingress, machine, cluster, and service networks do not overlap and match the physical network design.
 
-== 6.3 Validate cluster template
+When bare-metal nodes require static addressing and LACP during provisioning, continue with xref:ROOT:12-acm-bmh-static-networking.adoc[6.3 Configure BareMetalHost Static LACP Networking]. That lesson generates:
+
+* Hub-side network-data Secrets.
+* Optional hub-side BareMetalHost resources.
+* Managed-cluster NNCP resources for permanent `bond0` and `br-ex` configuration.
+
+The Day-0 resources must be applied to the hub before Metal3 inspection or provisioning. The Day-2 NNCPs must not be applied until the nodes have joined the managed cluster and their hostnames have been verified.
+
+[#validate-cluster-template]
+== 6.4 Validate cluster template and provisioning resources
+
+Validate the cluster definition and all rendered node-network resources:
 
 [source,bash]
 ----
 python scripts/validate_yaml.py
 python scripts/validate_kubernetes_manifests.py
-oc apply --dry-run=server -f rendered/acm/spoke01/
+
+oc --kubeconfig "$HUB_KUBECONFIG" apply \
+  --dry-run=server \
+  -f rendered/acm/spoke01/
+
+oc --kubeconfig "$HUB_KUBECONFIG" apply \
+  --dry-run=server \
+  -f rendered/acm-bmh-static-networking/hub/day0/resources.yml
 ----
 
-Do not continue while placeholders, invalid references, duplicate IP addresses, or schema errors remain.
+Do not continue while placeholders, invalid references, duplicate IP addresses, duplicate MAC addresses, missing BMC Secrets, or schema errors remain.
 
-== 6.4 Deploy cluster
+The managed-cluster NNCP manifests can be structurally reviewed before installation, but server-side validation requires a reachable managed cluster with the NMState API installed:
+
+[source,bash]
+----
+oc --kubeconfig "$MANAGED_KUBECONFIG" apply \
+  --dry-run=server \
+  -f rendered/acm-bmh-static-networking/managed/day2/resources.yml
+----
+
+[#deploy-cluster]
+== 6.5 Deploy cluster
 
 Direct mode:
 
@@ -75,21 +105,57 @@ ansible-playbook playbooks/acm/deploy-cluster.yml \
   -e day2_deployment_mode=gitops
 
 git add rendered/acm/spoke01
+git add rendered/acm-bmh-static-networking/hub/day0
 git commit -m "Add ACM managed cluster spoke01"
 git push
 ----
 
-== Verification
+Monitor hub-side resources during discovery and installation:
 
 [source,bash]
 ----
-oc get managedcluster spoke01
-oc get clusterdeployment -A
-oc get agentclusterinstall -A
-oc get agents -A
+oc --kubeconfig "$HUB_KUBECONFIG" get clusterdeployment -A
+oc --kubeconfig "$HUB_KUBECONFIG" get agentclusterinstall -A
+oc --kubeconfig "$HUB_KUBECONFIG" get agents -A
+oc --kubeconfig "$HUB_KUBECONFIG" get baremetalhost -A
 ----
 
+[#verify-cluster]
+== 6.6 Verify managed cluster and apply Day-2 networking
+
 The managed cluster must become available, accepted, and joined to the hub before Day-2 policies are applied.
+
+[source,bash]
+----
+oc --kubeconfig "$HUB_KUBECONFIG" get managedcluster spoke01
+oc --kubeconfig "$MANAGED_KUBECONFIG" get nodes \
+  -L kubernetes.io/hostname
+oc --kubeconfig "$MANAGED_KUBECONFIG" get co
+----
+
+After verifying the node hostnames and NMState Operator health, apply the Day-2 NNCPs:
+
+[source,bash]
+----
+ansible-playbook \
+  -i inventories/lab/hosts.yml \
+  playbooks/day2/acm-bmh-static-networking.yml \
+  -e @inventories/lab/group_vars/all/acm-bmh-static-networking.yml \
+  -e acm_bmh_networking_mode=apply \
+  -e acm_bmh_apply_day0=false \
+  -e acm_bmh_apply_day2=true
+----
+
+Observe each enactment before proceeding to the next node:
+
+[source,bash]
+----
+oc --kubeconfig "$MANAGED_KUBECONFIG" get nncp
+oc --kubeconfig "$MANAGED_KUBECONFIG" get nnce -w
+oc --kubeconfig "$MANAGED_KUBECONFIG" get nodes
+----
+
+The module is complete when the managed cluster is Available, all nodes are Ready, all NNCP enactments succeed, and LACP, `br-ex`, static addressing, default routes, DNS, and required OVN localnet VLANs have been validated.
 
 ++++
 <a class="button" href="../ROOT/08-final-challenge.html">Next: Final Challenge</a>
