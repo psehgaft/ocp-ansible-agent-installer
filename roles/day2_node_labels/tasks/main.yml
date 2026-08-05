@@ -10,22 +10,17 @@
       - item.labels is mapping
       - item.labels | length > 0
       - item.labels.keys() | intersect(node_label_protected_keys) | length == 0
+      - >-
+        item.labels.keys()
+        | reject('match', '^(' ~ (node_label_allowed_prefixes | map('regex_escape') | join('|')) ~ ')')
+        | list
+        | length == 0
     fail_msg: >-
-      Each node_label_assignments item requires name and labels. Protected Kubernetes
-      identity labels cannot be changed by this role.
+      Each node label assignment requires a valid node name and non-empty labels.
+      Protected identity labels and keys outside the approved prefixes are rejected.
   loop: "{{ node_label_assignments }}"
   loop_control:
     label: "{{ item.name | default('undefined-node') }}"
-
-- name: Validate approved label prefixes
-  ansible.builtin.assert:
-    that:
-      - >-
-        item.1 is match('^(' ~ (node_label_allowed_prefixes | map('regex_escape') | join('|')) ~ ')')
-    fail_msg: "Label {{ item.1 }} is outside the approved node label prefixes."
-  loop: "{{ node_label_assignments | subelements('labels', skip_missing=True) }}"
-  loop_control:
-    label: "{{ item.0.name }}:{{ item.1 }}"
 
 - name: Read target nodes
   kubernetes.core.k8s_info:
