@@ -4,7 +4,38 @@
     that:
       - day2_deployment_mode in ['direct', 'render', 'gitops']
       - oauth_identity_providers is sequence
+      - oauth_supporting_resources is sequence
       - oauth_rbac_bindings is sequence
+
+- name: Read current OAuth configuration
+  kubernetes.core.k8s_info:
+    api_version: config.openshift.io/v1
+    kind: OAuth
+    name: "{{ oauth_cluster_resource_name }}"
+  register: oauth_current
+  when:
+    - day2_deployment_mode == 'direct'
+    - oauth_merge_identity_providers | bool
+
+- name: Build reconciled provider list
+  ansible.builtin.set_fact:
+    oauth_reconciled_providers: >-
+      {{
+        (
+          oauth_current.resources[0].spec.identityProviders
+          | default([])
+          | rejectattr('name', 'in', oauth_identity_providers | map(attribute='name') | list)
+          | list
+        ) + oauth_identity_providers
+      }}
+  when:
+    - day2_deployment_mode == 'direct'
+    - oauth_merge_identity_providers | bool
+
+- name: Select desired provider list
+  ansible.builtin.set_fact:
+    oauth_effective_identity_providers: >-
+      {{ oauth_reconciled_providers | default(oauth_identity_providers) }}
 
 - name: Build OAuth desired state
   ansible.builtin.set_fact:
@@ -14,7 +45,15 @@
       metadata:
         name: "{{ oauth_cluster_resource_name }}"
       spec:
-        identityProviders: "{{ oauth_identity_providers }}"
+        identityProviders: "{{ oauth_effective_identity_providers }}"
+
+- name: Apply supporting identity resources directly
+  kubernetes.core.k8s:
+    state: present
+    definition: "{{ item }}"
+  loop: "{{ oauth_supporting_resources }}"
+  no_log: true
+  when: day2_deployment_mode == 'direct'
 
 - name: Apply OAuth configuration directly
   kubernetes.core.k8s:
@@ -36,9 +75,36 @@
     mode: '0750'
   when: day2_deployment_mode in ['render', 'gitops']
 
-- name: Render OAuth and RBAC desired state
+- name: Render identity desired state
   ansible.builtin.copy:
     dest: "{{ day2_render_root }}/day2/identity/resources.yml"
-    content: "{{ ([oauth_desired_state] + oauth_rbac_bindings) | to_nice_yaml(indent=2, explicit_start=True) }}"
-    mode: '0640'
+    content: >-
+      {{
+        (oauth_supporting_resources + [oauth_desired_state] + oauth_rbac_bindings)
+        | to_nice_yaml(indent=2, explicit_start=True)
+      }}
+    mode: '0600'
+  no_log: true
   when: day2_deployment_mode in ['render', 'gitops']
+
+- name: Wait for OAuth operator availability
+  kubernetes.core.k8s_info:
+    api_version: config.openshift.io/v1
+    kind: ClusterOperator
+    name: authentication
+  register: oauth_operator
+  until: >-
+    oauth_operator.resources | length == 1 and
+    (oauth_operator.resources[0].status.conditions
+     | selectattr('type', 'equalto', 'Available')
+     | selectattr('status', 'equalto', 'True')
+     | list | length) == 1 and
+    (oauth_operator.resources[0].status.conditions
+     | selectattr('type', 'equalto', 'Degraded')
+     | selectattr('status', 'equalto', 'True')
+     | list | length) == 0
+  retries: "{{ (oauth_operator_timeout | int / 10) | int }}"
+  delay: 10
+  when:
+    - day2_deployment_mode == 'direct'
+    - oauth_wait_for_operator | bool
