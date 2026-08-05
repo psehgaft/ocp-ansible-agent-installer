@@ -1,32 +1,146 @@
-= Final Challenge
+= 7.1 Final Challenge
 
-A mixed cluster has three problems:
+This challenge validates the complete workshop path, from workstation preparation and Redfish discovery through OpenShift installation, ordered Day-2 configuration, health checks, and ACM-based cluster deployment.
 
-* An iLO host selects the wrong provisioning MAC.
-* An iDRAC host cannot mount the ISO.
-* Registered hosts remain blocked by validation failures.
+== Scenario
 
-== Tasks
+You are responsible for recovering and standardizing a mixed-vendor OpenShift environment. The current state includes:
 
-. Inspect normalized BMC evidence.
-. Configure a deterministic NIC selector.
+* An iLO host selecting the wrong provisioning MAC.
+* An iDRAC host unable to mount the discovery ISO.
+* Assisted Installer hosts blocked by validation failures.
+* Inconsistent NTP sources across MachineConfigPools.
+* Worker nodes missing approved infrastructure and workload labels.
+* An incomplete LDAP and HTPasswd identity configuration.
+* Platform operators in mixed readiness states.
+* OADP configured without a verified BackupStorageLocation.
+* Health-check evidence showing unresolved warnings.
+* An ACM cluster template that has not passed validation.
+
+== Part 1: Foundations and security
+
+. Validate the control-node dependencies and Python environment.
+. Confirm the active inventory contains the intended HPE and Dell systems.
+. Validate cluster, network, and profile variables.
+. Confirm that no active `CHANGE_ME` placeholders remain.
+. Verify that Vault data is encrypted and secrets are excluded from Git.
+. Select either `direct` or `gitops` mode and explain why it is appropriate.
+
+== Part 2: Redfish and Assisted Installer
+
+. Run read-only BMC discovery against all target hosts.
+. Inspect normalized hardware, firmware, NIC, and provisioning-MAC evidence.
+. Configure a deterministic NIC selector or explicit MAC override for the affected iLO host.
 . Validate ISO reachability from the BMC network.
-. Review virtual-media categories and resource IDs.
-. Inspect Assisted Installer events and static-network mappings.
-. Repeat read-only discovery.
-. Repeat the one-host virtual-media test.
-. Resume installation only after all blocking conditions are understood.
-. Verify NTP sources and MachineConfigPool stability.
-. Verify node role labels and placement selectors.
-. Verify OADP operator, DPA, and BackupStorageLocation readiness.
+. Run the virtual-media test against one non-production host by using `--limit`.
+. Verify one-time boot behavior and eject the test media.
+. Review Assisted Installer events and resolve blocking host validations.
 
-== Completion Criteria
+== Part 3: OpenShift installation
 
-* Both vendors pass discovery and virtual-media tests.
-* All MAC mappings are deterministic.
-* All blocking validations are resolved.
-* NTP, node labels, and OADP are healthy.
-* Secrets and artifacts remain outside Git.
+. Run repository and installation preflight checks.
+. Generate or retrieve the discovery ISO.
+. Boot the mixed-vendor hosts with virtual media.
+. Verify that all hosts register with the expected hostname, MAC address, and role.
+. Start the installation only after all blocking validations are resolved.
+. Verify `ClusterVersion`, nodes, and cluster operators.
+. Eject virtual media from every installed node.
+
+== Part 4: Ordered Day-2 foundation
+
+. Configure approved NTP servers for the required MachineConfigPools.
+. Wait until the affected MachineConfigPools report `UPDATED=True` and `DEGRADED=False`.
+. Apply approved node labels, including infrastructure-node labels where required.
+. Verify node readiness, workload placement, and protected-label policy enforcement.
+. Configure LDAP or another enterprise IDP.
+. Configure the emergency HTPasswd administrator identity.
+. Validate the OAuth Operator and test both login paths.
+
+== Part 5: Platform operators
+
+Validate or deploy the following components in the documented sequence:
+
+. ACM.
+. ACS.
+. Storage operators and storage classes:
+.. LVM Storage Operator.
+.. Local Storage Operator.
+.. ODF.
+.. The selected Pure Storage, HPE, or NetApp CSI driver.
+. OpenShift Virtualization.
+. MTV.
+. AAP.
+. Cert Manager and PKI resources.
+. Quay and registry integration.
+. Networking resources:
+.. NMState.
+.. Multus.
+.. SR-IOV Network Operator.
+. Monitoring and Logging.
+. OADP, including the Operator CSV, DataProtectionApplication, BackupStorageLocation, and a test backup.
+. Cluster Observability Operator.
+. Network Observability Operator.
+. Bare Metal Operator.
+. Load Balancer Operator.
+. RHOSO Operator, when included in the selected profile.
+
+For every component, record:
+
+* The playbook or GitOps path used.
+* Required variables.
+* Operator namespace and subscription channel.
+* Readiness evidence.
+* Rollback or remediation notes.
+
+== Part 6: Health check and extensibility
+
+. Run the cluster health and reporting workflow.
+. Review critical, warning, and informational findings.
+. Remediate at least one actionable warning and rerun the relevant check.
+. Add one small component to the framework by following the component-extension contract.
+. Render its desired state and verify the generated artifact.
+. Confirm that repository, schema, lint, and documentation validations pass.
+
+== Part 7: Deploy a cluster from ACM
+
+. Generate the managed-cluster template.
+. Generate its network definition.
+. Validate all required variables and rendered YAML.
+. Run server-side validation before deployment.
+. Deploy the cluster through the selected direct or GitOps workflow.
+. Verify `ManagedCluster`, `ClusterDeployment`, `AgentClusterInstall`, and Agent status.
+. Confirm that the cluster becomes available and joins ACM successfully.
+
+== Completion criteria
+
+The challenge is complete only when:
+
+* Both hardware vendors pass discovery and virtual-media validation.
+* MAC mappings and network definitions are deterministic.
+* The OpenShift installation is healthy and all nodes are Ready.
+* NTP, node labels, identity providers, and OAuth are validated.
+* Required platform operators are installed or explicitly marked out of scope.
+* OADP completes a test backup and reports an available storage location.
+* Health-check findings have documented dispositions.
+* The new framework component passes repository quality gates.
+* The ACM-managed cluster template validates and the cluster reaches an available state.
+* Secrets and generated sensitive artifacts remain outside Git.
+
+== Evidence package
+
+Store the following evidence under the designated artifacts directory:
+
+* Inventory and preflight output.
+* Redfish discovery reports.
+* Assisted Installer events.
+* Installation verification output.
+* MachineConfigPool and node-label evidence.
+* OAuth and identity-provider status.
+* Operator CSV and custom-resource readiness output.
+* OADP backup evidence.
+* Health-check reports.
+* ACM rendered templates and deployment status.
+* Final remediation summary.
 
 [.text-center]
 xref:appendix.adoc[Next: Appendix and Troubleshooting,role=button]
