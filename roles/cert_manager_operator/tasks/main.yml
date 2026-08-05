@@ -1,24 +1,49 @@
 ---
 # Installs cert-manager Operator for Red Hat OpenShift via OLM:
-# Namespace -> OperatorGroup (AllNamespaces) -> Subscription -> Wait for CSV Succeeded -> (Optional) create CertManager/cluster
-# Note: The operator runs in `cert-manager-operator` and creates operand components in `cert-manager` namespace.
+# Namespace -> OperatorGroup -> Subscription -> Wait for CSV Succeeded
+# -> (Optional) create CertManager/cluster.
+# The operator runs in `cert-manager-operator` and creates operands in the
+# `cert-manager` namespace.
 
-- name: "Apply cert-manager operator namespace, OperatorGroup, and Subscription"
+- name: Apply cert-manager namespace, OperatorGroup, and Subscription
   ansible.builtin.command: "{{ oc_bin }} apply -f -"
   args:
     stdin: |
-      {{ lookup('template', 'namespace.yaml.j2', template_vars={'namespace': cert_manager_operator_namespace}) }}
+      {{ lookup(
+        'template',
+        'namespace.yaml.j2',
+        template_vars={'namespace': cert_manager_operator_namespace}
+      ) }}
       ---
-      {{ lookup('template', 'operatorgroup.yaml.j2', template_vars={'name': cert_manager_operatorgroup, 'namespace': cert_manager_operator_namespace, 'target_namespaces':[]}) }}
+      {{ lookup(
+        'template',
+        'operatorgroup.yaml.j2',
+        template_vars={
+          'name': cert_manager_operatorgroup,
+          'namespace': cert_manager_operator_namespace,
+          'target_namespaces': []
+        }
+      ) }}
       ---
-      {{ lookup('template', 'subscription.yaml.j2', template_vars={'subscription_name': cert_manager_subscription_name, 'namespace': cert_manager_operator_namespace, 'channel': cert_manager_channel, 'package_name': cert_manager_package_name, 'source': operator_source, 'sourceNamespace': operator_source_namespace}) }}
+      {{ lookup(
+        'template',
+        'subscription.yaml.j2',
+        template_vars={
+          'subscription_name': cert_manager_subscription_name,
+          'namespace': cert_manager_operator_namespace,
+          'channel': cert_manager_channel,
+          'package_name': cert_manager_package_name,
+          'source': operator_source,
+          'sourceNamespace': operator_source_namespace
+        }
+      ) }}
   environment: "{{ oc_env }}"
   changed_when: false
 
-- name: "Wait for cert-manager Subscription to report installedCSV"
+- name: Wait for cert-manager Subscription to report installedCSV
   ansible.builtin.command: >
-    {{ oc_bin }} -n {{ cert_manager_operator_namespace }} get subscription {{ cert_manager_subscription_name }}
-    -o jsonpath='{.status.installedCSV}'
+    {{ oc_bin }} -n {{ cert_manager_operator_namespace }} get subscription
+    {{ cert_manager_subscription_name }} -o jsonpath='{.status.installedCSV}'
   environment: "{{ oc_env }}"
   register: _cm_csv
   retries: 90
@@ -26,23 +51,34 @@
   until: _cm_csv.stdout | length > 0
   changed_when: false
 
-- name: "Wait for cert-manager CSV to be Succeeded"
+- name: Wait for cert-manager CSV to be Succeeded
   ansible.builtin.command: >
-    {{ oc_bin }} -n {{ cert_manager_operator_namespace }} wait csv/{{ _cm_csv.stdout }}
-    --for jsonpath='{.status.phase}'=Succeeded --timeout=20m
+    {{ oc_bin }} -n {{ cert_manager_operator_namespace }} wait
+    csv/{{ _cm_csv.stdout }} --for jsonpath='{.status.phase}'=Succeeded
+    --timeout=20m
   environment: "{{ oc_env }}"
   changed_when: false
 
-- name: "Create CertManager operand CR (optional)"
+- name: Create CertManager operand CR when enabled
   when: create_certmanager_cr | bool
   ansible.builtin.command: "{{ oc_bin }} apply -f -"
   args:
     stdin: |
-      {{ lookup('template', 'operand.yaml.j2', template_vars={'operand': {'apiVersion':'operator.openshift.io/v1alpha1','kind':'CertManager','metadata':{'name':'cluster'}} }) }}
+      {{ lookup(
+        'template',
+        'operand.yaml.j2',
+        template_vars={
+          'operand': {
+            'apiVersion': 'operator.openshift.io/v1alpha1',
+            'kind': 'CertManager',
+            'metadata': {'name': 'cluster'}
+          }
+        }
+      ) }}
   environment: "{{ oc_env }}"
   changed_when: false
 
-- name: "Wait for cert-manager operand namespace to exist (optional)"
+- name: Wait for cert-manager operand namespace when enabled
   when: create_certmanager_cr | bool
   ansible.builtin.command: "{{ oc_bin }} get ns cert-manager"
   environment: "{{ oc_env }}"
