@@ -51,10 +51,12 @@
 ** xref:ARCHITECTURE:11-new-component.adoc[5.2 Adding a New Component]
 ** xref:ARCHITECTURE:12-template-system.adoc[5.3 Template System and Rendering]
 * Module 6: Deploy a Cluster from ACM
-** xref:ARCHITECTURE:13-acm-cluster-deployment.adoc[6.1 Generate Cluster Template]
-** xref:ARCHITECTURE:13-acm-cluster-deployment.adoc[6.2 Generate Cluster Network Definition]
-** xref:ARCHITECTURE:13-acm-cluster-deployment.adoc[6.3 Validate Cluster Template]
-** xref:ARCHITECTURE:13-acm-cluster-deployment.adoc[6.4 Deploy and Verify Cluster]
+** xref:ARCHITECTURE:13-acm-cluster-deployment.adoc#generate-cluster-template[6.1 Generate Cluster Template]
+** xref:ARCHITECTURE:13-acm-cluster-deployment.adoc#generate-network-definition[6.2 Generate Cluster Network Definition]
+** xref:12-acm-bmh-static-networking.adoc[6.3 Configure BareMetalHost Static LACP Networking]
+** xref:ARCHITECTURE:13-acm-cluster-deployment.adoc#validate-cluster-template[6.4 Validate Cluster Template]
+** xref:ARCHITECTURE:13-acm-cluster-deployment.adoc#deploy-cluster[6.5 Deploy Cluster]
+** xref:ARCHITECTURE:13-acm-cluster-deployment.adoc#verify-cluster[6.6 Verify Managed Cluster]
 * Module 7: Challenge
 ** xref:08-final-challenge.adoc[7.1 Integrated Automation Challenge]
 ** xref:appendix.adoc[7.2 Reference and Troubleshooting]
