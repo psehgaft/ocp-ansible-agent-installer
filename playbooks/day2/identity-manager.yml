@@ -1,15 +1,8 @@
 ---
-- name: Configure OpenShift identity manager stack
-  hosts: localhost
-  gather_facts: false
-  tasks:
-    - name: Configure LDAP identity provider
-      ansible.builtin.import_playbook: ldap.yml
-      when: identity_enable_ldap | default(false) | bool
+- import_playbook: ldap.yml
+  when: identity_enable_ldap | default(false) | bool
 
-    - name: Configure HTPasswd identity provider
-      ansible.builtin.import_playbook: htpasswd.yml
-      when: identity_enable_htpasswd | default(false) | bool
+- import_playbook: htpasswd.yml
+  when: identity_enable_htpasswd | default(false) | bool
 
-    - name: Reconcile OAuth configuration and validate operator health
-      ansible.builtin.import_playbook: oauth.yml
+- import_playbook: oauth.yml
