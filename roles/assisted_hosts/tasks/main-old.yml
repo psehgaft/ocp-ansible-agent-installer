@@ -62,6 +62,9 @@
 
 - name: "Fail if any host could not be matched"
   ansible.builtin.fail:
-    msg: "Could not match Assisted host to inventory host {{ item }} by provisioning MAC={{ hostvars[item].provisioning_mac }}. Check discovery boot and networking."
+    msg: >-
+      Could not match Assisted host to inventory host {{ item }} by
+      provisioning MAC={{ hostvars[item].provisioning_mac }}. Check discovery
+      boot and networking.
   loop: "{{ ansible_play_batch }}"
   when: inventory_to_ocp_host_id[item] is not defined
