@@ -1,0 +1,69 @@
+= Module 4 Lab 1: Configure NTP
+
+*Execution order:* Run after the cluster is healthy and before assigning specialized node roles or deploying platform services.
+
+*Playbook:* `playbooks/day2/ntp.yml`
+
+*Supported modes:* `direct`, `render`, and `gitops`.
+
+== Required variables
+
+[cols="1,1,3",options="header"]
+|===
+|Variable |Required |Purpose
+|`day2_deployment_mode` |Yes |`direct`, `render`, or `gitops`.
+|`ntp_servers` or `ntp_pools` |Yes |At least one NTP server or pool must be provided.
+|`ntp_node_roles` |Yes |MachineConfig pools to configure: `master`, `worker`, or `infra`.
+|===
+
+== Optional variables
+
+`ntp_iburst`, `ntp_makestep`, `ntp_rtcsync`, `ntp_machineconfig_prefix`, and `day2_render_root`.
+
+== Example variables
+
+[source,yaml]
+----
+day2_deployment_mode: direct
+ntp_servers:
+  - 10.20.30.10
+  - 10.20.30.11
+ntp_pools: []
+ntp_node_roles:
+  - master
+  - worker
+ntp_iburst: true
+ntp_makestep: "1.0 3"
+ntp_rtcsync: true
+----
+
+== Execute
+
+[source,bash]
+----
+ansible-playbook playbooks/day2/ntp.yml \
+  -e @inventories/lab/group_vars/ntp.yml
+----
+
+For a render-only review:
+
+[source,bash]
+----
+ansible-playbook playbooks/day2/ntp.yml \
+  -e @inventories/lab/group_vars/ntp.yml \
+  -e day2_deployment_mode=render
+----
+
+== Verification
+
+[source,bash]
+----
+oc get machineconfig | grep chrony
+oc get machineconfigpool
+oc debug node/<node-name> -- chroot /host chronyc sources -v
+----
+
+Wait until affected MachineConfigPools return to `UPDATED=True` before continuing.
+
+[.text-center]
+xref:10-node-labels.adoc[Next: Assign Node Labels,role=button]
