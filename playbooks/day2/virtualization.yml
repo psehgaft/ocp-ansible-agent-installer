@@ -1,5 +1,6 @@
 ---
-- import_playbook: platform-operator-bundle.yml
+- name: Install and configure Red Hat OpenShift Virtualization
+  ansible.builtin.import_playbook: platform-operator-bundle.yml
   vars:
     platform_operator_components:
       - openshift_virtualization

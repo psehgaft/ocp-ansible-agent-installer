@@ -1,0 +1,72 @@
+---
+- name: Install ACM
+  ansible.builtin.import_playbook: acm.yml
+  when: platform_enable_acm | default(false) | bool
+
+- name: Install ACS
+  ansible.builtin.import_playbook: acs.yml
+  when: platform_enable_acs | default(false) | bool
+
+- name: Install storage services
+  ansible.builtin.import_playbook: storage.yml
+  when: platform_enable_odf | default(false) | bool
+
+- name: Install OpenShift Virtualization
+  ansible.builtin.import_playbook: virtualization.yml
+  when: platform_enable_virtualization | default(false) | bool
+
+- name: Install MTV
+  ansible.builtin.import_playbook: mtv.yml
+  when: platform_enable_mtv | default(false) | bool
+
+- name: Install AAP
+  ansible.builtin.import_playbook: aap.yml
+  when: platform_enable_aap | default(false) | bool
+
+- name: Install cert-manager
+  ansible.builtin.import_playbook: platform-cert-manager.yml
+  when: platform_enable_cert_manager | default(false) | bool
+
+- name: Configure PKI
+  ansible.builtin.import_playbook: platform-pki.yml
+  when: platform_enable_pki | default(false) | bool
+
+- name: Install Quay
+  ansible.builtin.import_playbook: platform-quay.yml
+  when: platform_enable_quay | default(false) | bool
+
+- name: Configure networking operators
+  ansible.builtin.import_playbook: platform-networking.yml
+  when: platform_enable_networking | default(false) | bool
+
+- name: Configure monitoring
+  ansible.builtin.import_playbook: platform-monitoring.yml
+  when: platform_enable_monitoring | default(false) | bool
+
+- name: Install logging
+  ansible.builtin.import_playbook: platform-logging.yml
+  when: platform_enable_logging | default(false) | bool
+
+- name: Install OADP
+  ansible.builtin.import_playbook: platform-oadp.yml
+  when: platform_enable_oadp | default(false) | bool
+
+- name: Install Cluster Observability Operator
+  ansible.builtin.import_playbook: platform-cluster-observability.yml
+  when: platform_enable_cluster_observability | default(false) | bool
+
+- name: Install Network Observability Operator
+  ansible.builtin.import_playbook: platform-network-observability.yml
+  when: platform_enable_network_observability | default(false) | bool
+
+- name: Configure Bare Metal Operator
+  ansible.builtin.import_playbook: platform-baremetal.yml
+  when: platform_enable_baremetal | default(false) | bool
+
+- name: Install MetalLB
+  ansible.builtin.import_playbook: platform-load-balancer.yml
+  when: platform_enable_load_balancer | default(false) | bool
+
+- name: Install RHOSO
+  ansible.builtin.import_playbook: platform-rhoso.yml
+  when: platform_enable_rhoso | default(false) | bool

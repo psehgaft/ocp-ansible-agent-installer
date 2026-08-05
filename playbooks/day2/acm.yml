@@ -1,5 +1,6 @@
 ---
-- import_playbook: platform-operator-bundle.yml
+- name: Install and configure Red Hat Advanced Cluster Management
+  ansible.builtin.import_playbook: platform-operator-bundle.yml
   vars:
     platform_operator_components:
       - acm
