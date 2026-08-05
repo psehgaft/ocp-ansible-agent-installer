@@ -1,0 +1,9 @@
+---
+- import_playbook: platform-operator-bundle.yml
+  vars:
+    platform_operator_components:
+      - nmstate
+      - sriov
+      - metallb
+    platform_operator_resources: "{{ networking_operator_resources | default([]) }}"
+    platform_operator_render_root: "{{ playbook_dir }}/../../rendered/day2/platform-operators/networking"
