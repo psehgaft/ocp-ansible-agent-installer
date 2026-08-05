@@ -1,0 +1,6 @@
+---
+- import_playbook: platform-operator-bundle.yml
+  vars:
+    platform_operator_components: [metallb]
+    platform_operator_resources: "{{ load_balancer_resources | default([]) }}"
+    platform_operator_render_root: "{{ playbook_dir }}/../../rendered/day2/platform-operators/load-balancer"
