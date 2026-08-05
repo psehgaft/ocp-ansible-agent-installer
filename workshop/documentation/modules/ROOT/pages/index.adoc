@@ -1,26 +1,118 @@
-= OpenShift Assisted Installer with HPE iLO and Dell iDRAC
+= OpenShift Automation Framework Workshop
 
-Welcome to the vendor-neutral Redfish installation workshop.
+This workshop provides a progressive, hands-on path for automating bare-metal discovery, OpenShift installation, Day-2 platform configuration, health validation, and managed-cluster deployment.
 
-== Overview
+The curriculum uses one canonical navigation tree. Each module has a distinct purpose and builds on the evidence, variables, and artifacts produced by the previous module.
 
-This workshop provides a progressive, hands-on path from control-node preparation to a complete OpenShift bare-metal installation through the Assisted Installer API.
+== Workshop Outcomes
 
-You will practice:
+By completing the workshop, you will be able to:
 
-* Mixed HPE iLO and Dell iDRAC inventory design.
-* Secure credential handling with Ansible Vault.
-* Standards-based Redfish discovery.
-* NIC normalization and provisioning-MAC selection.
-* Virtual media, one-time boot, and server restart.
-* Assisted Installer Cluster and InfraEnv creation.
-* Static NMState and MAC-interface mapping.
-* Installation validation, reporting, and troubleshooting.
+* Prepare a repeatable Ansible execution environment and protect sensitive data.
+* Discover and validate mixed-vendor HPE iLO and Dell iDRAC systems through Redfish.
+* Install and verify OpenShift with the Assisted Installer workflow.
+* Configure ordered Day-2 foundations and platform operators through direct or GitOps delivery.
+* Run health checks, generate evidence, and extend the automation framework safely.
+* Generate, validate, and deploy a managed cluster from Red Hat Advanced Cluster Management.
+* Complete an integrated challenge that exercises the full automation lifecycle.
 
-== Learning Outcomes
+== Module 1: Foundations
 
-By the end of this workshop, you will be able to operate one Ansible workflow across iLO, iDRAC, and other conformant Redfish controllers while preserving explicit vendor intent through `bmc_type`.
+Establish the workstation, repository, inventory, dependency, profile, and credential foundations required by every later exercise.
 
-== Getting Started
+Participants will:
 
-Begin with xref:environment-details.adoc[Environment Details], then continue to xref:01-environment.adoc[Module 1 Lab 1: Prepare the Environment].
+* Review the workshop source map and architecture.
+* Select direct or GitOps execution mode.
+* Prepare the control environment and required collections.
+* Build a mixed-vendor inventory with explicit BMC intent.
+* Understand framework profiles and variable precedence.
+* Protect passwords, pull secrets, tokens, and private material with Ansible Vault.
+
+Expected result: a validated execution environment and inventory that can be used safely by the remaining modules.
+
+== Module 2: Redfish Validation
+
+Validate out-of-band management before attempting installation.
+
+Participants will:
+
+* Review the Redfish and Assisted Installer integration model.
+* Discover HPE iLO and Dell iDRAC endpoints.
+* Normalize system, NIC, storage, and virtual-media evidence.
+* Select deterministic provisioning MAC addresses.
+* Test ISO reachability, virtual-media insertion, one-time boot, and restart behavior.
+
+Expected result: every target host has verified BMC access, deterministic network identity, and working virtual-media capability.
+
+== Module 3: OpenShift Installation
+
+Create the discovery ISO, boot the target systems, monitor Assisted Installer validation, and complete the OpenShift installation.
+
+Participants will:
+
+* Create Cluster and InfraEnv resources.
+* Generate and expose the discovery ISO.
+* Apply static NMState and MAC-to-interface mappings where required.
+* Boot hosts through Redfish virtual media.
+* Resolve Assisted Installer validation failures.
+* Verify cluster operators, nodes, authentication, and platform readiness.
+
+Expected result: an installed and operational OpenShift cluster with installation evidence retained for troubleshooting and audit.
+
+== Module 4: Ordered Day-2 Foundation
+
+Apply post-installation configuration in a controlled order so dependent services are introduced only after the platform is ready.
+
+Participants will configure:
+
+* NTP and MachineConfigPool stabilization.
+* Node labels and workload-placement metadata.
+* LDAP, HTPasswd, OAuth, and identity-management resources.
+* ACM, ACS, storage, virtualization, MTV, AAP, certificate, PKI, registry, networking, monitoring, logging, observability, bare-metal, load-balancer, RHOSO, and OADP components.
+* Direct deployment and rendered GitOps output using the same variable contracts.
+
+Expected result: a policy-driven Day-2 baseline with verifiable operator, storage, networking, identity, observability, and backup readiness.
+
+== Module 5: Health Check
+
+Assess platform health, generate actionable evidence, troubleshoot failures, and understand how to extend the automation framework.
+
+Participants will:
+
+* Run cluster, node, operator, storage, networking, certificate, etcd, and workload checks.
+* Produce structured reports and remediation evidence.
+* Distinguish warnings from blocking failures.
+* Add a new framework component using the established role and variable contracts.
+* Validate template rendering and repository quality gates.
+
+Expected result: a repeatable health-check workflow and a documented method for adding new automation without breaking existing behavior.
+
+== Module 6: Deploy a Cluster from ACM
+
+Use Red Hat Advanced Cluster Management as the control plane for generating and deploying another OpenShift cluster.
+
+Participants will:
+
+* Generate a reusable cluster template.
+* Generate the cluster network definition.
+* Validate template variables and rendered resources.
+* Deploy the cluster through direct or GitOps workflows.
+* Verify ManagedCluster, ClusterDeployment, AgentClusterInstall, InfraEnv, and Agent status.
+
+Expected result: a validated ACM-managed cluster deployment with reusable templates and deployment evidence.
+
+== Module 7: Challenge
+
+Complete an end-to-end scenario that combines all workshop capabilities.
+
+Participants must diagnose mixed-vendor BMC issues, complete installation prerequisites, apply Day-2 foundations, verify platform health, extend the framework, and validate an ACM-based cluster deployment.
+
+Expected result: a complete evidence package demonstrating that the participant can operate the automation framework from initial preparation through installation, Day-2 configuration, health validation, and managed-cluster delivery.
+
+== Start the Workshop
+
+Begin with xref:ARCHITECTURE:legacy-workshop.adoc[1.0 Workshop Source Map].
+
+[.text-center]
+xref:environment-details.adoc[Next: Environment Details,role=button]
