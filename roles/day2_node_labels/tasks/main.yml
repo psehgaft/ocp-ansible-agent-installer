@@ -1,0 +1,86 @@
+---
+- name: Validate node label assignments
+  ansible.builtin.assert:
+    that:
+      - day2_deployment_mode in ['direct', 'render', 'gitops']
+      - node_label_assignments is sequence
+      - node_label_assignments | length > 0
+      - item.name is defined
+      - item.name | length > 0
+      - item.labels is mapping
+      - item.labels | length > 0
+      - item.labels.keys() | intersect(node_label_protected_keys) | length == 0
+    fail_msg: >-
+      Each node_label_assignments item requires name and labels. Protected Kubernetes
+      identity labels cannot be changed by this role.
+  loop: "{{ node_label_assignments }}"
+  loop_control:
+    label: "{{ item.name | default('undefined-node') }}"
+
+- name: Validate approved label prefixes
+  ansible.builtin.assert:
+    that:
+      - >-
+        item.1 is match('^(' ~ (node_label_allowed_prefixes | map('regex_escape') | join('|')) ~ ')')
+    fail_msg: "Label {{ item.1 }} is outside the approved node label prefixes."
+  loop: "{{ node_label_assignments | subelements('labels', skip_missing=True) }}"
+  loop_control:
+    label: "{{ item.0.name }}:{{ item.1 }}"
+
+- name: Read target nodes
+  kubernetes.core.k8s_info:
+    api_version: v1
+    kind: Node
+    name: "{{ item.name }}"
+  loop: "{{ node_label_assignments }}"
+  register: node_label_discovery
+  when:
+    - day2_deployment_mode == 'direct'
+    - node_label_require_existing_nodes
+
+- name: Fail when a target node does not exist
+  ansible.builtin.assert:
+    that:
+      - item.resources | length == 1
+    fail_msg: "Target node {{ item.item.name }} does not exist."
+  loop: "{{ node_label_discovery.results | default([]) }}"
+  when:
+    - day2_deployment_mode == 'direct'
+    - node_label_require_existing_nodes
+
+- name: Build Node label resources
+  ansible.builtin.set_fact:
+    node_label_resources: >-
+      {{
+        (node_label_resources | default([]))
+        + [{
+          'apiVersion': 'v1',
+          'kind': 'Node',
+          'metadata': {
+            'name': item.name,
+            'labels': item.labels
+          }
+        }]
+      }}
+  loop: "{{ node_label_assignments }}"
+
+- name: Apply node labels directly
+  kubernetes.core.k8s:
+    state: patched
+    definition: "{{ item }}"
+  loop: "{{ node_label_resources }}"
+  when: day2_deployment_mode == 'direct'
+
+- name: Create node labels render directory
+  ansible.builtin.file:
+    path: "{{ day2_render_root }}/day2/node-labels"
+    state: directory
+    mode: '0750'
+  when: day2_deployment_mode in ['render', 'gitops']
+
+- name: Render node label desired state
+  ansible.builtin.copy:
+    dest: "{{ day2_render_root }}/day2/node-labels/resources.yml"
+    content: "{{ node_label_resources | to_nice_yaml(indent=2, explicit_start=True) }}"
+    mode: '0640'
+  when: day2_deployment_mode in ['render', 'gitops']
