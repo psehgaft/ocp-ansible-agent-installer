@@ -1,0 +1,15 @@
+---
+acm_bmh_networking_mode: render
+acm_bmh_render_root: "{{ playbook_dir }}/../../rendered/acm-bmh-static-networking"
+acm_bmh_hub_kubeconfig: ''
+acm_bmh_managed_kubeconfig: ''
+acm_bmh_apply_day0: false
+acm_bmh_apply_day2: false
+acm_bmh_create_baremetalhost: true
+acm_bmh_network_data_key: networkData
+acm_bmh_bond_name: bond0
+acm_bmh_bridge_name: br-ex
+acm_bmh_bond_mode: 802.3ad
+acm_bmh_miimon: '100'
+acm_bmh_ipv6_enabled: false
+acm_bmh_nodes: []

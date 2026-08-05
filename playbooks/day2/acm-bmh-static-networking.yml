@@ -1,0 +1,7 @@
+---
+- name: Render or apply ACM BareMetalHost static networking
+  hosts: localhost
+  gather_facts: false
+  connection: local
+  roles:
+    - role: acm_bmh_static_networking
