@@ -1,0 +1,31 @@
+---
+- import_playbook: platform-operator-bundle.yml
+  vars:
+    platform_operator_components: []
+    platform_operator_resources: >-
+      {{ aap_resources | default([
+        {
+          'apiVersion': 'v1',
+          'kind': 'Namespace',
+          'metadata': {'name': 'aap'}
+        },
+        {
+          'apiVersion': 'operators.coreos.com/v1',
+          'kind': 'OperatorGroup',
+          'metadata': {'name': 'aap', 'namespace': 'aap'},
+          'spec': {'targetNamespaces': ['aap']}
+        },
+        {
+          'apiVersion': 'operators.coreos.com/v1alpha1',
+          'kind': 'Subscription',
+          'metadata': {'name': 'ansible-automation-platform-operator', 'namespace': 'aap'},
+          'spec': {
+            'channel': aap_channel | default('stable-2.5'),
+            'installPlanApproval': aap_install_plan_approval | default('Manual'),
+            'name': 'ansible-automation-platform-operator',
+            'source': aap_catalog_source | default('redhat-operators'),
+            'sourceNamespace': 'openshift-marketplace'
+          }
+        }
+      ]) }}
+    platform_operator_render_root: "{{ playbook_dir }}/../../rendered/day2/platform-operators/aap"
