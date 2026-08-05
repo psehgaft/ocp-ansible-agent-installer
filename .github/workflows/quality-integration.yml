@@ -7,26 +7,50 @@ on:
         description: Inventory path
         required: true
         default: inventories/testing/hosts.yml
+        type: string
 
 permissions:
   contents: read
 
-environment: cluster-integration
-
 jobs:
   integration:
-    if: ${{ secrets.KUBECONFIG_B64 != '' }}
     runs-on: ubuntu-latest
+    environment: cluster-integration
+    env:
+      KUBECONFIG_B64: ${{ secrets.KUBECONFIG_B64 }}
+
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - run: pip install -r requirements-ci.txt
-      - run: ansible-galaxy collection install -r collections/requirements.yml
+
+      - name: Validate integration credentials
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          if [[ -z "${KUBECONFIG_B64}" ]]; then
+            echo "ERROR: KUBECONFIG_B64 is not configured in the cluster-integration environment." >&2
+            exit 1
+          fi
+
+      - name: Install Python dependencies
+        run: pip install -r requirements-ci.txt
+
+      - name: Install Ansible collections
+        run: ansible-galaxy collection install -r collections/requirements.yml
+
       - name: Configure cluster access
-        run: echo '${{ secrets.KUBECONFIG_B64 }}' | base64 -d > "$RUNNER_TEMP/kubeconfig"
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          printf '%s' "${KUBECONFIG_B64}" | base64 --decode > "${RUNNER_TEMP}/kubeconfig"
+          chmod 0600 "${RUNNER_TEMP}/kubeconfig"
+
       - name: Run non-destructive integration tests
         env:
           KUBECONFIG: ${{ runner.temp }}/kubeconfig
-        run: pytest -q -m integration --inventory '${{ inputs.inventory }}'
+        run: >-
+          pytest -q -m integration
+          --inventory '${{ inputs.inventory }}'
