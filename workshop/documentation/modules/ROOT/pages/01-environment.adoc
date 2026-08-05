@@ -66,3 +66,6 @@ Confirm that the collection is installed and the normalization tests pass.
 == Conclusion
 
 You prepared the control node and validated the repository before contacting production hardware.
+
+[.text-center]
+xref:02-inventory.adoc[Next: Configure Inventory,role=button]
