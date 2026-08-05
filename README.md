@@ -144,6 +144,77 @@ ansible-playbook playbooks/day2/oauth.yml \
 
 Direct mode applies validated resources with `kubernetes.core.k8s` and should be used for controlled administration, break-glass recovery, or environments not yet managed by GitOps.
 
+### 8. Install custom API and Ingress certificates
+
+The canonical playbook for replacing the OpenShift API named certificate and the default Ingress wildcard certificate is:
+
+```text
+playbooks/day2/install_certs.yml
+```
+
+The playbook accepts local PEM certificate and private-key paths through:
+
+- `WILDCARD_CER`
+- `WILDCARD_KEY`
+- `API_CER`
+- `API_KEY`
+- `API_DOMAIN`
+- `INGRESS_DOMAIN`
+
+It supports three modes:
+
+- `validate` — default; validates files, PEM parsing, remaining lifetime, hostname coverage, and certificate/private-key matching without changing the cluster.
+- `render` — writes a protected manifest under `rendered/day2/certificates/` for local review.
+- `apply` — creates the TLS Secrets, updates the default IngressController, reconciles the API named certificate, preserves unrelated API named certificates, and waits for operator recovery.
+
+Validate first:
+
+```bash
+ansible-playbook playbooks/day2/install_certs.yml \
+  -e WILDCARD_CER=/absolute/path/apps-wildcard.cer \
+  -e WILDCARD_KEY=/absolute/path/apps-wildcard.key \
+  -e API_CER=/absolute/path/api.cer \
+  -e API_KEY=/absolute/path/api.key \
+  -e API_DOMAIN=api.cluster.example.com \
+  -e INGRESS_DOMAIN='*.apps.cluster.example.com'
+```
+
+Render for review:
+
+```bash
+ansible-playbook playbooks/day2/install_certs.yml \
+  -e CERT_INSTALL_MODE=render \
+  -e WILDCARD_CER=/absolute/path/apps-wildcard.cer \
+  -e WILDCARD_KEY=/absolute/path/apps-wildcard.key \
+  -e API_CER=/absolute/path/api.cer \
+  -e API_KEY=/absolute/path/api.key \
+  -e API_DOMAIN=api.cluster.example.com \
+  -e INGRESS_DOMAIN='*.apps.cluster.example.com'
+```
+
+Back up the current configuration and apply:
+
+```bash
+mkdir -p evidence/certificates
+oc get apiserver cluster -o yaml \
+  > evidence/certificates/apiserver-before.yaml
+oc get ingresscontroller default -n openshift-ingress-operator -o yaml \
+  > evidence/certificates/ingresscontroller-before.yaml
+
+ansible-playbook playbooks/day2/install_certs.yml \
+  -e CERT_INSTALL_MODE=apply \
+  -e WILDCARD_CER=/absolute/path/apps-wildcard.cer \
+  -e WILDCARD_KEY=/absolute/path/apps-wildcard.key \
+  -e API_CER=/absolute/path/api.cer \
+  -e API_KEY=/absolute/path/api.key \
+  -e API_DOMAIN=api.cluster.example.com \
+  -e INGRESS_DOMAIN='*.apps.cluster.example.com'
+```
+
+Certificate changes trigger progressive reconciliation of Ingress router and kube-apiserver operands. Keep the original administrative session open until both ClusterOperators are Available and not Degraded, the API presents the expected certificate, a representative route presents the wildcard certificate, and a new login succeeds.
+
+Rendered manifests contain private keys and must never be committed. Use SOPS, Sealed Secrets, External Secrets, Vault integration, or another approved encrypted-secret mechanism for GitOps delivery.
+
 ## GitOps execution
 
 Kustomize is the default composition mechanism. Helm is used only when a chart provides meaningful lifecycle value.
@@ -233,6 +304,8 @@ The Antora workshop contains:
 
 - the architecture-aligned framework learning path; and
 - the retained Redfish and Assisted Installer source material.
+
+The custom serving-certificate lesson is available at `4.4.8.1 Custom API and Ingress Certificates` and documents validation, rendering, application, endpoint verification, rollout impact, and rollback.
 
 Build it with:
 
