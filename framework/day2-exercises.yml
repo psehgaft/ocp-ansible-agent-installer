@@ -1,56 +1,394 @@
 ---
 defaults:
-  supported_modes: [direct, render, gitops]
+  supported_modes:
+    - direct
+    - render
+    - gitops
   gitops_root: rendered/day2
 
 exercises:
-  networking: {playbook: playbooks/day2/networking.yml, role: day2_cluster_operations, resources_variable: networking_resources, gitops_output: rendered/day2/networking}
-  metallb: {playbook: playbooks/day2/metallb.yml, role: day2_cluster_operations, resources_variable: metallb_resources, gitops_output: rendered/day2/metallb}
-  sriov: {playbook: playbooks/day2/sriov.yml, role: day2_cluster_operations, resources_variable: sriov_resources, gitops_output: rendered/day2/sriov}
-  nmstate: {playbook: playbooks/day2/nmstate.yml, role: day2_cluster_operations, resources_variable: nmstate_resources, gitops_output: rendered/day2/nmstate}
-  ptp: {playbook: playbooks/day2/ptp.yml, role: day2_cluster_operations, resources_variable: ptp_resources, gitops_output: rendered/day2/ptp}
-  storageclasses: {playbook: playbooks/day2/storageclasses.yml, role: day2_cluster_operations, resources_variable: storageclass_resources, gitops_output: rendered/day2/storageclasses}
-  volume_snapshots: {playbook: playbooks/day2/volume-snapshots.yml, role: day2_cluster_operations, resources_variable: volume_snapshot_resources, gitops_output: rendered/day2/volume-snapshots}
-  odf_day2: {playbook: playbooks/day2/odf-day2.yml, role: day2_cluster_operations, resources_variable: odf_day2_resources, gitops_output: rendered/day2/odf-day2}
-  ingress: {playbook: playbooks/day2/ingress.yml, role: day2_cluster_operations, resources_variable: ingress_resources, gitops_output: rendered/day2/ingress}
-  node_configuration: {playbook: playbooks/day2/node-configuration.yml, role: day2_cluster_operations, resources_variable: node_configuration_resources, gitops_output: rendered/day2/node-configuration}
-  machineconfig: {playbook: playbooks/day2/machineconfig.yml, role: day2_cluster_operations, resources_variable: machineconfig_resources, gitops_output: rendered/day2/machineconfig}
-  chrony: {playbook: playbooks/day2/chrony.yml, role: day2_cluster_operations, resources_variable: chrony_resources, gitops_output: rendered/day2/chrony}
-  ntp: {playbook: playbooks/day2/ntp.yml, role: day2_ntp, resources_variable: ntp_servers, gitops_output: rendered/day2/ntp}
-  node_labels: {playbook: playbooks/day2/node-labels.yml, role: day2_node_labels, resources_variable: node_label_assignments, gitops_output: rendered/day2/node-labels}
-  monitoring: {playbook: playbooks/day2/monitoring.yml, role: day2_operational_workflow, resources_variable: monitoring_resources, gitops_output: rendered/day2/monitoring}
-  alertmanager: {playbook: playbooks/day2/alertmanager.yml, role: day2_operational_workflow, resources_variable: alertmanager_resources, gitops_output: rendered/day2/alertmanager}
-  user_workload_monitoring: {playbook: playbooks/day2/user-workload-monitoring.yml, role: day2_operational_workflow, resources_variable: user_workload_monitoring_resources, gitops_output: rendered/day2/user-workload-monitoring}
-  logging: {playbook: playbooks/day2/logging.yml, role: day2_operational_workflow, resources_variable: logging_resources, gitops_output: rendered/day2/logging}
-  loki: {playbook: playbooks/day2/loki.yml, role: day2_operational_workflow, resources_variable: loki_resources, gitops_output: rendered/day2/loki}
-  backup_oadp: {playbook: playbooks/day2/backup-oadp.yml, role: day2_operational_workflow, resources_variable: backup_oadp_resources, gitops_output: rendered/day2/backup-oadp}
-  oadp: {playbook: playbooks/day2/oadp.yml, role: day2_oadp, resources_variable: oadp_backup_bucket, gitops_output: rendered/day2/oadp}
-  upgrade_prechecks: {playbook: playbooks/day2/upgrade-prechecks.yml, role: day2_operational_workflow, resources_variable: upgrade_precheck_resources, gitops_output: rendered/day2/upgrade-prechecks}
-  certificate_audit: {playbook: playbooks/day2/certificate-audit.yml, role: day2_operational_workflow, resources_variable: certificate_audit_resources, gitops_output: rendered/day2/certificate-audit}
-  etcd_health: {playbook: playbooks/day2/etcd-health.yml, role: day2_operational_workflow, resources_variable: etcd_health_resources, gitops_output: rendered/day2/etcd-health}
-  acm_hub: {playbook: playbooks/day2/acm-hub.yml, role: day2_operational_workflow, resources_variable: acm_hub_resources, gitops_output: rendered/day2/acm-hub}
-  acs_policies: {playbook: playbooks/day2/acs-policies.yml, role: day2_operational_workflow, resources_variable: acs_policy_resources, gitops_output: rendered/day2/acs-policies}
-  rhoso_day2: {playbook: playbooks/day2/rhoso-day2.yml, role: day2_operational_workflow, resources_variable: rhoso_day2_resources, gitops_output: rendered/day2/rhoso-day2}
-  virtualization_day2: {playbook: playbooks/day2/virtualization-day2.yml, role: day2_operational_workflow, resources_variable: virtualization_day2_resources, gitops_output: rendered/day2/virtualization-day2}
-  health_checks: {playbook: playbooks/day2/health-checks.yml, role: day2_operational_workflow, resources_variable: health_check_resources, gitops_output: rendered/day2/health-checks}
-  reports: {playbook: playbooks/day2/reports.yml, role: day2_operational_workflow, resources_variable: report_resources, gitops_output: rendered/day2/reports}
-  oauth: {playbook: playbooks/day2/oauth.yml, role: day2_identity, resources_variable: oauth_identity_providers, gitops_output: rendered/day2/identity}
-  ldap: {playbook: playbooks/day2/ldap.yml, role: day2_identity, resources_variable: oauth_identity_providers, gitops_output: rendered/day2/identity}
-  ldap_group_sync: {playbook: playbooks/day2/ldap-group-sync.yml, role: ldap_group_sync, resources_variable: ldap_sync_config, gitops_output: rendered/day2/ldap-group-sync}
-  cert_manager: {playbook: playbooks/day2/cert-manager.yml, role: day2_pki, resources_variable: pki_cert_manager_resources, gitops_output: rendered/day2/pki}
-  certificates: {playbook: playbooks/day2/certificates.yml, role: day2_pki, resources_variable: pki_api_certificate_manifest, gitops_output: rendered/day2/pki}
-  trusted_ca: {playbook: playbooks/day2/trusted-ca.yml, role: day2_pki, resources_variable: pki_trusted_ca_manifest, gitops_output: rendered/day2/pki}
-  external_registries: {playbook: playbooks/day2/external-registries.yml, role: day2_registry, resources_variable: registry_resources, gitops_output: rendered/day2/registry}
-  registry_proxy: {playbook: playbooks/day2/registry-proxy.yml, role: day2_registry, resources_variable: registry_proxy_resource, gitops_output: rendered/day2/registry}
-  mirror_sets: {playbook: playbooks/day2/mirror-sets.yml, role: day2_registry, resources_variable: registry_resources, gitops_output: rendered/day2/registry}
-  quay: {playbook: playbooks/day2/quay.yml, role: day2_registry, resources_variable: registry_quay_resources, gitops_output: rendered/day2/registry}
-  cluster_health: {playbook: playbooks/day2/cluster-health.yml, role: day2_operational_workflow, resources_variable: health_check_resources, gitops_output: rendered/day2/cluster-health}
-  etcd_backup: {playbook: playbooks/day2/etcd-backup.yml, role: operational_command, resources_variable: etcd_backup_confirm, gitops_output: reports/etcd-backup}
-  must_gather: {playbook: playbooks/day2/must-gather.yml, role: operational_command, resources_variable: must_gather_images, gitops_output: reports/must-gather}
-  cluster_admin_rbac: {playbook: playbooks/day2/cluster-admin-rbac.yml, role: kubernetes_resources, resources_variable: cluster_admin_groups, gitops_output: rendered/day2/rbac}
-  compliance: {playbook: playbooks/day2/compliance.yml, role: platform_operator_bundle, resources_variable: compliance_resources, gitops_output: rendered/day2/security/compliance}
-  file_integrity: {playbook: playbooks/day2/file-integrity.yml, role: platform_operator_bundle, resources_variable: file_integrity_resources, gitops_output: rendered/day2/security/file-integrity}
-  multicluster_observability: {playbook: playbooks/day2/multicluster-observability.yml, role: platform_operator_bundle, resources_variable: multicluster_observability_resources, gitops_output: rendered/day2/acm/multicluster-observability}
-  gitops_application_lifecycle: {playbook: playbooks/day2/gitops-application-lifecycle.yml, role: platform_operator_bundle, resources_variable: gitops_application_resources, gitops_output: rendered/day2/gitops/application-lifecycle}
-  submariner: {playbook: playbooks/day2/submariner.yml, role: platform_operator_bundle, resources_variable: submariner_resources, gitops_output: rendered/day2/acm/submariner}
-  platform_observability_stack: {playbook: playbooks/day2/platform-observability-stack.yml, role: orchestrator, resources_variable: monitoring_resources, gitops_output: rendered/day2/observability}
+  networking:
+    playbook: playbooks/day2/networking.yml
+    role: day2_cluster_operations
+    resources_variable: networking_resources
+    gitops_output: rendered/day2/networking
+  metallb:
+    playbook: playbooks/day2/metallb.yml
+    role: day2_cluster_operations
+    resources_variable: metallb_resources
+    gitops_output: rendered/day2/metallb
+  sriov:
+    playbook: playbooks/day2/sriov.yml
+    role: day2_cluster_operations
+    resources_variable: sriov_resources
+    gitops_output: rendered/day2/sriov
+  nmstate:
+    playbook: playbooks/day2/nmstate.yml
+    role: day2_cluster_operations
+    resources_variable: nmstate_resources
+    gitops_output: rendered/day2/nmstate
+  ptp:
+    playbook: playbooks/day2/ptp.yml
+    role: day2_cluster_operations
+    resources_variable: ptp_resources
+    gitops_output: rendered/day2/ptp
+  storageclasses:
+    playbook: playbooks/day2/storageclasses.yml
+    role: day2_cluster_operations
+    resources_variable: storageclass_resources
+    gitops_output: rendered/day2/storageclasses
+  volume_snapshots:
+    playbook: playbooks/day2/volume-snapshots.yml
+    role: day2_cluster_operations
+    resources_variable: volume_snapshot_resources
+    gitops_output: rendered/day2/volume-snapshots
+  odf_day2:
+    playbook: playbooks/day2/odf-day2.yml
+    role: day2_cluster_operations
+    resources_variable: odf_day2_resources
+    gitops_output: rendered/day2/odf-day2
+  ingress:
+    playbook: playbooks/day2/ingress.yml
+    role: day2_cluster_operations
+    resources_variable: ingress_resources
+    gitops_output: rendered/day2/ingress
+  node_configuration:
+    playbook: playbooks/day2/node-configuration.yml
+    role: day2_cluster_operations
+    resources_variable: node_configuration_resources
+    gitops_output: rendered/day2/node-configuration
+  machineconfig:
+    playbook: playbooks/day2/machineconfig.yml
+    role: day2_cluster_operations
+    resources_variable: machineconfig_resources
+    gitops_output: rendered/day2/machineconfig
+  chrony:
+    playbook: playbooks/day2/chrony.yml
+    role: day2_cluster_operations
+    resources_variable: chrony_resources
+    gitops_output: rendered/day2/chrony
+  ntp:
+    playbook: playbooks/day2/ntp.yml
+    role: day2_ntp
+    resources_variable: ntp_servers
+    gitops_output: rendered/day2/ntp
+  node_labels:
+    playbook: playbooks/day2/node-labels.yml
+    role: day2_node_labels
+    resources_variable: node_label_assignments
+    gitops_output: rendered/day2/node-labels
+  monitoring:
+    playbook: playbooks/day2/monitoring.yml
+    role: day2_operational_workflow
+    resources_variable: monitoring_resources
+    gitops_output: rendered/day2/monitoring
+  alertmanager:
+    playbook: playbooks/day2/alertmanager.yml
+    role: day2_operational_workflow
+    resources_variable: alertmanager_resources
+    gitops_output: rendered/day2/alertmanager
+  user_workload_monitoring:
+    playbook: playbooks/day2/user-workload-monitoring.yml
+    role: day2_operational_workflow
+    resources_variable: user_workload_monitoring_resources
+    gitops_output: rendered/day2/user-workload-monitoring
+  logging:
+    playbook: playbooks/day2/logging.yml
+    role: day2_operational_workflow
+    resources_variable: logging_resources
+    gitops_output: rendered/day2/logging
+  loki:
+    playbook: playbooks/day2/loki.yml
+    role: day2_operational_workflow
+    resources_variable: loki_resources
+    gitops_output: rendered/day2/loki
+  backup_oadp:
+    playbook: playbooks/day2/backup-oadp.yml
+    role: day2_operational_workflow
+    resources_variable: backup_oadp_resources
+    gitops_output: rendered/day2/backup-oadp
+  oadp:
+    playbook: playbooks/day2/oadp.yml
+    role: day2_oadp
+    resources_variable: oadp_backup_bucket
+    gitops_output: rendered/day2/oadp
+  upgrade_prechecks:
+    playbook: playbooks/day2/upgrade-prechecks.yml
+    role: day2_operational_workflow
+    resources_variable: upgrade_precheck_resources
+    gitops_output: rendered/day2/upgrade-prechecks
+  certificate_audit:
+    playbook: playbooks/day2/certificate-audit.yml
+    role: day2_operational_workflow
+    resources_variable: certificate_audit_resources
+    gitops_output: rendered/day2/certificate-audit
+  etcd_health:
+    playbook: playbooks/day2/etcd-health.yml
+    role: day2_operational_workflow
+    resources_variable: etcd_health_resources
+    gitops_output: rendered/day2/etcd-health
+  acm_hub:
+    playbook: playbooks/day2/acm-hub.yml
+    role: day2_operational_workflow
+    resources_variable: acm_hub_resources
+    gitops_output: rendered/day2/acm-hub
+  acs_policies:
+    playbook: playbooks/day2/acs-policies.yml
+    role: day2_operational_workflow
+    resources_variable: acs_policy_resources
+    gitops_output: rendered/day2/acs-policies
+  rhoso_day2:
+    playbook: playbooks/day2/rhoso-day2.yml
+    role: day2_operational_workflow
+    resources_variable: rhoso_day2_resources
+    gitops_output: rendered/day2/rhoso-day2
+  virtualization_day2:
+    playbook: playbooks/day2/virtualization-day2.yml
+    role: day2_operational_workflow
+    resources_variable: virtualization_day2_resources
+    gitops_output: rendered/day2/virtualization-day2
+  health_checks:
+    playbook: playbooks/day2/health-checks.yml
+    role: day2_operational_workflow
+    resources_variable: health_check_resources
+    gitops_output: rendered/day2/health-checks
+  reports:
+    playbook: playbooks/day2/reports.yml
+    role: day2_operational_workflow
+    resources_variable: report_resources
+    gitops_output: rendered/day2/reports
+  oauth:
+    playbook: playbooks/day2/oauth.yml
+    role: day2_identity
+    resources_variable: oauth_identity_providers
+    gitops_output: rendered/day2/identity
+  ldap:
+    playbook: playbooks/day2/ldap.yml
+    role: day2_identity
+    resources_variable: oauth_identity_providers
+    gitops_output: rendered/day2/identity
+  ldap_group_sync:
+    playbook: playbooks/day2/ldap-group-sync.yml
+    role: ldap_group_sync
+    resources_variable: ldap_sync_config
+    gitops_output: rendered/day2/ldap-group-sync
+  cert_manager:
+    playbook: playbooks/day2/cert-manager.yml
+    role: day2_pki
+    resources_variable: pki_cert_manager_resources
+    gitops_output: rendered/day2/pki
+  certificates:
+    playbook: playbooks/day2/certificates.yml
+    role: day2_pki
+    resources_variable: pki_api_certificate_manifest
+    gitops_output: rendered/day2/pki
+  trusted_ca:
+    playbook: playbooks/day2/trusted-ca.yml
+    role: day2_pki
+    resources_variable: pki_trusted_ca_manifest
+    gitops_output: rendered/day2/pki
+  external_registries:
+    playbook: playbooks/day2/external-registries.yml
+    role: day2_registry
+    resources_variable: registry_resources
+    gitops_output: rendered/day2/registry
+  registry_proxy:
+    playbook: playbooks/day2/registry-proxy.yml
+    role: day2_registry
+    resources_variable: registry_proxy_resource
+    gitops_output: rendered/day2/registry
+  mirror_sets:
+    playbook: playbooks/day2/mirror-sets.yml
+    role: day2_registry
+    resources_variable: registry_resources
+    gitops_output: rendered/day2/registry
+  quay:
+    playbook: playbooks/day2/quay.yml
+    role: day2_registry
+    resources_variable: registry_quay_resources
+    gitops_output: rendered/day2/registry
+  cluster_health:
+    playbook: playbooks/day2/cluster-health.yml
+    role: day2_operational_workflow
+    resources_variable: health_check_resources
+    gitops_output: rendered/day2/cluster-health
+  etcd_backup:
+    playbook: playbooks/day2/etcd-backup.yml
+    role: day2_operational_workflow
+    resources_variable: etcd_backup_confirm
+    gitops_output: reports/etcd-backup
+  must_gather:
+    playbook: playbooks/day2/must-gather.yml
+    role: day2_operational_workflow
+    resources_variable: must_gather_images
+    gitops_output: reports/must-gather
+  cluster_admin_rbac:
+    playbook: playbooks/day2/cluster-admin-rbac.yml
+    role: day2_operational_workflow
+    resources_variable: cluster_admin_groups
+    gitops_output: rendered/day2/rbac
+  compliance:
+    playbook: playbooks/day2/compliance.yml
+    role: day2_operational_workflow
+    resources_variable: compliance_resources
+    gitops_output: rendered/day2/security/compliance
+  file_integrity:
+    playbook: playbooks/day2/file-integrity.yml
+    role: day2_operational_workflow
+    resources_variable: file_integrity_resources
+    gitops_output: rendered/day2/security/file-integrity
+  multicluster_observability:
+    playbook: playbooks/day2/multicluster-observability.yml
+    role: day2_operational_workflow
+    resources_variable: multicluster_observability_resources
+    gitops_output: rendered/day2/acm/multicluster-observability
+  gitops_application_lifecycle:
+    playbook: playbooks/day2/gitops-application-lifecycle.yml
+    role: day2_operational_workflow
+    resources_variable: gitops_application_resources
+    gitops_output: rendered/day2/gitops/application-lifecycle
+  submariner:
+    playbook: playbooks/day2/submariner.yml
+    role: day2_operational_workflow
+    resources_variable: submariner_resources
+    gitops_output: rendered/day2/acm/submariner
+  platform_observability_stack:
+    playbook: playbooks/day2/platform-observability-stack.yml
+    role: day2_operational_workflow
+    resources_variable: day2_deployment_mode
+    gitops_output: rendered/day2/observability
+  aap:
+    playbook: playbooks/day2/aap.yml
+    role: day2_operational_workflow
+    resources_variable: day2_deployment_mode
+    gitops_output: rendered/day2/aap
+  acm_bmh_static_networking:
+    playbook: playbooks/day2/acm-bmh-static-networking.yml
+    role: day2_operational_workflow
+    resources_variable: day2_deployment_mode
+    gitops_output: rendered/day2/acm-bmh-static-networking
+  acm:
+    playbook: playbooks/day2/acm.yml
+    role: day2_operational_workflow
+    resources_variable: day2_deployment_mode
+    gitops_output: rendered/day2/acm
+  acs:
+    playbook: playbooks/day2/acs.yml
+    role: day2_operational_workflow
+    resources_variable: day2_deployment_mode
+    gitops_output: rendered/day2/acs
+  htpasswd:
+    playbook: playbooks/day2/htpasswd.yml
+    role: day2_operational_workflow
+    resources_variable: day2_deployment_mode
+    gitops_output: rendered/day2/htpasswd
+  identity_manager:
+    playbook: playbooks/day2/identity-manager.yml
+    role: day2_operational_workflow
+    resources_variable: day2_deployment_mode
+    gitops_output: rendered/day2/identity-manager
+  install_api_ingress_certificates:
+    playbook: playbooks/day2/install_certs.yml
+    role: day2_operational_workflow
+    resources_variable: day2_deployment_mode
+    gitops_output: rendered/day2/install-api-ingress-certificates
+  mtv:
+    playbook: playbooks/day2/mtv.yml
+    role: day2_operational_workflow
+    resources_variable: day2_deployment_mode
+    gitops_output: rendered/day2/mtv
+  platform_baremetal:
+    playbook: playbooks/day2/platform-baremetal.yml
+    role: day2_operational_workflow
+    resources_variable: day2_deployment_mode
+    gitops_output: rendered/day2/platform-baremetal
+  platform_cert_manager:
+    playbook: playbooks/day2/platform-cert-manager.yml
+    role: day2_operational_workflow
+    resources_variable: day2_deployment_mode
+    gitops_output: rendered/day2/platform-cert-manager
+  platform_cluster_observability:
+    playbook: playbooks/day2/platform-cluster-observability.yml
+    role: day2_operational_workflow
+    resources_variable: day2_deployment_mode
+    gitops_output: rendered/day2/platform-cluster-observability
+  platform_csi_drivers:
+    playbook: playbooks/day2/platform-csi-drivers.yml
+    role: day2_operational_workflow
+    resources_variable: day2_deployment_mode
+    gitops_output: rendered/day2/platform-csi-drivers
+  platform_load_balancer:
+    playbook: playbooks/day2/platform-load-balancer.yml
+    role: day2_operational_workflow
+    resources_variable: day2_deployment_mode
+    gitops_output: rendered/day2/platform-load-balancer
+  platform_local_storage:
+    playbook: playbooks/day2/platform-local-storage.yml
+    role: day2_operational_workflow
+    resources_variable: day2_deployment_mode
+    gitops_output: rendered/day2/platform-local-storage
+  platform_logging:
+    playbook: playbooks/day2/platform-logging.yml
+    role: day2_operational_workflow
+    resources_variable: day2_deployment_mode
+    gitops_output: rendered/day2/platform-logging
+  platform_lvm_storage:
+    playbook: playbooks/day2/platform-lvm-storage.yml
+    role: day2_operational_workflow
+    resources_variable: day2_deployment_mode
+    gitops_output: rendered/day2/platform-lvm-storage
+  platform_monitoring:
+    playbook: playbooks/day2/platform-monitoring.yml
+    role: day2_operational_workflow
+    resources_variable: day2_deployment_mode
+    gitops_output: rendered/day2/platform-monitoring
+  platform_network_observability:
+    playbook: playbooks/day2/platform-network-observability.yml
+    role: day2_operational_workflow
+    resources_variable: day2_deployment_mode
+    gitops_output: rendered/day2/platform-network-observability
+  platform_networking:
+    playbook: playbooks/day2/platform-networking.yml
+    role: day2_operational_workflow
+    resources_variable: day2_deployment_mode
+    gitops_output: rendered/day2/platform-networking
+  platform_oadp:
+    playbook: playbooks/day2/platform-oadp.yml
+    role: day2_operational_workflow
+    resources_variable: day2_deployment_mode
+    gitops_output: rendered/day2/platform-oadp
+  platform_operator_bundle:
+    playbook: playbooks/day2/platform-operator-bundle.yml
+    role: day2_operational_workflow
+    resources_variable: day2_deployment_mode
+    gitops_output: rendered/day2/platform-operator-bundle
+  platform_operators:
+    playbook: playbooks/day2/platform-operators.yml
+    role: day2_operational_workflow
+    resources_variable: day2_deployment_mode
+    gitops_output: rendered/day2/platform-operators
+  platform_pki:
+    playbook: playbooks/day2/platform-pki.yml
+    role: day2_operational_workflow
+    resources_variable: day2_deployment_mode
+    gitops_output: rendered/day2/platform-pki
+  platform_quay:
+    playbook: playbooks/day2/platform-quay.yml
+    role: day2_operational_workflow
+    resources_variable: day2_deployment_mode
+    gitops_output: rendered/day2/platform-quay
+  platform_rhoso:
+    playbook: playbooks/day2/platform-rhoso.yml
+    role: day2_operational_workflow
+    resources_variable: day2_deployment_mode
+    gitops_output: rendered/day2/platform-rhoso
+  storage:
+    playbook: playbooks/day2/storage.yml
+    role: day2_operational_workflow
+    resources_variable: day2_deployment_mode
+    gitops_output: rendered/day2/storage
+  virtualization:
+    playbook: playbooks/day2/virtualization.yml
+    role: day2_operational_workflow
+    resources_variable: day2_deployment_mode
+    gitops_output: rendered/day2/virtualization
