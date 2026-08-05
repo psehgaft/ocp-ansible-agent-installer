@@ -1,0 +1,56 @@
+---
+- name: Reconcile explicit cluster-admin RBAC assignments
+  hosts: localhost
+  gather_facts: false
+  connection: local
+  vars:
+    cluster_admin_users: []
+    cluster_admin_groups: []
+  pre_tasks:
+    - name: Require at least one explicit subject
+      ansible.builtin.assert:
+        that:
+          - cluster_admin_users | length > 0 or cluster_admin_groups | length > 0
+        fail_msg: Define cluster_admin_users and/or cluster_admin_groups. No default administrator is created.
+  tasks:
+    - name: Bind users to cluster-admin
+      kubernetes.core.k8s:
+        state: present
+        definition:
+          apiVersion: rbac.authorization.k8s.io/v1
+          kind: ClusterRoleBinding
+          metadata:
+            name: "cluster-admin-user-{{ cluster_admin_user | lower | regex_replace('[^a-z0-9.-]', '-') }}"
+          roleRef:
+            apiGroup: rbac.authorization.k8s.io
+            kind: ClusterRole
+            name: cluster-admin
+          subjects:
+            - apiGroup: rbac.authorization.k8s.io
+              kind: User
+              name: "{{ cluster_admin_user }}"
+      loop: "{{ cluster_admin_users }}"
+      loop_control:
+        loop_var: cluster_admin_user
+        label: "{{ cluster_admin_user }}"
+
+    - name: Bind groups to cluster-admin
+      kubernetes.core.k8s:
+        state: present
+        definition:
+          apiVersion: rbac.authorization.k8s.io/v1
+          kind: ClusterRoleBinding
+          metadata:
+            name: "cluster-admin-group-{{ cluster_admin_group | lower | regex_replace('[^a-z0-9.-]', '-') }}"
+          roleRef:
+            apiGroup: rbac.authorization.k8s.io
+            kind: ClusterRole
+            name: cluster-admin
+          subjects:
+            - apiGroup: rbac.authorization.k8s.io
+              kind: Group
+              name: "{{ cluster_admin_group }}"
+      loop: "{{ cluster_admin_groups }}"
+      loop_control:
+        loop_var: cluster_admin_group
+        label: "{{ cluster_admin_group }}"

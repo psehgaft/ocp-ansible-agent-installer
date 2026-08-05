@@ -1,0 +1,7 @@
+---
+- name: Install and configure the Compliance Operator
+  ansible.builtin.import_playbook: platform-operator-bundle.yml
+  vars:
+    platform_operator_components: []
+    platform_operator_resources: "{{ compliance_resources }}"
+    platform_operator_render_root: "{{ playbook_dir }}/../../rendered/day2/security/compliance"

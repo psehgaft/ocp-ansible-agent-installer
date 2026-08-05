@@ -1,0 +1,73 @@
+---
+- name: Create an OpenShift etcd backup on one control-plane node
+  hosts: localhost
+  gather_facts: false
+  connection: local
+  vars:
+    etcd_backup_confirm: false
+    etcd_backup_node: ''
+    etcd_backup_host_path: "/home/core/assets/backup-{{ lookup('pipe', 'date +%Y%m%d-%H%M%S') }}"
+  pre_tasks:
+    - name: Require explicit confirmation
+      ansible.builtin.assert:
+        that:
+          - etcd_backup_confirm | bool
+        fail_msg: Set etcd_backup_confirm=true after reviewing cluster health and the target path.
+
+    - name: Discover control-plane nodes
+      kubernetes.core.k8s_info:
+        api_version: v1
+        kind: Node
+        label_selectors:
+          - node-role.kubernetes.io/master
+      register: etcd_control_plane_nodes
+
+    - name: Select a control-plane node
+      ansible.builtin.set_fact:
+        etcd_backup_selected_node: >-
+          {{ etcd_backup_node if etcd_backup_node | length > 0
+             else (etcd_control_plane_nodes.resources | map(attribute='metadata.name') | list | first) }}
+
+    - name: Validate selected node and backup path
+      ansible.builtin.assert:
+        that:
+          - etcd_control_plane_nodes.resources | length > 0
+          - etcd_backup_selected_node | length > 0
+          - etcd_backup_host_path.startswith('/home/core/')
+        fail_msg: A control-plane node and a safe /home/core backup path are required.
+
+  tasks:
+    - name: Run the OpenShift cluster backup script
+      ansible.builtin.command:
+        argv:
+          - oc
+          - debug
+          - "node/{{ etcd_backup_selected_node }}"
+          - --
+          - chroot
+          - /host
+          - /usr/local/bin/cluster-backup.sh
+          - "{{ etcd_backup_host_path }}"
+      register: etcd_backup_command
+      changed_when: true
+
+    - name: Verify backup artifacts on the selected node
+      ansible.builtin.command:
+        argv:
+          - oc
+          - debug
+          - "node/{{ etcd_backup_selected_node }}"
+          - --
+          - chroot
+          - /host
+          - /bin/bash
+          - -lc
+          - "test -s {{ etcd_backup_host_path }}/snapshot_*.db && test -s {{ etcd_backup_host_path }}/static_kuberesources_*.tar.gz"
+      changed_when: false
+
+    - name: Report backup location
+      ansible.builtin.debug:
+        msg:
+          node: "{{ etcd_backup_selected_node }}"
+          host_path: "{{ etcd_backup_host_path }}"
+          reminder: Copy the backup off the node to protected storage and test the documented restore procedure.
