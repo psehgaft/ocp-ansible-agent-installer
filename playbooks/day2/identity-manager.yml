@@ -1,0 +1,8 @@
+---
+- import_playbook: ldap.yml
+  when: identity_enable_ldap | default(false) | bool
+
+- import_playbook: htpasswd.yml
+  when: identity_enable_htpasswd | default(false) | bool
+
+- import_playbook: oauth.yml

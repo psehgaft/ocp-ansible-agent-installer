@@ -1,26 +1,212 @@
-= Cert Manager, PKI, LDAP, and OAuth
+= 4.3 Configure Identity Manager
 
-== PKI
+This section configures OpenShift authentication as an ordered Day-2 workflow. It supports LDAP or Active Directory, a local HTPasswd recovery provider, OAuth reconciliation, RBAC bindings, direct execution, manifest rendering, and GitOps delivery.
 
-Use cert-manager for Issuer, ClusterIssuer, and Certificate lifecycle where appropriate. Keep API and Ingress certificate configuration separate and validate trust chains before rollout.
+The implementation is intentionally split into independent playbooks:
+
+* `playbooks/day2/identity-manager.yml` orchestrates the enabled providers and final OAuth validation.
+* `playbooks/day2/ldap.yml` creates the LDAP bind secret, optional CA ConfigMap, and LDAP identity provider.
+* `playbooks/day2/htpasswd.yml` generates an HTPasswd file, creates the OpenShift secret, and registers the provider.
+* `playbooks/day2/oauth.yml` reconciles the OAuth resource, preserves unrelated providers, applies RBAC mappings, and validates the authentication operator.
+
+== Prerequisites
+
+* Log in with a user authorized to update `oauths.config.openshift.io/cluster` and resources in `openshift-config`.
+* Install the `kubernetes.core` and `community.general` collections.
+* Store bind passwords and local user passwords in Ansible Vault or an external secret manager.
+* Export `KUBECONFIG` for direct execution.
+* Back up the existing OAuth resource before making authentication changes.
 
 [source,bash]
 ----
-ansible-playbook playbooks/day2/cert-manager.yml
-ansible-playbook playbooks/day2/certificates.yml
-ansible-playbook playbooks/day2/trusted-ca.yml
+oc get oauth cluster -o yaml > oauth-cluster-before.yaml
+oc get clusteroperator authentication
+ansible-galaxy collection install -r collections/requirements.yml
 ----
 
-== OAuth and LDAP
+== 4.3.1 LDAP / IDP
 
-Configure OAuth identity providers from inventory variables or external secret references. Never store bind credentials in plaintext Git content.
+The LDAP workflow supports Active Directory and generic LDAP directories. It creates only the resources required by the provider and merges the provider into the existing OAuth configuration by provider name.
+
+Create an encrypted variables file:
 
 [source,bash]
 ----
-ansible-playbook playbooks/day2/oauth.yml
-ansible-playbook playbooks/day2/ldap.yml
-ansible-playbook playbooks/day2/ldap-group-sync.yml \
-  -e ldap_group_sync_test_mode=true
+mkdir -p inventories/lab/group_vars/all
+ansible-vault create inventories/lab/group_vars/all/identity-vault.yml
 ----
 
-The LDAP synchronization workflow includes least-privilege RBAC, a CronJob, concurrency controls, history limits, test mode, and a synchronization report. Validate identities, group membership, RBAC mappings, and OAuth operator health after every change.
+Use variables similar to the following:
+
+[source,yaml]
+----
+identity_enable_ldap: true
+
+ldap_provider_name: corporate-ldap
+ldap_mapping_method: claim
+ldap_bind_secret_name: corporate-ldap-bind
+ldap_ca_configmap_name: corporate-ldap-ca
+
+ldap_bind_dn: >-
+  CN=svc-openshift,OU=Service Accounts,DC=example,DC=com
+ldap_bind_password: "{{ vault_ldap_bind_password }}"
+ldap_url: >-
+  ldaps://ad.example.com/DC=example,DC=com?sAMAccountName?sub?(memberOf=CN=OpenShift-Users,OU=Groups,DC=example,DC=com)
+ldap_insecure: false
+ldap_ca_bundle: |
+  -----BEGIN CERTIFICATE-----
+  REPLACE_WITH_DIRECTORY_CA
+  -----END CERTIFICATE-----
+
+ldap_attributes:
+  id:
+    - dn
+  preferredUsername:
+    - sAMAccountName
+  name:
+    - displayName
+    - cn
+  email:
+    - mail
+----
+
+Run the provider workflow:
+
+[source,bash]
+----
+ansible-playbook -i inventories/lab/hosts.yml \
+  playbooks/day2/ldap.yml \
+  --ask-vault-pass
+----
+
+Validate the result:
+
+[source,bash]
+----
+oc get secret corporate-ldap-bind -n openshift-config
+oc get configmap corporate-ldap-ca -n openshift-config
+oc get oauth cluster -o jsonpath='{.spec.identityProviders[*].name}{"\n"}'
+oc get clusteroperator authentication
+oc logs -n openshift-authentication deploy/oauth-openshift --tail=100
+----
+
+Use `ldap_insecure: true` only for an explicitly approved lab using plain LDAP or an untrusted endpoint. Production deployments should use LDAPS or LDAP with a trusted CA bundle.
+
+== 4.3.2 HTPasswd
+
+HTPasswd provides a local recovery or bootstrap identity provider. It should not normally replace the enterprise identity provider. Passwords are read from encrypted variables, used to generate bcrypt hashes, and never written to Git in plaintext.
+
+Example encrypted variables:
+
+[source,yaml]
+----
+identity_enable_htpasswd: true
+htpasswd_provider_name: local-htpasswd
+htpasswd_secret_name: local-htpasswd
+htpasswd_mapping_method: claim
+
+htpasswd_users:
+  - name: ocp-admin
+    password: "{{ vault_ocp_admin_password }}"
+  - name: workshop-user
+    password: "{{ vault_workshop_user_password }}"
+
+oauth_rbac_bindings:
+  - apiVersion: rbac.authorization.k8s.io/v1
+    kind: ClusterRoleBinding
+    metadata:
+      name: ocp-admin-cluster-admin
+    roleRef:
+      apiGroup: rbac.authorization.k8s.io
+      kind: ClusterRole
+      name: cluster-admin
+    subjects:
+      - apiGroup: rbac.authorization.k8s.io
+        kind: User
+        name: ocp-admin
+----
+
+Run and validate:
+
+[source,bash]
+----
+ansible-playbook -i inventories/lab/hosts.yml \
+  playbooks/day2/htpasswd.yml \
+  --ask-vault-pass
+
+oc get secret local-htpasswd -n openshift-config
+oc get oauth cluster -o jsonpath='{.spec.identityProviders[*].name}{"\n"}'
+oc auth can-i '*' '*' --as=ocp-admin
+----
+
+Test authentication from a separate terminal so the current administrative session remains available for rollback:
+
+[source,bash]
+----
+oc login https://api.example.com:6443 \
+  -u ocp-admin \
+  -p '<password>'
+----
+
+== 4.3.3 OAuth Operator
+
+The OAuth workflow reconciles the cluster OAuth resource and waits for the `authentication` ClusterOperator to become Available and not Degraded. By default, providers are merged by `name`; providers managed by other teams are preserved.
+
+Run the final reconciliation and health validation:
+
+[source,bash]
+----
+ansible-playbook -i inventories/lab/hosts.yml \
+  playbooks/day2/oauth.yml \
+  --ask-vault-pass
+----
+
+Run the complete identity stack when both LDAP and HTPasswd are enabled:
+
+[source,bash]
+----
+ansible-playbook -i inventories/lab/hosts.yml \
+  playbooks/day2/identity-manager.yml \
+  --ask-vault-pass
+----
+
+For manifest rendering instead of direct cluster changes:
+
+[source,bash]
+----
+ansible-playbook playbooks/day2/identity-manager.yml \
+  -e platform_deployment_mode=render \
+  --ask-vault-pass
+
+find rendered/day2/identity -type f -maxdepth 2 -print
+----
+
+The rendered file can be committed only after replacing secret material with Sealed Secrets, External Secrets, SOPS-encrypted content, or another approved GitOps secret mechanism.
+
+== Troubleshooting and rollback
+
+Inspect operator state and recent authentication events:
+
+[source,bash]
+----
+oc describe clusteroperator authentication
+oc get pods -n openshift-authentication
+oc logs -n openshift-authentication deploy/oauth-openshift --tail=200
+oc get events -n openshift-authentication --sort-by=.lastTimestamp
+oc get oauth cluster -o yaml
+----
+
+Common failure patterns include a missing bind secret, an incorrect CA bundle, an invalid LDAP search URL, duplicate identity mappings, and an OAuth provider referencing a resource outside `openshift-config`.
+
+Rollback with the saved OAuth resource:
+
+[source,bash]
+----
+oc apply -f oauth-cluster-before.yaml
+oc get clusteroperator authentication -w
+----
+
+Do not delete the previous provider or current administrative session until the new provider has been tested successfully.
+
+[.text-center]
+xref:04-platform-operators.adoc[Next: Platform Operators,role=button]

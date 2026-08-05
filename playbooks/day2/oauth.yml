@@ -1,6 +1,34 @@
 ---
-- name: Configure OpenShift OAuth and RBAC mappings
+- name: Reconcile OpenShift OAuth and validate authentication operator
   hosts: localhost
   gather_facts: false
   roles:
     - role: day2_identity
+
+  post_tasks:
+    - name: Read OAuth cluster configuration
+      kubernetes.core.k8s_info:
+        api_version: config.openshift.io/v1
+        kind: OAuth
+        name: cluster
+      register: oauth_configuration
+
+    - name: Read authentication operator status
+      kubernetes.core.k8s_info:
+        api_version: config.openshift.io/v1
+        kind: ClusterOperator
+        name: authentication
+      register: authentication_operator
+
+    - name: Report configured identity providers
+      ansible.builtin.debug:
+        msg:
+          providers: >-
+            {{
+              oauth_configuration.resources[0].spec.identityProviders
+              | default([])
+              | map(attribute='name')
+              | list
+            }}
+          authentication_conditions: >-
+            {{ authentication_operator.resources[0].status.conditions | default([]) }}
