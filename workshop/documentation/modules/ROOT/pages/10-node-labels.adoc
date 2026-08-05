@@ -1,0 +1,63 @@
+= Module 4 Lab 2: Assign Node Labels
+
+*Execution order:* Run after NTP MachineConfigPools are stable and before deploying workloads that depend on node selectors, tolerations, or infrastructure placement.
+
+*Playbook:* `playbooks/day2/node-labels.yml`
+
+*Supported modes:* `direct`, `render`, and `gitops`.
+
+== Required variables
+
+[cols="1,1,3",options="header"]
+|===
+|Variable |Required |Purpose
+|`day2_deployment_mode` |Yes |`direct`, `render`, or `gitops`.
+|`node_label_assignments` |Yes |List of node names and label maps.
+|===
+
+== Policy variables
+
+[cols="1,3",options="header"]
+|===
+|Variable |Purpose
+|`node_label_allowed_prefixes` |Allowlist for label keys. Defaults include Kubernetes, OpenShift, topology, workload, and node-role prefixes.
+|`node_label_protected_keys` |Keys that cannot be changed, including hostname, OS, and architecture identity labels.
+|`node_label_require_existing_nodes` |Fails direct execution when a referenced node does not exist.
+|===
+
+== Example: infrastructure nodes
+
+[source,yaml]
+----
+day2_deployment_mode: direct
+node_label_assignments:
+  - name: worker-0
+    labels:
+      node-role.kubernetes.io/infra: ""
+      workload.openshift.io/router: "true"
+  - name: worker-1
+    labels:
+      node-role.kubernetes.io/infra: ""
+      workload.openshift.io/monitoring: "true"
+----
+
+== Execute
+
+[source,bash]
+----
+ansible-playbook playbooks/day2/node-labels.yml \
+  -e @inventories/lab/group_vars/node-labels.yml
+----
+
+== Verification
+
+[source,bash]
+----
+oc get nodes --show-labels
+oc get nodes -l node-role.kubernetes.io/infra
+----
+
+Do not move ingress, monitoring, or registry workloads until the expected infra nodes are `Ready` and their labels are visible.
+
+[.text-center]
+xref:11-oadp.adoc[Next: Deploy OADP,role=button]
