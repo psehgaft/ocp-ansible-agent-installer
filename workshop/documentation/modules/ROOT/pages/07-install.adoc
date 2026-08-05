@@ -41,3 +41,6 @@ ClusterVersion is Available, nodes are Ready, operators are healthy, and virtual
 == Conclusion
 
 You installed and validated OpenShift on mixed-vendor bare metal.
+
+[.text-center]
+xref:09-ntp.adoc[Next: Configure NTP,role=button]
