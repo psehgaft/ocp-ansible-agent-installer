@@ -1,0 +1,71 @@
+---
+- name: Validate NTP inputs
+  ansible.builtin.assert:
+    that:
+      - day2_deployment_mode in ['direct', 'render', 'gitops']
+      - ntp_node_roles is sequence
+      - ntp_node_roles | length > 0
+      - not ntp_validate_nonempty_sources or (ntp_servers | length + ntp_pools | length) > 0
+      - ntp_node_roles | difference(['master', 'worker', 'infra']) | length == 0
+    fail_msg: >-
+      Invalid NTP configuration. Define at least one ntp_servers or ntp_pools entry
+      and use only master, worker, or infra node roles.
+
+- name: Build Chrony configuration
+  ansible.builtin.set_fact:
+    ntp_chrony_lines: >-
+      {{
+        (ntp_servers | map('regex_replace', '^(.*)$', 'server \\1' ~ (' iburst' if ntp_iburst else '')) | list)
+        + (ntp_pools | map('regex_replace', '^(.*)$', 'pool \\1' ~ (' iburst' if ntp_iburst else '')) | list)
+        + ['driftfile /var/lib/chrony/drift', 'makestep ' ~ ntp_makestep]
+        + (['rtcsync'] if ntp_rtcsync else [])
+      }}
+
+- name: Initialize NTP MachineConfig resources
+  ansible.builtin.set_fact:
+    ntp_resources: []
+
+- name: Build NTP MachineConfig resources
+  ansible.builtin.set_fact:
+    ntp_resources: "{{ ntp_resources + [ntp_machineconfig] }}"
+  vars:
+    ntp_machineconfig:
+      apiVersion: machineconfiguration.openshift.io/v1
+      kind: MachineConfig
+      metadata:
+        name: "{{ ntp_machineconfig_prefix }}-{{ item }}"
+        labels:
+          "machineconfiguration.openshift.io/role": "{{ item }}"
+      spec:
+        config:
+          ignition:
+            version: 3.4.0
+          storage:
+            files:
+              - path: /etc/chrony.conf
+                mode: 420
+                overwrite: true
+                contents:
+                  source: "data:text/plain;charset=utf-8;base64,{{ (ntp_chrony_lines | join('\n') ~ '\n') | b64encode }}"
+  loop: "{{ ntp_node_roles }}"
+
+- name: Apply NTP resources directly
+  kubernetes.core.k8s:
+    state: present
+    definition: "{{ item }}"
+  loop: "{{ ntp_resources }}"
+  when: day2_deployment_mode == 'direct'
+
+- name: Create NTP render directory
+  ansible.builtin.file:
+    path: "{{ day2_render_root }}/day2/ntp"
+    state: directory
+    mode: '0750'
+  when: day2_deployment_mode in ['render', 'gitops']
+
+- name: Render NTP desired state
+  ansible.builtin.copy:
+    dest: "{{ day2_render_root }}/day2/ntp/resources.yml"
+    content: "{{ ntp_resources | to_nice_yaml(indent=2, explicit_start=True) }}"
+    mode: '0640'
+  when: day2_deployment_mode in ['render', 'gitops']

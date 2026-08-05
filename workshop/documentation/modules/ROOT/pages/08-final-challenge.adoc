@@ -16,10 +16,17 @@ A mixed cluster has three problems:
 . Repeat read-only discovery.
 . Repeat the one-host virtual-media test.
 . Resume installation only after all blocking conditions are understood.
+. Verify NTP sources and MachineConfigPool stability.
+. Verify node role labels and placement selectors.
+. Verify OADP operator, DPA, and BackupStorageLocation readiness.
 
 == Completion Criteria
 
 * Both vendors pass discovery and virtual-media tests.
 * All MAC mappings are deterministic.
 * All blocking validations are resolved.
+* NTP, node labels, and OADP are healthy.
 * Secrets and artifacts remain outside Git.
+
+[.text-center]
+xref:appendix.adoc[Next: Appendix and Troubleshooting,role=button]

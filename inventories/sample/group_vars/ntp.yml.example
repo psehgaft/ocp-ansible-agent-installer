@@ -1,0 +1,12 @@
+---
+day2_deployment_mode: direct
+ntp_servers:
+  - 10.20.30.10
+  - 10.20.30.11
+ntp_pools: []
+ntp_node_roles:
+  - master
+  - worker
+ntp_iburst: true
+ntp_makestep: "1.0 3"
+ntp_rtcsync: true

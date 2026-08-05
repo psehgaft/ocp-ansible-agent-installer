@@ -1,0 +1,11 @@
+---
+day2_deployment_mode: direct
+node_label_assignments:
+  - name: worker-0
+    labels:
+      node-role.kubernetes.io/infra: ""
+      workload.openshift.io/router: "true"
+  - name: worker-1
+    labels:
+      node-role.kubernetes.io/infra: ""
+      workload.openshift.io/monitoring: "true"

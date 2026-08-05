@@ -1,0 +1,89 @@
+---
+- name: Validate OADP inputs
+  ansible.builtin.assert:
+    that:
+      - day2_deployment_mode in ['direct', 'render', 'gitops']
+      - oadp_namespace | length > 0
+      - oadp_subscription_channel | length > 0
+      - oadp_credentials_secret_name | length > 0
+      - not oadp_require_backup_location or oadp_backup_bucket | length > 0
+      - not oadp_require_backup_location or oadp_backup_endpoint | length > 0
+    fail_msg: >-
+      Invalid OADP configuration. Define the namespace, subscription channel,
+      existing credential Secret name, backup bucket, and endpoint.
+
+- name: Build OADP resources
+  ansible.builtin.set_fact:
+    oadp_resources:
+      - apiVersion: v1
+        kind: Namespace
+        metadata:
+          name: "{{ oadp_namespace }}"
+      - apiVersion: operators.coreos.com/v1
+        kind: OperatorGroup
+        metadata:
+          name: "{{ oadp_operator_group_name }}"
+          namespace: "{{ oadp_namespace }}"
+        spec:
+          targetNamespaces:
+            - "{{ oadp_namespace }}"
+      - apiVersion: operators.coreos.com/v1alpha1
+        kind: Subscription
+        metadata:
+          name: "{{ oadp_subscription_name }}"
+          namespace: "{{ oadp_namespace }}"
+        spec:
+          channel: "{{ oadp_subscription_channel }}"
+          installPlanApproval: "{{ oadp_install_plan_approval }}"
+          name: redhat-oadp-operator
+          source: "{{ oadp_subscription_source }}"
+          sourceNamespace: "{{ oadp_subscription_source_namespace }}"
+      - apiVersion: oadp.openshift.io/v1alpha1
+        kind: DataProtectionApplication
+        metadata:
+          name: "{{ oadp_dpa_name }}"
+          namespace: "{{ oadp_namespace }}"
+        spec:
+          backupLocations:
+            - velero:
+                provider: "{{ oadp_backup_provider }}"
+                default: true
+                credential:
+                  name: "{{ oadp_credentials_secret_name }}"
+                  key: "{{ oadp_credentials_secret_key }}"
+                objectStorage:
+                  bucket: "{{ oadp_backup_bucket }}"
+                  prefix: "{{ oadp_backup_prefix }}"
+                config:
+                  region: "{{ oadp_backup_region }}"
+                  s3Url: "{{ oadp_backup_endpoint }}"
+                  s3ForcePathStyle: "{{ oadp_backup_force_path_style | string | lower }}"
+          snapshotLocations: "{{ oadp_snapshot_locations }}"
+          configuration:
+            velero:
+              defaultPlugins: "{{ oadp_velero_plugins }}"
+            restic:
+              enable: "{{ oadp_restic_enabled }}"
+            nodeAgent:
+              enable: "{{ oadp_node_agent_enabled }}"
+
+- name: Apply OADP resources directly
+  kubernetes.core.k8s:
+    state: present
+    definition: "{{ item }}"
+  loop: "{{ oadp_resources }}"
+  when: day2_deployment_mode == 'direct'
+
+- name: Create OADP render directory
+  ansible.builtin.file:
+    path: "{{ day2_render_root }}/day2/oadp"
+    state: directory
+    mode: '0750'
+  when: day2_deployment_mode in ['render', 'gitops']
+
+- name: Render OADP desired state
+  ansible.builtin.copy:
+    dest: "{{ day2_render_root }}/day2/oadp/resources.yml"
+    content: "{{ oadp_resources | to_nice_yaml(indent=2, explicit_start=True) }}"
+    mode: '0640'
+  when: day2_deployment_mode in ['render', 'gitops']

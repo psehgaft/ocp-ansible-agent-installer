@@ -1,0 +1,81 @@
+= Module 4 Lab 3: Deploy OADP
+
+*Execution order:* Run after foundational node configuration and labels are stable, storage access is validated, and the object-storage credential Secret already exists.
+
+*Playbook:* `playbooks/day2/oadp.yml`
+
+*Supported modes:* `direct`, `render`, and `gitops`.
+
+== Required variables
+
+[cols="1,1,3",options="header"]
+|===
+|Variable |Required |Purpose
+|`day2_deployment_mode` |Yes |`direct`, `render`, or `gitops`.
+|`oadp_backup_bucket` |Yes |Object-storage bucket used by Velero.
+|`oadp_backup_endpoint` |Yes |S3-compatible endpoint URL.
+|`oadp_credentials_secret_name` |Yes |Existing Secret containing the object-storage credentials.
+|`oadp_credentials_secret_key` |Yes |Key inside the Secret, normally `cloud`.
+|===
+
+== Common optional variables
+
+`oadp_namespace`, `oadp_subscription_channel`, `oadp_install_plan_approval`, `oadp_backup_provider`, `oadp_backup_prefix`, `oadp_backup_region`, `oadp_backup_force_path_style`, `oadp_velero_plugins`, `oadp_snapshot_locations`, `oadp_restic_enabled`, and `oadp_node_agent_enabled`.
+
+== Create the credential Secret outside Git
+
+[source,bash]
+----
+oc create namespace openshift-adp --dry-run=client -o yaml | oc apply -f -
+oc -n openshift-adp create secret generic cloud-credentials \
+  --from-file=cloud=/secure/path/cloud-credentials \
+  --dry-run=client -o yaml | oc apply -f -
+----
+
+Do not commit the credential file or the generated Secret manifest.
+
+== Example variables
+
+[source,yaml]
+----
+day2_deployment_mode: direct
+oadp_namespace: openshift-adp
+oadp_subscription_channel: stable-1.5
+oadp_install_plan_approval: Automatic
+oadp_dpa_name: cluster-dpa
+oadp_backup_provider: aws
+oadp_backup_bucket: ocp-backups
+oadp_backup_prefix: production
+oadp_backup_region: minio
+oadp_backup_endpoint: https://s3.example.com
+oadp_backup_force_path_style: true
+oadp_credentials_secret_name: cloud-credentials
+oadp_credentials_secret_key: cloud
+oadp_velero_plugins:
+  - openshift
+  - aws
+oadp_restic_enabled: true
+oadp_node_agent_enabled: true
+----
+
+== Execute
+
+[source,bash]
+----
+ansible-playbook playbooks/day2/oadp.yml \
+  -e @inventories/lab/group_vars/oadp.yml
+----
+
+== Verification
+
+[source,bash]
+----
+oc -n openshift-adp get subscription,csv,deployments,pods
+oc -n openshift-adp get dataprotectionapplication
+oc -n openshift-adp get backupstoragelocation
+----
+
+The OADP CSV must be `Succeeded`, the DPA must reconcile successfully, and the default BackupStorageLocation must report `Available` before creating backup schedules.
+
+[.text-center]
+xref:08-final-challenge.adoc[Next: Final Validation Challenge,role=button]

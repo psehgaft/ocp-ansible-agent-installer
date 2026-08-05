@@ -45,3 +45,6 @@ The image is mounted for one boot, then removed, without changing persistent boo
 == Conclusion
 
 You validated virtual media before applying it to the cluster.
+
+[.text-center]
+xref:06-discovery-iso.adoc[Next: Create the Discovery ISO,role=button]

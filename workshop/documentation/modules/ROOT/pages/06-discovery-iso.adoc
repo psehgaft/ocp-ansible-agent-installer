@@ -32,3 +32,6 @@ All hosts mount the ISO, boot the discovery environment, and begin registering w
 == Conclusion
 
 You booted one discovery workflow across HPE and Dell hardware.
+
+[.text-center]
+xref:07-install.adoc[Next: Install OpenShift,role=button]

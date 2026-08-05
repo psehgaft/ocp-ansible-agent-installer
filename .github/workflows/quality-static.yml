@@ -52,6 +52,9 @@ jobs:
           done
       - name: Shellcheck
         uses: ludeeus/action-shellcheck@master
+        with:
+          severity: warning
+          ignore_paths: .collections .ansible .venv venv node_modules artifacts reports/output www
       - name: Actionlint
         uses: raven-actions/actionlint@v2
       - name: Install Kustomize

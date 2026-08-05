@@ -1,0 +1,7 @@
+---
+# Required input contract: ntp_servers or ntp_pools, ntp_node_roles, day2_deployment_mode.
+- name: Configure OpenShift NTP with MachineConfig
+  hosts: localhost
+  gather_facts: false
+  roles:
+    - role: day2_ntp

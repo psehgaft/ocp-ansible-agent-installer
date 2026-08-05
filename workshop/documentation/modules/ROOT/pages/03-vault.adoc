@@ -38,3 +38,6 @@ git check-ignore -v inventories/lab/group_vars/vault.yml
 == Conclusion
 
 Credentials are encrypted and excluded from Git.
+
+[.text-center]
+xref:04-discovery.adoc[Next: Discover BMCs,role=button]

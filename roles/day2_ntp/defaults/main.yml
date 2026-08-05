@@ -1,0 +1,13 @@
+---
+day2_deployment_mode: direct
+day2_render_root: "{{ playbook_dir }}/../../rendered"
+ntp_node_roles:
+  - master
+  - worker
+ntp_servers: []
+ntp_pools: []
+ntp_iburst: true
+ntp_makestep: "1.0 3"
+ntp_rtcsync: true
+ntp_machineconfig_prefix: 99-chrony
+ntp_validate_nonempty_sources: true

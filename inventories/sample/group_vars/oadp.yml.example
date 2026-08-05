@@ -1,0 +1,19 @@
+---
+day2_deployment_mode: direct
+oadp_namespace: openshift-adp
+oadp_subscription_channel: stable-1.5
+oadp_install_plan_approval: Automatic
+oadp_dpa_name: cluster-dpa
+oadp_backup_provider: aws
+oadp_backup_bucket: ocp-backups
+oadp_backup_prefix: production
+oadp_backup_region: minio
+oadp_backup_endpoint: https://s3.example.com
+oadp_backup_force_path_style: true
+oadp_credentials_secret_name: cloud-credentials
+oadp_credentials_secret_key: cloud
+oadp_velero_plugins:
+  - openshift
+  - aws
+oadp_restic_enabled: true
+oadp_node_agent_enabled: true

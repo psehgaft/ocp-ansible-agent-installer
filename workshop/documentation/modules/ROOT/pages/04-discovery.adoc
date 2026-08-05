@@ -47,3 +47,6 @@ Every host reports the expected vendor, model, serial number, NICs, and provisio
 == Conclusion
 
 You validated the hardware identity used by Assisted Installer host matching.
+
+[.text-center]
+xref:05-virtual-media.adoc[Next: Validate Virtual Media,role=button]
