@@ -36,6 +36,7 @@
 *** xref:ARCHITECTURE:04-platform-operators.adoc#aap[4.4.6 Ansible Automation Platform]
 *** xref:ARCHITECTURE:04-platform-operators.adoc#cert-manager[4.4.7 cert-manager Operator]
 *** xref:ARCHITECTURE:04-platform-operators.adoc#pki[4.4.8 Platform PKI and Trust]
+**** xref:13-install-api-ingress-certificates.adoc[4.4.8.1 Custom API and Ingress Certificates]
 *** xref:ARCHITECTURE:04-platform-operators.adoc#quay[4.4.9 Quay and Registry Services]
 *** xref:ARCHITECTURE:04-platform-operators.adoc#networking[4.4.10 Network Foundation Operators]
 *** xref:ARCHITECTURE:04-platform-operators.adoc#monitoring[4.4.11 Platform Monitoring]
