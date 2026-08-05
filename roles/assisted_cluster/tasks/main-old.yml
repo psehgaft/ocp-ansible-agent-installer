@@ -67,7 +67,6 @@
         return_content: true
       register: _infraenv
 
-
     - name: "Persist infra-env creation response"
       ansible.builtin.copy:
         dest: "{{ artifacts_dir }}/{{ cluster_name }}/raw/infraenv-create-response.json"
@@ -102,8 +101,8 @@
     discovery_iso_url: "{{ (_iso_url.json.url | default(_iso_url.content | trim)) }}"
   no_log: true
 
-#- name: "Persist ISO URL"
-#  ansible.builtin.copy:
-#    dest: "{{ artifacts_dir }}/{{ cluster_name }}/raw/discovery-iso-url.json"
-#    content: "{{ {'discovery_iso_url': discovery_iso_url, 'infra_env_id': infra_env_id, 'cluster_id': cluster_id} | to_nice_json }}"
-#  delegate_to: localhost
+# - name: "Persist ISO URL"
+#   ansible.builtin.copy:
+#     dest: "{{ artifacts_dir }}/{{ cluster_name }}/raw/discovery-iso-url.json"
+#     content: "{{ {'discovery_iso_url': discovery_iso_url, 'infra_env_id': infra_env_id, 'cluster_id': cluster_id} | to_nice_json }}"
+#   delegate_to: localhost

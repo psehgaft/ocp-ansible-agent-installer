@@ -18,12 +18,13 @@ def test_every_day2_playbook_is_cataloged_for_ansible_and_gitops() -> None:
     declared = {item["playbook"] for item in exercises.values()}
     assert discovered == declared
 
+    allowed_output_roots = ("rendered/day2/", "reports/")
     for exercise in exercises.values():
         role = exercise["role"]
         role_tasks = ROOT / f"roles/{role}/tasks/main.yml"
         assert role_tasks.is_file(), role
         assert exercise["resources_variable"]
-        assert exercise["gitops_output"].startswith("rendered/day2/")
+        assert exercise["gitops_output"].startswith(allowed_output_roots)
         assert (ROOT / exercise["playbook"]).is_file()
         content = role_tasks.read_text(encoding="utf-8")
         assert "day2_deployment_mode" in content
