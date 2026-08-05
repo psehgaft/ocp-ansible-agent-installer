@@ -1,0 +1,15 @@
+---
+day2_deployment_mode: direct
+day2_render_root: "{{ playbook_dir }}/../../rendered"
+node_label_assignments: []
+node_label_allowed_prefixes:
+  - node-role.kubernetes.io/
+  - topology.kubernetes.io/
+  - kubernetes.io/
+  - openshift.io/
+  - workload.openshift.io/
+node_label_protected_keys:
+  - kubernetes.io/hostname
+  - kubernetes.io/os
+  - kubernetes.io/arch
+node_label_require_existing_nodes: true
