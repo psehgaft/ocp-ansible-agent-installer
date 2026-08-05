@@ -1,0 +1,83 @@
+---
+- name: Install and configure a platform operator bundle
+  hosts: localhost
+  gather_facts: false
+  connection: local
+  vars:
+    platform_operator_components: []
+    platform_operator_resources: []
+    platform_operator_deployment_mode: "{{ platform_deployment_mode | default('direct') }}"
+    platform_operator_render_root: "{{ playbook_dir }}/../../rendered/day2/platform-operators"
+  pre_tasks:
+    - name: Validate platform operator bundle inputs
+      ansible.builtin.assert:
+        that:
+          - platform_operator_deployment_mode in ['direct', 'render', 'gitops']
+          - platform_operator_components is sequence
+          - platform_operator_resources is sequence
+          - platform_operator_components | length > 0 or platform_operator_resources | length > 0
+        fail_msg: Define at least one catalog component or one operand/resource manifest.
+
+    - name: Create platform operator render directory
+      ansible.builtin.file:
+        path: "{{ platform_operator_render_root }}"
+        state: directory
+        mode: '0750'
+      when: platform_operator_deployment_mode in ['render', 'gitops']
+
+  tasks:
+    - name: Validate catalog component
+      ansible.builtin.include_role:
+        name: operator_catalog_validation
+      vars:
+        operator_lifecycle_component: "{{ platform_operator_component }}"
+        operator_lifecycle_deployment_mode: "{{ platform_operator_deployment_mode }}"
+      loop: "{{ platform_operator_components }}"
+      loop_control:
+        loop_var: platform_operator_component
+        label: "{{ platform_operator_component }}"
+
+    - name: Install or render catalog component
+      ansible.builtin.include_role:
+        name: operator_lifecycle
+      vars:
+        operator_lifecycle_component: "{{ platform_operator_component }}"
+        operator_lifecycle_deployment_mode: "{{ platform_operator_deployment_mode }}"
+      loop: "{{ platform_operator_components }}"
+      loop_control:
+        loop_var: platform_operator_component
+        label: "{{ platform_operator_component }}"
+
+    - name: Apply operator operands and supporting resources
+      kubernetes.core.k8s:
+        state: present
+        definition: "{{ platform_operator_resource }}"
+      loop: "{{ platform_operator_resources }}"
+      loop_control:
+        loop_var: platform_operator_resource
+        label: >-
+          {{ platform_operator_resource.kind | default('resource') }}/
+          {{ platform_operator_resource.metadata.name | default('unnamed') }}
+      when: platform_operator_deployment_mode == 'direct'
+
+    - name: Render operator operands and supporting resources
+      ansible.builtin.copy:
+        dest: "{{ platform_operator_render_root }}/resources.yml"
+        content: "{{ platform_operator_resources | to_nice_yaml(indent=2, explicit_start=True) }}"
+        mode: '0640'
+      when:
+        - platform_operator_deployment_mode in ['render', 'gitops']
+        - platform_operator_resources | length > 0
+
+    - name: Collect catalog component results
+      ansible.builtin.set_fact:
+        platform_operator_bundle_result:
+          deployment_mode: "{{ platform_operator_deployment_mode }}"
+          components: "{{ platform_operator_components }}"
+          resource_count: "{{ platform_operator_resources | length }}"
+          render_path: >-
+            {{ platform_operator_render_root if platform_operator_deployment_mode in ['render', 'gitops'] else '' }}
+
+    - name: Display platform operator bundle result
+      ansible.builtin.debug:
+        var: platform_operator_bundle_result
