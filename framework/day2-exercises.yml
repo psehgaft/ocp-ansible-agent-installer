@@ -16,12 +16,15 @@ exercises:
   node_configuration: {playbook: playbooks/day2/node-configuration.yml, role: day2_cluster_operations, resources_variable: node_configuration_resources, gitops_output: rendered/day2/node-configuration}
   machineconfig: {playbook: playbooks/day2/machineconfig.yml, role: day2_cluster_operations, resources_variable: machineconfig_resources, gitops_output: rendered/day2/machineconfig}
   chrony: {playbook: playbooks/day2/chrony.yml, role: day2_cluster_operations, resources_variable: chrony_resources, gitops_output: rendered/day2/chrony}
+  ntp: {playbook: playbooks/day2/ntp.yml, role: day2_ntp, resources_variable: ntp_servers, gitops_output: rendered/day2/ntp}
+  node_labels: {playbook: playbooks/day2/node-labels.yml, role: day2_node_labels, resources_variable: node_label_assignments, gitops_output: rendered/day2/node-labels}
   monitoring: {playbook: playbooks/day2/monitoring.yml, role: day2_operational_workflow, resources_variable: monitoring_resources, gitops_output: rendered/day2/monitoring}
   alertmanager: {playbook: playbooks/day2/alertmanager.yml, role: day2_operational_workflow, resources_variable: alertmanager_resources, gitops_output: rendered/day2/alertmanager}
   user_workload_monitoring: {playbook: playbooks/day2/user-workload-monitoring.yml, role: day2_operational_workflow, resources_variable: user_workload_monitoring_resources, gitops_output: rendered/day2/user-workload-monitoring}
   logging: {playbook: playbooks/day2/logging.yml, role: day2_operational_workflow, resources_variable: logging_resources, gitops_output: rendered/day2/logging}
   loki: {playbook: playbooks/day2/loki.yml, role: day2_operational_workflow, resources_variable: loki_resources, gitops_output: rendered/day2/loki}
   backup_oadp: {playbook: playbooks/day2/backup-oadp.yml, role: day2_operational_workflow, resources_variable: backup_oadp_resources, gitops_output: rendered/day2/backup-oadp}
+  oadp: {playbook: playbooks/day2/oadp.yml, role: day2_oadp, resources_variable: oadp_backup_bucket, gitops_output: rendered/day2/oadp}
   upgrade_prechecks: {playbook: playbooks/day2/upgrade-prechecks.yml, role: day2_operational_workflow, resources_variable: upgrade_precheck_resources, gitops_output: rendered/day2/upgrade-prechecks}
   certificate_audit: {playbook: playbooks/day2/certificate-audit.yml, role: day2_operational_workflow, resources_variable: certificate_audit_resources, gitops_output: rendered/day2/certificate-audit}
   etcd_health: {playbook: playbooks/day2/etcd-health.yml, role: day2_operational_workflow, resources_variable: etcd_health_resources, gitops_output: rendered/day2/etcd-health}
