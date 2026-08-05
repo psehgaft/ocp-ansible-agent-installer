@@ -22,4 +22,7 @@ rules:
     level: warning
   document-start: disable
   truthy:
-    allowed-values: ['true', 'false']
+    allowed-values:
+      - 'true'
+      - 'false'
+      - 'on'
