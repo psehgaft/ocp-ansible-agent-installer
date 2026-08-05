@@ -1,0 +1,42 @@
+---
+- name: Collect OpenShift must-gather diagnostics
+  hosts: localhost
+  gather_facts: false
+  connection: local
+  vars:
+    must_gather_output_root: "{{ playbook_dir }}/../../reports/must-gather"
+    must_gather_case_id: "{{ lookup('pipe', 'date +%Y%m%d-%H%M%S') }}"
+    must_gather_images: []
+  tasks:
+    - name: Create the must-gather output directory
+      ansible.builtin.file:
+        path: "{{ must_gather_output_root }}/{{ must_gather_case_id }}"
+        state: directory
+        mode: '0700'
+
+    - name: Collect the standard OpenShift must-gather
+      ansible.builtin.command:
+        argv:
+          - oc
+          - adm
+          - must-gather
+          - "--dest-dir={{ must_gather_output_root }}/{{ must_gather_case_id }}/cluster"
+      changed_when: true
+
+    - name: Collect optional operator-specific must-gathers
+      ansible.builtin.command:
+        argv:
+          - oc
+          - adm
+          - must-gather
+          - "--image={{ must_gather_image }}"
+          - "--dest-dir={{ must_gather_output_root }}/{{ must_gather_case_id }}/operators/{{ must_gather_image | regex_replace('[^A-Za-z0-9_.-]', '_') }}"
+      loop: "{{ must_gather_images }}"
+      loop_control:
+        loop_var: must_gather_image
+        label: "{{ must_gather_image }}"
+      changed_when: true
+
+    - name: Report must-gather location
+      ansible.builtin.debug:
+        msg: "Must-gather evidence: {{ must_gather_output_root }}/{{ must_gather_case_id }}"

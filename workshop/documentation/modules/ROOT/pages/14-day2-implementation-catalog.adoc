@@ -1,0 +1,118 @@
+= 4.5 Complete Day-2 Implementation Catalog
+
+This lesson validates that every required Day-2 capability has a canonical playbook and an operational procedure. The catalog is complementary: existing workflows not listed here remain part of the framework.
+
+== 4.5.1 Health, backup, and evidence
+
+[source,bash]
+----
+ansible-playbook playbooks/day2/cluster-health.yml
+ansible-playbook playbooks/day2/etcd-backup.yml -e etcd_backup_confirm=true
+ansible-playbook playbooks/day2/must-gather.yml
+----
+
+Run health checks before and after disruptive changes. Copy etcd backups off the selected control-plane node to protected storage. A must-gather is diagnostic evidence, not a backup.
+
+== 4.5.2 Certificates and identity
+
+[source,bash]
+----
+ansible-playbook playbooks/day2/install_certs.yml \
+  -e CERT_INSTALL_MODE=validate \
+  -e WILDCARD_CER=/secure/apps.crt \
+  -e WILDCARD_KEY=/secure/apps.key \
+  -e API_CER=/secure/api.crt \
+  -e API_KEY=/secure/api.key \
+  -e API_DOMAIN=api.cluster.example.com \
+  -e INGRESS_DOMAIN='*.apps.cluster.example.com'
+
+ansible-playbook playbooks/day2/identity-manager.yml --ask-vault-pass
+ansible-playbook playbooks/day2/ldap-group-sync.yml --ask-vault-pass
+ansible-playbook playbooks/day2/cluster-admin-rbac.yml \
+  -e '{"cluster_admin_groups":["openshift-cluster-admins"]}'
+----
+
+Use group-based administration where possible. Preserve a tested break-glass identity during IDP transitions.
+
+== 4.5.3 Storage and OADP
+
+Use `storage.yml` and `odf-day2.yml` for ODF, `platform-csi-drivers.yml` for vendor CSI resources, and the OADP workflows for backup and restore. Prove recovery with a test Backup and Restore; a successful Backup object without a restore test is insufficient evidence.
+
+== 4.5.4 Nodes and capacity
+
+Use `node-labels.yml`, `platform-baremetal.yml`, `acm-bmh-static-networking.yml`, `node-configuration.yml`, and `machineconfig.yml`. Validate capacity, disruption budgets, MCP convergence, BMC access, and rollback before moving to the next node wave.
+
+== 4.5.5 Platform and user-workload observability
+
+[source,bash]
+----
+ansible-playbook playbooks/day2/platform-observability-stack.yml \
+  -e @inventories/lab/group_vars/all/observability.yml
+----
+
+The input resources must cover:
+
+* `cluster-monitoring-config` with `enableUserWorkload: true` where required.
+* Persistent storage for Prometheus and Thanos.
+* Alertmanager routing and protected receiver credentials.
+* LokiStack object storage and retention.
+* ClusterLogForwarder inputs, outputs, pipelines, and TLS.
+
+Validate targets, alerts, PVC usage, collector backpressure, and remote destinations.
+
+== 4.5.6 Compliance, vulnerability, and file auditing
+
+[source,bash]
+----
+ansible-playbook playbooks/day2/compliance.yml \
+  -e @inventories/lab/group_vars/all/compliance.yml
+
+ansible-playbook playbooks/day2/file-integrity.yml \
+  -e @inventories/lab/group_vars/all/file-integrity.yml
+
+ansible-playbook playbooks/day2/acs-policies.yml \
+  -e @inventories/lab/group_vars/all/acs.yml
+----
+
+Review the current catalog package and channel before defining OLM resources. Schedule scans to avoid capacity peaks and document exception handling, remediation ownership, and evidence retention.
+
+== 4.5.7 Multicluster observability
+
+Use `multicluster-observability.yml` with an object-storage Secret reference and a `MultiClusterObservability` custom resource. Validate hub observability pods, managed-cluster metrics collection, Thanos object storage, retention, and query availability.
+
+== 4.5.8 GitOps application lifecycle
+
+[source,bash]
+----
+ansible-playbook playbooks/day2/gitops-application-lifecycle.yml \
+  -e platform_deployment_mode=direct \
+  -e @inventories/lab/group_vars/all/gitops-applications.yml
+
+ansible-playbook playbooks/gitops-foundation.yml \
+  -e gitops_foundation_mode=render \
+  -e gitops_foundation_environment=production
+----
+
+Create the remote repository through the approved Git provider process, protect the default branch, configure credentials outside Git, then push the reviewed rendered tree. Validate AppProject boundaries, destinations, sync waves, health, prune behavior, and rollback.
+
+== 4.5.9 Submariner and multicluster networking
+
+Use `submariner.yml` with explicit ACM add-on, SubmarinerConfig, Broker, Placement, and optional PlacementRule resources. Before deployment, coordinate external firewall changes:
+
+* UDP 500 and 4500 for IPsec, or UDP 51820 for WireGuard.
+* Product-required API, broker, health-check, and gateway traffic.
+
+Do not attempt to hide external firewall changes inside a Kubernetes manifest. Validate non-overlapping pod and service CIDRs, MTU, NAT traversal, gateway node labels, broker connectivity, cable-driver health, and cross-cluster ServiceImport access.
+
+== Completion criteria
+
+The Day-2 implementation is complete when every enabled capability has:
+
+* A canonical playbook and reviewed variables file.
+* Direct or GitOps execution evidence.
+* Health and readiness validation.
+* Secret-management and rollback procedures.
+* Capacity and operational ownership.
+* A post-change health report and retained diagnostic evidence.
+
+See `docs/day2-implementation-catalog.md` for the complete playbook matrix, including existing capabilities not repeated in this lesson.

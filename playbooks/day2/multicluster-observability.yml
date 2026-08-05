@@ -1,0 +1,7 @@
+---
+- name: Configure ACM multicluster observability aggregation
+  ansible.builtin.import_playbook: platform-operator-bundle.yml
+  vars:
+    platform_operator_components: []
+    platform_operator_resources: "{{ multicluster_observability_resources }}"
+    platform_operator_render_root: "{{ playbook_dir }}/../../rendered/day2/acm/multicluster-observability"

@@ -1,0 +1,8 @@
+---
+- name: Install OpenShift GitOps and configure application lifecycle resources
+  ansible.builtin.import_playbook: platform-operator-bundle.yml
+  vars:
+    platform_operator_components:
+      - gitops
+    platform_operator_resources: "{{ gitops_application_resources | default([]) }}"
+    platform_operator_render_root: "{{ playbook_dir }}/../../rendered/day2/gitops/application-lifecycle"

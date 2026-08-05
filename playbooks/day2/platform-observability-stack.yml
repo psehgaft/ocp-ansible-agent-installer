@@ -1,0 +1,15 @@
+---
+- name: Configure platform monitoring
+  ansible.builtin.import_playbook: monitoring.yml
+
+- name: Enable and configure user workload monitoring
+  ansible.builtin.import_playbook: user-workload-monitoring.yml
+
+- name: Configure Alertmanager
+  ansible.builtin.import_playbook: alertmanager.yml
+
+- name: Configure Loki resources
+  ansible.builtin.import_playbook: loki.yml
+
+- name: Configure OpenShift Logging and forwarding
+  ansible.builtin.import_playbook: logging.yml
