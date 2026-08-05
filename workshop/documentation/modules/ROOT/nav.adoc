@@ -10,5 +10,9 @@
 * Module 3: OpenShift Installation
 ** xref:06-discovery-iso.adoc[3.1 Create and Boot the ISO]
 ** xref:07-install.adoc[3.2 Install and Verify OpenShift]
+* Module 4: Ordered Day-2 Foundation
+** xref:09-ntp.adoc[4.1 Configure NTP]
+** xref:10-node-labels.adoc[4.2 Assign Node Labels]
+** xref:11-oadp.adoc[4.3 Deploy OADP]
 * xref:08-final-challenge.adoc[Final Challenge]
 * xref:appendix.adoc[Appendix and Troubleshooting]
