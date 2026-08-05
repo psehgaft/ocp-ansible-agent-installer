@@ -1,0 +1,287 @@
+= 4.4.8.1 Install Custom API and Ingress Certificates
+
+This lesson installs a custom named certificate for the OpenShift API and a custom wildcard certificate for the default IngressController.
+
+The canonical playbook is:
+
+[source,text]
+----
+playbooks/day2/install_certs.yml
+----
+
+== Learning objectives
+
+After completing this lesson, you can:
+
+* Validate PEM certificate and private-key inputs before changing the cluster.
+* Confirm certificate lifetime, SAN coverage, and certificate/key matching.
+* Render protected Kubernetes resources for review.
+* Install the API named certificate and the default Ingress wildcard certificate.
+* Preserve unrelated API named certificates.
+* Validate progressive rollout of the `kube-apiserver` and `ingress` ClusterOperators.
+* Roll back to the previous configuration when required.
+
+== Prerequisites
+
+Before running the playbook, confirm:
+
+* You are logged in with privileges to update `APIServer/cluster`, `IngressController/default`, and Secrets in `openshift-config` and `openshift-ingress`.
+* `openssl`, `oc`, and the `kubernetes.core` Ansible collection are installed.
+* The certificate files are PEM encoded.
+* Each certificate file contains the leaf certificate followed by required intermediate certificates.
+* Private-key files are unencrypted PEM files protected with restrictive filesystem permissions.
+* The API certificate includes the exact API hostname in its SAN extension.
+* The wildcard certificate covers `*.apps.<cluster>.<base-domain>`.
+* Clients trust the issuing CA chain.
+* You have an active administrative session and control-plane recovery access.
+
+[WARNING]
+====
+Replacing serving certificates causes progressive rollout of Ingress router and kube-apiserver operands. An incorrect SAN, key, chain, or trust relationship can make routes, the console, or the API inaccessible.
+====
+
+== Input variables
+
+The playbook accepts the following command-line variables:
+
+[cols="1,2,2"]
+|===
+|Variable |Purpose |Default
+
+|`WILDCARD_CER`
+|Ingress wildcard certificate chain
+|`./certs/wildcard.cer`
+
+|`WILDCARD_KEY`
+|Ingress wildcard private key
+|`./certs/wildcard.key`
+
+|`API_CER`
+|API certificate chain
+|`./certs/api.cer`
+
+|`API_KEY`
+|API private key
+|`./certs/api.key`
+
+|`API_DOMAIN`
+|Exact API hostname
+|`api.ocp.example.com`
+
+|`INGRESS_DOMAIN`
+|Wildcard applications domain
+|`*.apps.ocp.example.com`
+
+|`CERT_INSTALL_MODE`
+|`validate`, `render`, or `apply`
+|`validate`
+
+|`CERT_MINIMUM_VALIDITY_DAYS`
+|Minimum remaining certificate lifetime
+|`30`
+
+|`INGRESS_SECRET_NAME`
+|TLS Secret in `openshift-ingress`
+|`custom-wildcard-ingress-certs`
+
+|`API_SECRET_NAME`
+|TLS Secret in `openshift-config`
+|`custom-api-certs`
+|===
+
+When the same wildcard certificate also covers the API hostname, the same certificate and key paths can be supplied to both API and Ingress variables. Confirm that the certificate SAN extension explicitly covers both names before doing this.
+
+== Exercise 1: Back up the current configuration
+
+[source,bash]
+----
+mkdir -p evidence/certificates
+
+oc get apiserver cluster -o yaml \
+  > evidence/certificates/apiserver-before.yaml
+
+oc get ingresscontroller default \
+  -n openshift-ingress-operator \
+  -o yaml \
+  > evidence/certificates/ingresscontroller-before.yaml
+
+oc get secret -n openshift-config
+oc get secret -n openshift-ingress
+oc get clusteroperator kube-apiserver ingress
+----
+
+Do not store exported Secret contents in the evidence directory unless the location is encrypted and access controlled.
+
+== Exercise 2: Validate the certificate files
+
+Validation mode is the default and does not modify the cluster:
+
+[source,bash]
+----
+ansible-playbook playbooks/day2/install_certs.yml \
+  -e WILDCARD_CER=/absolute/path/apps-wildcard.cer \
+  -e WILDCARD_KEY=/absolute/path/apps-wildcard.key \
+  -e API_CER=/absolute/path/api.cer \
+  -e API_KEY=/absolute/path/api.key \
+  -e API_DOMAIN=api.cluster.example.com \
+  -e INGRESS_DOMAIN='*.apps.cluster.example.com'
+----
+
+The playbook validates:
+
+* Input-file existence and size.
+* PEM certificate parsing.
+* PEM private-key parsing.
+* Remaining certificate lifetime.
+* API hostname coverage.
+* Ingress wildcard coverage using a representative route hostname.
+* Certificate and private-key public-key fingerprints.
+
+Require a longer minimum lifetime when policy demands it:
+
+[source,bash]
+----
+-e CERT_MINIMUM_VALIDITY_DAYS=90
+----
+
+== Exercise 3: Render the resources
+
+[source,bash]
+----
+ansible-playbook playbooks/day2/install_certs.yml \
+  -e CERT_INSTALL_MODE=render \
+  -e WILDCARD_CER=/absolute/path/apps-wildcard.cer \
+  -e WILDCARD_KEY=/absolute/path/apps-wildcard.key \
+  -e API_CER=/absolute/path/api.cer \
+  -e API_KEY=/absolute/path/api.key \
+  -e API_DOMAIN=api.cluster.example.com \
+  -e INGRESS_DOMAIN='*.apps.cluster.example.com'
+
+ls -l rendered/day2/certificates/api-ingress-certificates.yml
+----
+
+The rendered file is created with mode `0600` and contains private keys. Review it locally and never commit it to Git. For GitOps, replace raw Secret content with SOPS, Sealed Secrets, External Secrets, Vault integration, or another approved encrypted-secret mechanism.
+
+The rendered resources include:
+
+* `openshift-ingress/custom-wildcard-ingress-certs`
+* `IngressController/default.spec.defaultCertificate`
+* `openshift-config/custom-api-certs`
+* `APIServer/cluster.spec.servingCerts.namedCertificates`
+
+== Exercise 4: Apply the certificates
+
+[source,bash]
+----
+ansible-playbook playbooks/day2/install_certs.yml \
+  -e CERT_INSTALL_MODE=apply \
+  -e WILDCARD_CER=/absolute/path/apps-wildcard.cer \
+  -e WILDCARD_KEY=/absolute/path/apps-wildcard.key \
+  -e API_CER=/absolute/path/api.cer \
+  -e API_KEY=/absolute/path/api.key \
+  -e API_DOMAIN=api.cluster.example.com \
+  -e INGRESS_DOMAIN='*.apps.cluster.example.com'
+----
+
+The workflow preserves API named-certificate entries for unrelated hostnames and replaces only the entry associated with `API_DOMAIN`.
+
+The playbook waits until both ClusterOperators meet these conditions:
+
+* `Available=True`
+* `Degraded` is not `True`
+
+Keep the current administrative terminal open throughout the rollout.
+
+== Exercise 5: Verify the rollout
+
+[source,bash]
+----
+oc get clusteroperator kube-apiserver ingress
+oc get pods -n openshift-ingress
+oc get pods -n openshift-kube-apiserver
+oc get apiserver cluster -o yaml
+oc get ingresscontroller default -n openshift-ingress-operator -o yaml
+----
+
+Verify the API endpoint:
+
+[source,bash]
+----
+openssl s_client \
+  -connect api.cluster.example.com:6443 \
+  -servername api.cluster.example.com \
+  </dev/null 2>/dev/null \
+  | openssl x509 \
+      -noout \
+      -subject \
+      -issuer \
+      -dates \
+      -ext subjectAltName
+----
+
+Verify an Ingress route:
+
+[source,bash]
+----
+openssl s_client \
+  -connect console-openshift-console.apps.cluster.example.com:443 \
+  -servername console-openshift-console.apps.cluster.example.com \
+  </dev/null 2>/dev/null \
+  | openssl x509 \
+      -noout \
+      -subject \
+      -issuer \
+      -dates \
+      -ext subjectAltName
+----
+
+Verify a new API login and console route before closing the original session:
+
+[source,bash]
+----
+oc login https://api.cluster.example.com:6443
+oc whoami
+oc get route console -n openshift-console
+----
+
+== Operational impact
+
+Changing the certificates triggers progressive reconciliation. During a healthy rollout:
+
+* Ingress router pods are gradually replaced or reconfigured.
+* kube-apiserver static pods are progressively reconciled across control-plane nodes.
+* Brief TLS reconnects can occur.
+* Existing clients might fail until their trust stores include the issuing CA.
+
+Do not manually restart all router or API server pods simultaneously.
+
+== Rollback
+
+If the API remains reachable, restore the saved resources:
+
+[source,bash]
+----
+oc apply -f evidence/certificates/apiserver-before.yaml
+oc apply -f evidence/certificates/ingresscontroller-before.yaml
+oc get clusteroperator kube-apiserver ingress -w
+----
+
+Restoring the resource references does not automatically delete the new Secrets. Keep them until rollback is verified, then remove them only after confirming that no resource references them.
+
+If normal API access is lost, use a trusted kubeconfig, a supported control-plane recovery path, and the environment's console or BMC access. Do not improvise changes directly inside static-pod manifests unless directed by a supported recovery procedure.
+
+== Completion criteria
+
+The exercise is complete when:
+
+* Input certificate and key pairs pass all validation checks.
+* API and Ingress resources reference the expected Secrets.
+* Existing unrelated API named certificates remain present.
+* `kube-apiserver` and `ingress` are Available and not Degraded.
+* The API endpoint presents the expected API certificate.
+* Application routes present the expected wildcard certificate.
+* A new API login succeeds.
+* The original backup and rollback evidence are retained securely.
+
+[.text-center]
+xref:ARCHITECTURE:04-platform-operators.adoc#quay[Next: Quay and Registry Services,role=button]
