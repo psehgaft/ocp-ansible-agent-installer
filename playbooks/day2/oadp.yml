@@ -1,0 +1,6 @@
+---
+- name: Deploy and configure OpenShift API for Data Protection
+  hosts: localhost
+  gather_facts: false
+  roles:
+    - role: day2_oadp
