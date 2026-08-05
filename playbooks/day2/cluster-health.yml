@@ -1,6 +1,10 @@
 ---
 - name: Run comprehensive OpenShift cluster health checks
   ansible.builtin.import_playbook: health-checks.yml
+  vars:
+    health_check_resources: "{{ health_check_resources | default([]) }}"
 
 - name: Run focused etcd health checks
   ansible.builtin.import_playbook: etcd-health.yml
+  vars:
+    etcd_health_resources: "{{ etcd_health_resources | default([]) }}"
