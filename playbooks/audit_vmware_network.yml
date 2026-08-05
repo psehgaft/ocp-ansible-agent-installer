@@ -4,7 +4,9 @@
   gather_facts: false
   vars:
     validate_certs: true
-    output_file: "{{ artifacts_dir | default('./artifacts') }}/VMware_Network_Audit_Report.md"
+    output_file: >-
+      {{ artifacts_dir | default('./artifacts') }}/
+      VMware_Network_Audit_Report.md
 
   pre_tasks:
     - name: Validate VMware audit inputs
@@ -79,7 +81,15 @@
           |---|---|---|---|---|---|
           {% for host_name, switches in vswitch_info.hosts_vswitch_info.items() %}
           {% for switch_name, switch in switches.items() %}
-          | {{ host_name }} | {{ switch_name }} | {{ switch.mtu | default('1500') }} | {{ switch.pnics | default([]) | join(', ') }} | {{ switch.failover_active | default([]) | join(', ') }} | {{ switch.failover_standby | default([]) | join(', ') }} |
+          {% set switch_row = [
+            host_name,
+            switch_name,
+            switch.mtu | default('1500'),
+            switch.pnics | default([]) | join(', '),
+            switch.failover_active | default([]) | join(', '),
+            switch.failover_standby | default([]) | join(', ')
+          ] %}
+          | {{ switch_row | join(' | ') }} |
           {% endfor %}
           {% endfor %}
 
@@ -89,7 +99,14 @@
           |---|---|---|---|---|
           {% for host_name, portgroups in standard_portgroup_info.hosts_portgroup_info.items() %}
           {% for portgroup in portgroups %}
-          | {{ host_name }} | {{ portgroup.portgroup }} | {{ portgroup.vlan_id }} | {{ portgroup.vswitch }} | {{ portgroup.security | default([]) | join(', ') }} |
+          {% set portgroup_row = [
+            host_name,
+            portgroup.portgroup,
+            portgroup.vlan_id,
+            portgroup.vswitch,
+            portgroup.security | default([]) | join(', ')
+          ] %}
+          | {{ portgroup_row | join(' | ') }} |
           {% endfor %}
           {% endfor %}
 
@@ -98,7 +115,12 @@
           | vDS name | UUID | Hosts |
           |---|---|---|
           {% for vds in vds_info.distributed_virtual_switches | default([]) %}
-          | {{ vds.configure.settings.properties.general.name | default('N/A') }} | {{ vds.uuid | default('N/A') }} | {{ vds.configure.hosts | default([]) | join(', ') }} |
+          {% set vds_row = [
+            vds.configure.settings.properties.general.name | default('N/A'),
+            vds.uuid | default('N/A'),
+            vds.configure.hosts | default([]) | join(', ')
+          ] %}
+          | {{ vds_row | join(' | ') }} |
           {% endfor %}
 
           ## Distributed port groups
@@ -107,7 +129,16 @@
           |---|---|---|---|---|---|---|
           {% for switch_name, portgroups in distributed_portgroup_info.dvs_portgroup_info.items() %}
           {% for portgroup in portgroups %}
-          | {{ switch_name }} | {{ portgroup.portgroup_name }} | {{ portgroup.vlan_info.vlan_id | default('N/A') }} | {{ portgroup.num_ports | default('N/A') }} | {{ portgroup.network_policy.promiscuous | default('Inherited') }} | {{ portgroup.network_policy.mac_changes | default('Inherited') }} | {{ portgroup.network_policy.forged_transmits | default('Inherited') }} |
+          {% set distributed_portgroup_row = [
+            switch_name,
+            portgroup.portgroup_name,
+            portgroup.vlan_info.vlan_id | default('N/A'),
+            portgroup.num_ports | default('N/A'),
+            portgroup.network_policy.promiscuous | default('Inherited'),
+            portgroup.network_policy.mac_changes | default('Inherited'),
+            portgroup.network_policy.forged_transmits | default('Inherited')
+          ] %}
+          | {{ distributed_portgroup_row | join(' | ') }} |
           {% endfor %}
           {% endfor %}
 
