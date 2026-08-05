@@ -1,4 +1,5 @@
 ---
+# Required input contract: node_label_assignments and day2_deployment_mode.
 - name: Apply validated OpenShift node labels
   hosts: localhost
   gather_facts: false
