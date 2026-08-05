@@ -1,4 +1,5 @@
 ---
+# Required input contract: oadp_backup_bucket, oadp_backup_endpoint, and credential Secret reference.
 - name: Deploy and configure OpenShift API for Data Protection
   hosts: localhost
   gather_facts: false
