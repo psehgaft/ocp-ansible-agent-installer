@@ -1,5 +1,6 @@
 ---
-- import_playbook: platform-operator-bundle.yml
+- name: Install and configure platform networking operators
+  ansible.builtin.import_playbook: platform-operator-bundle.yml
   vars:
     platform_operator_components:
       - nmstate

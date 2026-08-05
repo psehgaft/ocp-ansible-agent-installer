@@ -1,271 +1,155 @@
-= Platform Operators
+= Platform Operator Lifecycle and Day-2 Services
 
-Module 4.4 installs and configures the platform services required after the OpenShift control plane is healthy. Operator installation and operand configuration are intentionally separate: OLM resources establish the operator lifecycle, while inventory-driven manifests create the platform service.
+Module 4.4 establishes a repeatable lifecycle for platform operators and their operands. The workflow separates operator installation from service configuration, supports direct and GitOps delivery, and requires explicit readiness evidence before dependent services are installed.
 
-== Objectives
+== Learning objectives
 
 After completing this module, you can:
 
-* Install operators from the declarative component catalog.
-* Apply custom resources only after operator readiness.
-* use `direct`, `render`, or `gitops` deployment modes.
-* Keep channels, approval policy, storage credentials, registry credentials, and cloud credentials outside playbooks.
-* Validate Subscription, InstallPlan, CSV, workload, custom-resource, and ClusterOperator health.
-* Produce evidence and rollback data for every installed platform service.
+* Select supported packages and channels for the target OpenShift release.
+* Install catalog-backed operators with reusable lifecycle automation.
+* Render reviewed manifests for GitOps reconciliation.
+* Configure operands only after their CRDs and controllers are ready.
+* Protect registry, storage, cloud, PKI, and backup credentials.
+* Validate Subscriptions, InstallPlans, CSVs, ClusterOperators, workloads, routes, storage, and custom-resource conditions.
+* Record rollback boundaries and evidence for every platform capability.
 
-== Shared execution model
+== Execution model
 
-All topic-specific playbooks call `playbooks/day2/platform-operator-bundle.yml`. Catalog-backed operators use `framework/components.yml`; services not yet represented in the catalog provide explicit Namespace, OperatorGroup, and Subscription resources.
+Use the individual playbooks for focused exercises or the orchestrator for a complete environment:
 
 [source,bash]
 ----
-# Direct installation
-ansible-playbook playbooks/day2/acm.yml \
-  -e platform_deployment_mode=direct
+ansible-playbook playbooks/day2/platform-operators.yml \
+  -e @inventories/lab/group_vars/all/platform-operators.yml
 
-# Render manifests for review
 ansible-playbook playbooks/day2/platform-logging.yml \
-  -e platform_deployment_mode=render
-
-# Render into a GitOps working tree
-ansible-playbook playbooks/day2/platform-networking.yml \
   -e platform_deployment_mode=gitops
 ----
 
-Before production execution, verify the package, channel, CatalogSource, OpenShift compatibility, mirrored images, install-plan policy, capacity, default StorageClass, certificates, and backup strategy.
+The shared `platform-operator-bundle.yml` validates input, invokes the catalog lifecycle roles, applies operand resources in direct mode, and renders resources in render or GitOps mode. Do not place passwords, private keys, pull secrets, object-storage credentials, or cloud credentials in unencrypted inventory.
 
-== Recommended installation order
+== Recommended dependency order
 
-. cert-manager and PKI prerequisites.
-. Storage and networking foundations.
+. cert-manager and PKI trust.
+. Storage and network foundations.
 . Monitoring, logging, observability, and backup.
 . ACM and ACS.
 . Virtualization and MTV.
 . AAP and Quay.
 . Bare-metal, load-balancer, and RHOSO services.
 
-== 4.4.1 ACM
+[#acm]
+== 4.4.1 Advanced Cluster Management
 
-Advanced Cluster Management provides hub-based lifecycle, governance, application placement, observability, and managed-cluster operations.
+Install ACM with `playbooks/day2/acm.yml`. Configure `MultiClusterHub`, observability, governance, policies, placements, and managed-cluster integration through `acm_resources`. Validate the Subscription and CSV in `open-cluster-management`, `MultiClusterHub` conditions, hub workloads, and managed-cluster availability.
 
-[source,bash]
-----
-ansible-playbook playbooks/day2/acm.yml \
-  -e platform_deployment_mode=direct \
-  -e @inventories/lab/group_vars/all/platform-operators.yml
-----
+[#acs]
+== 4.4.2 Advanced Cluster Security
 
-Define `acm_resources` with the `MultiClusterHub`, optional `MultiClusterObservability`, policies, and placement resources. Validate:
+Install ACS with `playbooks/day2/acs.yml`. Supply `Central`, `SecuredCluster`, scanner, admission-control, and integration resources through `acs_resources`. Store central credentials and external integrations in Vault or an external secret manager. Validate Central, scanner, collector, admission control, and secured-cluster connectivity.
 
-[source,bash]
-----
-oc get subscription,csv -n open-cluster-management
-oc get multiclusterhub -n open-cluster-management
-oc get pods -n open-cluster-management
-oc get managedcluster
-----
+[#storage]
+== 4.4.3 Storage Platform Services
 
-== 4.4.2 ACS
+Select storage according to workload access modes, failure domains, performance, snapshots, encryption, expansion, and recovery requirements. Never claim raw devices that contain data or belong to another storage stack.
 
-Advanced Cluster Security provides image, deployment, runtime, compliance, vulnerability, and network-policy controls.
+[#lvm-storage]
+=== 4.4.3.1 LVM Storage Operator
 
-[source,bash]
-----
-ansible-playbook playbooks/day2/acs.yml
-----
+Use `playbooks/day2/platform-lvm-storage.yml` with an explicit `lvm_storage_resources` list containing the Namespace, OperatorGroup, Subscription, and `LVMCluster` resources appropriate to the target catalog. Validate device classes, thin-pool sizing, node selection, StorageClasses, expansion, and VolumeSnapshotClass behavior.
 
-Define `acs_resources` with `Central` and `SecuredCluster` custom resources. Protect the central admin password, collector configuration, scanner database settings, and external integrations with Vault or an external secret manager.
+[#local-storage]
+=== 4.4.3.2 Local Storage Operator
 
-== 4.4.3 Storage
+Use `playbooks/day2/platform-local-storage.yml` with `local_storage_resources`. Configure LocalVolume or LocalVolumeSet resources only after confirming stable device paths and node affinity. Validate PV creation, StorageClass binding mode, reclaim policy, and recovery procedures.
 
-The storage workflow installs ODF through the catalog and accepts additional resources for LVM Storage, Local Storage, CSI drivers, StorageSystems, StorageClusters, StorageClasses, and VolumeSnapshotClasses.
+[#odf]
+=== 4.4.3.3 OpenShift Data Foundation
 
-[source,bash]
-----
-ansible-playbook playbooks/day2/storage.yml \
-  -e @inventories/lab/group_vars/all/storage.yml
-----
+Use `playbooks/day2/storage.yml`. Define `storage_operator_resources` for `StorageSystem`, `StorageCluster`, external-mode resources, and supporting secrets. Validate topology, raw-device ownership, capacity, Ceph health, object storage, StorageClasses, snapshots, and failure-domain resilience.
 
-Define `storage_operator_resources`. Validate node eligibility, device ownership, failure domains, capacity, reclaim policy, expansion, encryption, snapshots, and recovery before selecting a default StorageClass.
+[#csi-drivers]
+=== 4.4.3.4 Enterprise CSI Drivers
 
-== 4.4.4 Virtualization
+Use `playbooks/day2/platform-csi-drivers.yml` with reviewed `csi_driver_resources` for Pure Storage, HPE, NetApp, or another supported vendor. Include vendor operator or Helm resources, credentials from protected inputs, StorageClasses, VolumeSnapshotClasses, and topology configuration. Confirm the support matrix and image sources before deployment.
 
-OpenShift Virtualization adds KubeVirt-based virtual-machine lifecycle to OpenShift.
+[#virtualization]
+== 4.4.4 OpenShift Virtualization
 
-[source,bash]
-----
-ansible-playbook playbooks/day2/virtualization.yml
-----
+Use `playbooks/day2/virtualization.yml`. Define the `HyperConverged` custom resource and optional migration network, storage profiles, templates, and policies in `virtualization_resources`. Validate CPU virtualization extensions, node placement, DataVolume imports, VM startup, and live migration.
 
-Define `virtualization_resources` with the `HyperConverged` custom resource and optional namespace, templates, DataVolumes, and migration policies. Validate hardware virtualization, worker labels, storage profiles, live-migration networks, and `HyperConverged` conditions.
+[#mtv]
+== 4.4.5 Migration Toolkit for Virtualization
 
-== 4.4.5 MTV
+Use `playbooks/day2/mtv.yml` only after OpenShift Virtualization is healthy. Store source-platform credentials securely and define ForkliftController, Providers, NetworkMaps, StorageMaps, and Plans in `mtv_resources`. Test discovery and a noncritical migration before production waves.
 
-Migration Toolkit for Virtualization discovers source providers and migrates virtual machines into OpenShift Virtualization.
+[#aap]
+== 4.4.6 Ansible Automation Platform
 
-[source,bash]
-----
-ansible-playbook playbooks/day2/mtv.yml
-----
+Use `playbooks/day2/aap.yml` with an explicit `aap_resources` list. Include Namespace, OperatorGroup, Subscription, and required AAP custom resources. Validate the selected channel against the catalog, configure persistent storage and routes, and protect controller, hub, database, and external-service credentials.
 
-Run this after Virtualization is healthy. Define `mtv_resources` with the ForkliftController, provider secrets, Providers, NetworkMaps, StorageMaps, and Plans. Store vCenter, RHV, or OpenStack credentials in encrypted variables.
+[#cert-manager]
+== 4.4.7 cert-manager Operator
 
-== 4.4.6 AAP
+Run `platform-cert-manager.yml` to install the operator, then the existing `cert-manager.yml` operand workflow for Issuers, ClusterIssuers, and Certificates. Validate controller readiness, issuer conditions, certificate SANs, renewal, and resulting Secrets.
 
-Ansible Automation Platform provides controller, execution environments, automation mesh, event-driven automation, and centralized credentials.
+[#pki]
+== 4.4.8 Platform PKI and Trust
 
-[source,bash]
-----
-ansible-playbook playbooks/day2/aap.yml \
-  -e aap_channel=stable-2.5 \
-  -e aap_install_plan_approval=Manual
-----
+Use `platform-pki.yml` with `pki_resources` for trust bundles, API and Ingress certificates, Proxy trusted CA configuration, and certificate policies. Validate chain order, SANs, key usage, client trust, expiry, and rollback before replacing serving certificates.
 
-The playbook creates the AAP namespace, OperatorGroup, and Subscription by default. Override `aap_resources` to add `AnsibleAutomationPlatform`, `AutomationController`, `AutomationHub`, or `EDA` custom resources. Review the channel against the target catalog before use.
+[#quay]
+== 4.4.9 Quay and Registry Services
 
-== 4.4.7 Cert Manager
+Use `platform-quay.yml`. Define QuayRegistry, object storage, database, route, TLS, Clair, mirroring, and registry-policy resources in `quay_resources`. Protect robot tokens and storage/database credentials and verify push, pull, scanning, mirroring, and retention.
 
-cert-manager automates Issuer, ClusterIssuer, Certificate, renewal, and secret lifecycle.
+[#networking]
+== 4.4.10 Network Foundation Operators
 
-[source,bash]
-----
-ansible-playbook playbooks/day2/platform-cert-manager.yml
-ansible-playbook playbooks/day2/cert-manager.yml
-----
+Use `platform-networking.yml` for NMState, SR-IOV, and MetalLB lifecycle. Define NodeNetworkConfigurationPolicy, NetworkAttachmentDefinition, SriovNetworkNodePolicy, SriovNetwork, IPAddressPool, advertisements, and peer resources in `networking_operator_resources`. Validate IOMMU, firmware, NIC ownership, VLANs, MTU, address overlap, and rollback connectivity.
 
-The first playbook installs the operator; the second configures issuers and certificates. Keep CA private keys and external-provider credentials outside Git.
+[#monitoring]
+== 4.4.11 Platform Monitoring
 
-== 4.4.8 PKI
+Use `platform-monitoring.yml` with a nonempty `monitoring_resources` list for cluster-monitoring configuration, user-workload monitoring, ServiceMonitor, PodMonitor, PrometheusRule, AlertmanagerConfig, storage, retention, and scheduling. Validate targets, rules, alerts, PVC usage, and remote-write destinations.
 
-PKI configuration manages trust bundles, API and Ingress certificates, certificate policies, and integration with internal or external certificate authorities.
+[#logging]
+== 4.4.12 Cluster Logging and Loki
 
-[source,bash]
-----
-ansible-playbook playbooks/day2/platform-pki.yml \
-  -e @inventories/lab/group_vars/all/pki.yml
-----
+Use `platform-logging.yml` to install Loki before Cluster Logging. Provide LokiStack, ClusterLogForwarder, storage, TLS, output, pipeline, and tenancy resources in `logging_resources`. Validate collector flow, object storage, retention, forwarding destinations, and backpressure.
 
-Define `pki_resources` with ConfigMaps, Secrets from protected inputs, Issuers, ClusterIssuers, Certificates, APIServer, IngressController, or Proxy trust resources. Validate SANs, chain order, key usage, rotation, and client trust before rollout.
+[#oadp]
+== 4.4.13 Backup and Restore with OADP
 
-== 4.4.9 Quay and Registries
+Use `platform-oadp.yml` with an explicit `oadp_operator_resources` list, then run the existing `oadp.yml` operand workflow. Include Namespace, OperatorGroup, Subscription, DataProtectionApplication, BackupStorageLocation, VolumeSnapshotLocation, and protected credential references. Prove recovery with test Backup and Restore objects.
 
-Quay provides enterprise image storage, vulnerability scanning, mirroring, robot accounts, retention, and geo-replication.
-
-[source,bash]
-----
-ansible-playbook playbooks/day2/platform-quay.yml
-----
-
-Define `quay_resources` with `QuayRegistry` and supporting storage, database, route, certificate, and configuration resources. Registry authentication, object-storage credentials, and database passwords must be encrypted.
-
-== 4.4.10 Networking
-
-The networking workflow installs NMState, SR-IOV, and MetalLB components and accepts Multus, NAD, NodeNetworkConfigurationPolicy, SriovNetworkNodePolicy, SriovNetwork, IPAddressPool, and advertisement resources.
-
-[source,bash]
-----
-ansible-playbook playbooks/day2/platform-networking.yml \
-  -e @inventories/lab/group_vars/all/networking.yml
-----
-
-Define `networking_operator_resources`. Apply NMState policies before workloads, validate SR-IOV firmware and IOMMU settings, reserve address pools, and avoid overlapping cluster, service, pod, machine, and load-balancer networks.
-
-== 4.4.11 Monitoring
-
-OpenShift monitoring is part of the cluster payload. This workflow manages configuration and monitoring operands rather than installing a separate operator.
-
-[source,bash]
-----
-ansible-playbook playbooks/day2/platform-monitoring.yml \
-  -e @inventories/lab/group_vars/all/monitoring.yml
-----
-
-Define `monitoring_resources` with cluster-monitoring-config, user-workload-monitoring-config, ServiceMonitor, PodMonitor, PrometheusRule, AlertmanagerConfig, and retention/storage settings.
-
-== 4.4.12 Logging
-
-Logging installs Loki first and then the Cluster Logging Operator. Operand resources define the LokiStack, ClusterLogForwarder, inputs, outputs, pipelines, retention, and tenancy.
-
-[source,bash]
-----
-ansible-playbook playbooks/day2/platform-logging.yml \
-  -e @inventories/lab/group_vars/all/logging.yml
-----
-
-Validate object storage, TLS, tenant mode, collector scheduling, forwarding destinations, flow control, and retention. Avoid embedding SIEM credentials in manifests.
-
-== 4.4.13 Backup OADP
-
-OADP provides Velero-based backup and restore for Kubernetes objects and supported persistent volumes.
-
-[source,bash]
-----
-ansible-playbook playbooks/day2/platform-oadp.yml \
-  -e oadp_channel=stable-1.5
-ansible-playbook playbooks/day2/oadp.yml
-----
-
-The first playbook installs the operator; the second configures DPA and backup workflows. Override `oadp_resources` for disconnected catalogs or custom channels. Validate BackupStorageLocation, VolumeSnapshotLocation, DPA, test Backup, test Restore, and application consistency.
-
+[#cluster-observability]
 == 4.4.14 Cluster Observability Operator
 
-The Cluster Observability Operator provides independent monitoring stacks and console integrations for application or platform teams.
+Use `platform-cluster-observability.yml`. Define MonitoringStack, UIPlugin, ServiceMonitor, PrometheusRule, storage, and tenancy resources through `cluster_observability_resources`. Ensure the design complements rather than duplicates built-in monitoring.
 
-[source,bash]
-----
-ansible-playbook playbooks/day2/platform-cluster-observability.yml
-----
-
-Define `cluster_observability_resources` with MonitoringStack, ThanosQuerier, UIPlugin, ServiceMonitor, PrometheusRule, and storage resources. Confirm that it complements rather than duplicates the built-in monitoring stack.
-
+[#network-observability]
 == 4.4.15 Network Observability Operator
 
-Network Observability collects and analyzes network flows through eBPF agents, FlowCollector, optional Kafka, Loki, and console integration.
+Use `platform-network-observability.yml` with an explicit `network_observability_resources` list that includes lifecycle resources and FlowCollector configuration. Size eBPF sampling, Loki or Kafka, storage, retention, and console integration according to traffic volume.
 
-[source,bash]
-----
-ansible-playbook playbooks/day2/platform-network-observability.yml \
-  -e netobserv_install_plan_approval=Manual
-----
-
-Override `network_observability_resources` to add an OperatorGroup, custom catalog configuration, and `FlowCollector`. Size flow sampling, Loki, Kafka, storage, and retention according to traffic volume.
-
+[#baremetal]
 == 4.4.16 Bare Metal Operator
 
-The Bare Metal Operator is delivered with OpenShift and manages Provisioning and BareMetalHost resources.
+Use `platform-baremetal.yml` for cluster-payload configuration and BareMetalHost resources. Validate BMC connectivity, credentials, boot MACs, inspection, provisioning network mode, and host operational status before automated provisioning.
 
-[source,bash]
-----
-ansible-playbook playbooks/day2/platform-baremetal.yml
-----
+[#load-balancer]
+== 4.4.17 MetalLB Load Balancing
 
-Define `baremetal_resources` with Provisioning configuration and BareMetalHost manifests. Validate BMC reachability, credentials, boot MACs, inspection, provisioning networks, and available state before automated provisioning.
+Use `platform-load-balancer.yml`. Define MetalLB, IPAddressPool, L2Advertisement, BGPAdvertisement, BGPPeer, and BFDProfile resources in `load_balancer_resources`. Reserve nonoverlapping addresses and test failover and upstream routing.
 
-== 4.4.17 Load Balancer Operator
+[#rhoso]
+== 4.4.18 Red Hat OpenStack Services on OpenShift
 
-The load-balancer workflow uses the MetalLB catalog component and configures MetalLB, IPAddressPool, BGPAdvertisement, L2Advertisement, BFDProfile, and BGP peer resources.
+Use `platform-rhoso.yml` after cert-manager and NMState are healthy. Define OpenStackControlPlane, data-plane node sets and deployments, network isolation, secrets, and storage integration in `rhoso_resources`. Validate all operator CSVs, control-plane conditions, data-plane Ansible execution, endpoints, and network reachability.
 
-[source,bash]
-----
-ansible-playbook playbooks/day2/platform-load-balancer.yml \
-  -e @inventories/lab/group_vars/all/load-balancer.yml
-----
-
-Define `load_balancer_resources`. Reserve non-overlapping addresses, confirm upstream routing or Layer-2 reachability, and test service failover.
-
-== 4.4.18 RHOSO Operator
-
-Red Hat OpenStack Services on OpenShift deploys OpenStack control-plane services on OpenShift and data-plane services on external nodes.
-
-[source,bash]
-----
-ansible-playbook playbooks/day2/platform-rhoso.yml \
-  -e @inventories/lab/group_vars/all/rhoso.yml
-----
-
-RHOSO depends on cert-manager and NMState. Define `rhoso_resources` with OpenStackControlPlane, OpenStackDataPlaneNodeSet, OpenStackDataPlaneDeployment, network definitions, secrets, and storage integrations. Validate operator CSVs, control-plane conditions, data-plane Ansible execution, network isolation, and service endpoints.
-
-== Common validation
+== Common validation and evidence
 
 [source,bash]
 ----
@@ -277,4 +161,4 @@ oc get pods -A --field-selector=status.phase!=Running,status.phase!=Succeeded
 oc get events -A --sort-by=.lastTimestamp | tail -100
 ----
 
-For Manual InstallPlans, review the CSV and related images before approval. Record namespace, Subscription, InstallPlan, CSV, workloads, custom-resource conditions, routes, storage usage, and rollback instructions in the workshop evidence package.
+For each service, capture the selected package and channel, approval decision, Namespace, Subscription, InstallPlan, CSV, controller workloads, custom-resource conditions, routes, PVC usage, warnings, rollback instructions, and validation timestamp.

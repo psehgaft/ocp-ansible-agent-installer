@@ -1,8 +1,11 @@
 ---
-- import_playbook: ldap.yml
+- name: Configure the LDAP identity provider
+  ansible.builtin.import_playbook: ldap.yml
   when: identity_enable_ldap | default(false) | bool
 
-- import_playbook: htpasswd.yml
+- name: Configure the HTPasswd identity provider
+  ansible.builtin.import_playbook: htpasswd.yml
   when: identity_enable_htpasswd | default(false) | bool
 
-- import_playbook: oauth.yml
+- name: Reconcile OAuth and validate authentication health
+  ansible.builtin.import_playbook: oauth.yml

@@ -1,5 +1,6 @@
 ---
-- import_playbook: platform-operator-bundle.yml
+- name: Install and configure OpenShift Logging and Loki
+  ansible.builtin.import_playbook: platform-operator-bundle.yml
   vars:
     platform_operator_components:
       - loki

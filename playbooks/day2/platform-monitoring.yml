@@ -1,6 +1,7 @@
 ---
-- import_playbook: platform-operator-bundle.yml
+- name: Configure OpenShift monitoring resources
+  ansible.builtin.import_playbook: platform-operator-bundle.yml
   vars:
     platform_operator_components: []
-    platform_operator_resources: "{{ monitoring_resources | default([]) }}"
+    platform_operator_resources: "{{ monitoring_resources }}"
     platform_operator_render_root: "{{ playbook_dir }}/../../rendered/day2/platform-operators/monitoring"
