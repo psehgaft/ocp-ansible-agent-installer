@@ -51,3 +51,6 @@ The group sizes match `control_plane_count` and `compute_count`, and no active p
 == Conclusion
 
 You defined an auditable mixed-vendor cluster inventory.
+
+[.text-center]
+xref:03-vault.adoc[Next: Protect Credentials,role=button]
