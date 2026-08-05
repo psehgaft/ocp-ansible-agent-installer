@@ -2,10 +2,6 @@
 - name: Reconcile OpenShift OAuth and validate authentication operator
   hosts: localhost
   gather_facts: false
-  vars:
-    oauth_identity_providers: "{{ oauth_identity_providers | default([]) }}"
-    oauth_supporting_resources: "{{ oauth_supporting_resources | default([]) }}"
-    oauth_rbac_bindings: "{{ oauth_rbac_bindings | default([]) }}"
   roles:
     - role: day2_identity
 
