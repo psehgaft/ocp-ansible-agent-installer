@@ -2,16 +2,23 @@
 # Copy this file to vault.yml and encrypt it with ansible-vault.
 # Replace every CHANGE_ME value before execution.
 
+# REQUIRED inputs consumed by the installer.
+vault_pull_secret: '{"auths":{"cloud.openshift.com":{"auth":"CHANGE_ME"},"registry.redhat.io":{"auth":"CHANGE_ME"}}}'
+vault_ssh_public_key: "ssh-ed25519 CHANGE_ME"
+
 # REQUIRED for assisted_auth_mode=saas.
-assisted_offline_token: "CHANGE_ME_RED_HAT_OFFLINE_TOKEN"
+vault_assisted_offline_token: "CHANGE_ME_RED_HAT_OFFLINE_TOKEN"
 
 # REQUIRED for assisted_auth_mode=onprem instead of assisted_offline_token.
-# assisted_access_token: "CHANGE_ME_ON_PREMISES_TOKEN"
+# vault_assisted_access_token: "CHANGE_ME_ON_PREMISES_TOKEN"
 
 # REQUIRED: Passwords are keyed by Ansible inventory hostname.
-vault_bmc_passwords:
-  master-0: "CHANGE_ME_ILO_PASSWORD"
-  master-1: "CHANGE_ME_IDRAC_PASSWORD"
-  master-2: "CHANGE_ME_BMC_PASSWORD"
-  worker-0: "CHANGE_ME_ILO_PASSWORD"
-  worker-1: "CHANGE_ME_IDRAC_PASSWORD"
+vault_bmc_credentials:
+  master-0: {username: Administrator, password: CHANGE_ME_ILO_PASSWORD}
+  master-1: {username: root, password: CHANGE_ME_IDRAC_PASSWORD}
+  master-2: {username: CHANGE_ME_BMC_USER, password: CHANGE_ME_BMC_PASSWORD}
+  worker-0: {username: Administrator, password: CHANGE_ME_ILO_PASSWORD}
+  worker-1: {username: root, password: CHANGE_ME_IDRAC_PASSWORD}
+
+# Optional. When omitted, oc-mirror uses vault_pull_secret as its auth file.
+# vault_mirror_auth_json: '{"auths":{"registry.example.com:8443":{"auth":"CHANGE_ME"}}}'

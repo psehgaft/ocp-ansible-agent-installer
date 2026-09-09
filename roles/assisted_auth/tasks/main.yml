@@ -1,20 +1,24 @@
 ---
-- name: Read pull secret and SSH public key
+- name: Load optional mirror CA bundle
   ansible.builtin.set_fact:
-    pull_secret: "{{ lookup('ansible.builtin.file', pull_secret_file) | trim }}"
-    ssh_public_key: "{{ lookup('ansible.builtin.file', ssh_public_key_file) | trim }}"
+    assisted_additional_trust_bundle: >-
+      {{
+        lookup('ansible.builtin.file', mirror_ca_file) | trim
+        if mirror_ca_file | default('') | length > 0
+        else assisted_infra_env_api.additional_trust_bundle | default('')
+      }}
   no_log: true
 
 - name: Obtain SaaS access token from the offline token
   when: assisted_auth_mode == 'saas'
   ansible.builtin.uri:
-    url: "https://sso.redhat.com/auth/realms/redhat-external/protocol/openid-connect/token"
+    url: "{{ assisted_sso_url | default('https://sso.redhat.com/auth/realms/redhat-external/protocol/openid-connect/token') }}"
     method: POST
     body_format: form-urlencoded
     body:
       grant_type: refresh_token
       client_id: cloud-services
-      refresh_token: "{{ assisted_offline_token }}"
+      refresh_token: "{{ vault_assisted_offline_token | default(assisted_offline_token | default('')) }}"
     return_content: true
     status_code: [200]
   register: _assisted_token
@@ -26,7 +30,7 @@
       {{
         _assisted_token.json.access_token
         if assisted_auth_mode == 'saas'
-        else assisted_access_token
+        else vault_assisted_access_token | default(assisted_access_token | default(''))
       }}
   no_log: true
 
@@ -36,5 +40,6 @@
       - assisted_access_token_effective is defined
       - assisted_access_token_effective | length > 0
     fail_msg: >-
-      Provide assisted_offline_token for SaaS or assisted_access_token for on-premises service.
+      Put vault_assisted_offline_token (SaaS) or vault_assisted_access_token (on-premises)
+      in the encrypted inventory vault.
   no_log: true

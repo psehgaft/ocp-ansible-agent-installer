@@ -31,6 +31,13 @@
 - Installing with the Assisted Installer API: https://docs.redhat.com/en/documentation/assisted_installer_for_openshift_container_platform/2026/html/installing_openshift_container_platform_with_the_assisted_installer/installing-with-api
 - Assisted Installer network configuration: https://docs.redhat.com/en/documentation/assisted_installer_for_openshift_container_platform/2026/html/installing_openshift_container_platform_with_the_assisted_installer/assembly_network-configuration
 - Assisted Installer API viewer: https://developers.redhat.com/api-catalog/api/assisted-install-service
+- Assisted Service OpenAPI specification: https://github.com/openshift/assisted-service/blob/master/swagger.yaml
+
+## Disconnected installation
+
+- OpenShift disconnected environments and oc-mirror v2: https://docs.redhat.com/en/documentation/openshift_container_platform/4.18/html/disconnected_environments/about-installing-oc-mirror-v2
+- oc-mirror v2 workflows and ImageSetConfiguration: https://github.com/openshift/oc-mirror
+- Ansible Vault guide: https://docs.ansible.com/projects/ansible/latest/vault_guide/index.html
 
 ## Standards
 

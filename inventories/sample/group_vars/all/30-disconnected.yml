@@ -1,0 +1,30 @@
+---
+# Used only when deployment_mode=disconnected.
+disconnected_environment: partially_disconnected  # partially_disconnected | air_gapped
+
+# render_only creates the ImageSetConfiguration but does not transfer images.
+oc_mirror_workflow: render_only  # render_only | mirror_to_mirror | mirror_to_disk | disk_to_mirror
+oc_mirror_run_during_install: false
+oc_mirror_binary: oc-mirror
+oc_mirror_workspace: "{{ artifacts_dir }}/{{ cluster_name }}/mirror-workspace"
+oc_mirror_archive_dir: "{{ artifacts_dir }}/{{ cluster_name }}/mirror-archive"
+oc_mirror_registry: ""
+oc_mirror_dest_tls_verify: true
+oc_mirror_src_tls_verify: true
+oc_mirror_parallel_images: 4
+oc_mirror_parallel_layers: 5
+oc_mirror_retry_times: 5
+oc_mirror_archive_size_gb: 4
+oc_mirror_channel: "stable-{{ openshift_version.split('.')[0:2] | join('.') }}"
+oc_mirror_min_version: "4.18.41"
+oc_mirror_max_version: "4.18.41"
+oc_mirror_architectures: [amd64]
+oc_mirror_graph: true
+
+# Exact mirrored release pullspec, preferably digest-pinned. Required in disconnected mode.
+disconnected_release_image: ""
+mirror_ca_file: ""
+
+# Task 1 mirrors only the OpenShift release. Day-2 operator catalogs are intentionally excluded.
+oc_mirror_additional_images: []
+oc_mirror_helm: {}

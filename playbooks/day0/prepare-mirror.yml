@@ -1,0 +1,15 @@
+---
+- name: Prepare OpenShift release content for a disconnected installation
+  hosts: localhost
+  gather_facts: false
+  connection: local
+  tasks:
+    - name: Require disconnected deployment mode
+      ansible.builtin.assert:
+        that:
+          - deployment_mode == 'disconnected'
+        fail_msg: "Set deployment_mode=disconnected before preparing mirrored content."
+
+    - name: Render or execute the oc-mirror workflow
+      ansible.builtin.include_role:
+        name: oc_mirror

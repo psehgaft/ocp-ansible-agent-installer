@@ -1,93 +1,118 @@
-# Variable Reference
+# Variable reference
+
+The sample inventory is the authoritative variable example. Values are grouped under `inventories/sample/group_vars/all/`; sensitive values belong only in encrypted `group_vars/vault.yml`.
+
+## Required cluster variables
+
+| Variable | Type | Purpose |
+|---|---|---|
+| `deployment_mode` | `connected` or `disconnected` | Selects the image source and optional `oc-mirror` stage. |
+| `cluster_name` | String | Cluster identifier and artifact directory name. |
+| `base_dns_domain` | String | DNS base domain. |
+| `openshift_version` | String | Requested minor release identifier supported by the Assisted service, for example `4.18`. |
+| `control_plane_count` | Integer | Must match the `control_plane` inventory group. |
+| `compute_count` | Integer | Must match the `workers` inventory group. |
+| `machine_networks` | List | Machine CIDRs in Assisted Installer API format. |
+| `cluster_networks` | List | Pod CIDRs and per-node host prefixes. |
+| `service_networks` | List | Service CIDRs. |
+| `vip_allocation_mode` | `static` or `dhcp` | Determines whether VIP values are sent. |
+| `api_vips` | List | Required when VIP allocation is static. |
+| `ingress_vips` | List | Required when VIP allocation is static. |
+| `pull_secret` | Vault expression | Pull secret JSON. |
+| `ssh_public_key` | Vault expression | Authorized SSH public key. |
 
 ## Per-host variables
 
-| Variable | Required | Values / example | Purpose |
+| Variable | Required | Default | Purpose |
 |---|---:|---|---|
-| `bmc_type` | Yes | `ilo`, `idrac`, `generic`, `auto` | Declares or detects the management-controller technology. |
-| `bmc_endpoint` | Yes | `https://10.10.10.11` | BMC HTTPS endpoint without `/redfish/v1`. |
-| `bmc_username` | Yes | `Administrator` or `root` | Redfish account. |
+| `bmc_type` | Yes | `auto` | `ilo`, `idrac`, `generic`, or `auto`. |
+| `bmc_endpoint` | Yes | None | BMC HTTPS endpoint without `/redfish/v1`. |
+| `bmc_username` | Yes | Vault expression | Redfish username. |
 | `bmc_password` | Yes | Vault expression | Redfish password. |
-| `node_role` | Yes | `master`, `worker` | Assisted Installer host role. |
-| `node_hostname` | Yes | `master-0` | Final node hostname. |
-| `node_ipv4_address` | Yes | `192.168.50.21` | Static installation-network address. |
-| `provisioning_mac_override` | No | `aa:bb:cc:dd:ee:ff` | Forces the MAC used to match Assisted Installer registration. |
-| `provisioning_nic_match` | No | `LOM 1|Integrated.1-1` | Regex for selecting a NIC by name or Redfish ID. |
-| `mac_interface_map_override` | No | List of `logical_nic_name` and `mac_address` entries | Replaces discovery order with an explicit Assisted Installer MAC-to-logical-NIC map. |
-| `bmc_system_id` | No | `System.Embedded.1` | Overrides dynamic Systems resource selection. |
-| `bmc_manager_id` | No | `iDRAC.Embedded.1` | Overrides dynamic Managers resource selection. |
-| `bmc_chassis_id` | No | `System.Embedded.1` | Overrides dynamic Chassis resource selection. |
-| `bmc_virtual_media_category` | No | `Manager`, `Systems` | Redfish location used for virtual media. Default: `Manager`. |
+| `node_role` | Yes | None | `master` or `worker`. |
+| `node_hostname` | Yes | None | Final OpenShift hostname. |
+| `node_ipv4_address` | Static only | None | Installation-network IPv4 address. |
+| `installation_disk_id` | No | Empty | Assisted Installer disk ID assigned the `install` role. |
+| `disks_skip_formatting` | No | Empty list | Assisted Installer disk-preservation operations. |
+| `provisioning_mac_override` | No | Empty | Explicit host-matching MAC. |
+| `provisioning_nic_match` | No | Empty | Regex used to select the Redfish NIC. |
+| `mac_interface_map_override` | No | Empty list | Explicit logical-NIC-to-MAC map. |
+| `node_nmstate_config` | No | Undefined | Complete custom NMState mapping. |
+| `assisted_host_api_overrides` | No | Empty mapping | Additional valid `host-update-params` fields. |
 
-## Cluster variables
+## Assisted Installer API mappings
 
-| Variable | Required | Purpose |
-|---|---:|---|
-| `assisted_api_url` | Yes | Assisted Installer v2 API endpoint. |
-| `assisted_auth_mode` | Yes | `saas` or `onprem`. |
-| `cluster_name` | Yes | Cluster identifier and artifact directory name. |
-| `base_dns_domain` | Yes | Base DNS domain. |
-| `openshift_version` | Yes | Requested release stream/version supported by the selected Assisted service. |
-| `control_plane_count` | Yes | Must match the `control_plane` inventory group. |
-| `compute_count` | Yes | Must match the `workers` inventory group. |
-| `machine_network_cidr` | Yes | Bare-metal machine network. |
-| `api_vip` | Yes | API virtual IP. |
-| `ingress_vip` | Yes | Ingress virtual IP. |
-| `pull_secret_file` | Yes | Local pull-secret path. |
-| `ssh_public_key_file` | Yes | Local SSH public-key path. |
+`assisted_cluster_api` exposes stable `cluster-create-params` fields. `assisted_infra_env_api` exposes stable `infra-env-create-params` fields. The repository explicitly defines service defaults, and the payload filter omits empty values while retaining `false` and `0`.
 
-## Static network variables
-
-| Variable | Purpose |
+| Cluster field | Repository default |
 |---|---|
-| `install_network_mode` | `single` or `bond`. |
-| `install_network_interface` | Logical NIC name used for single-interface mode. |
-| `install_network_bond_name` | Bond name. |
-| `install_network_bond_ports` | Logical NICs included in the bond. |
-| `install_network_bond_mode` | NMState bond mode, for example `802.3ad`. |
-| `install_network_mtu` | Installation network MTU. |
-| `node_ipv4_prefix` | IPv4 prefix length. |
-| `node_ipv4_gateway` | Default gateway. |
-| `node_dns_servers` | DNS resolver list. |
-| `ntp_servers` | NTP sources included in the Assisted Installer resources. |
+| `high_availability_mode` | `Full` |
+| `cpu_architecture` | `x86_64` |
+| `hyperthreading` | `all` |
+| `network_type` | `OVNKubernetes` |
+| `schedulable_masters` | `false` |
+| `user_managed_networking` | `false` |
+| `platform.type` | `baremetal` |
+| `load_balancer.type` | `cluster-managed` |
+| `disk_encryption.enable_on` | `none` |
+| `disk_encryption.mode` | `tpmv2` |
+| Proxy, NTP, release image, OS stream, tags, Tang servers, ignition endpoint | Empty and omitted |
 
-## Redfish behavior variables
+| InfraEnv field | Repository default |
+|---|---|
+| `image_type` | `minimal-iso`; automatically `disconnected-iso` in disconnected mode |
+| `cpu_architecture` | `x86_64` |
+| `kernel_arguments` | Empty and omitted |
+| `network_discovery_delay_seconds` | `0` |
+| Proxy, NTP, rendezvous IP, ignition override, OS stream, CA | Empty and omitted |
+
+Use `assisted_cluster_api_overrides`, `assisted_infra_env_api_overrides`, and per-host `assisted_host_api_overrides` for API fields not represented by the stable mappings. Unknown fields are rejected by Assisted Installer.
+
+## Network variables
 
 | Variable | Default | Purpose |
 |---|---|---|
-| `bmc_validate_certs` | `false` | Enables BMC certificate validation. Set `true` in production. |
-| `bmc_ca_path` | empty | PEM CA bundle used when validation is enabled. |
-| `bmc_timeout` | `120` | Redfish request timeout in seconds. |
-| `bmc_boot_device` | `Cd` | One-time boot target. |
-| `bmc_virtual_media_category` | `Manager` | Preferred virtual-media resource category. |
-| `bmc_virtual_media_fallback_to_systems` | `true` | Retries insertion through the Systems resource. |
-| `bmc_power_command` | `PowerForceRestart` | Power action after boot override. |
-| `bmc_wait_for_node_ssh` | `true` | Waits for port 22 on the discovery environment. |
+| `node_network_config_mode` | `static` | `static` renders InfraEnv NMState; `dhcp` omits it. |
+| `install_network_mode` | `bond` | Generated `single` or `bond` configuration. |
+| `install_network_interface` | `nic0` | Logical NIC for single-interface mode. |
+| `install_network_bond_name` | `bond0` | Bond name. |
+| `install_network_bond_ports` | `[nic0, nic1]` | Bond ports. |
+| `install_network_bond_mode` | `802.3ad` | NMState bond mode. |
+| `install_network_bond_options` | `{miimon: "100"}` | NMState bond options. |
+| `install_network_mtu` | `1500` | Interface MTU. |
+| `node_ipv4_prefix` | `24` | Static IPv4 prefix length. |
+| `node_ipv4_gateway` | Example value | Static default gateway. |
+| `node_dns_servers` | Example list | Static DNS resolvers. |
 
-## ISO delivery variables
+## Disconnected variables
 
-| Variable | Purpose |
-|---|---|
-| `iso_delivery_mode` | `local_http`, `existing_http`, or `direct_url`. |
-| `iso_http_advertise_address` | Control-node address reachable from every BMC. |
-| `iso_http_bind_address` | Local bind address for the Podman HTTP container. |
-| `iso_http_port` | Published TCP port. |
-| `iso_existing_url` | Existing BMC-reachable ISO URL. |
-| `assisted_image_type` | `minimal-iso` or `full-iso`. |
+| Variable | Default | Purpose |
+|---|---|---|
+| `disconnected_environment` | `partially_disconnected` | Partially disconnected or `air_gapped`. |
+| `oc_mirror_workflow` | `render_only` | Render, mirror-to-mirror, mirror-to-disk, or disk-to-mirror. |
+| `oc_mirror_run_during_install` | `false` | Executes mirroring inside the install playbook when explicitly enabled. |
+| `oc_mirror_registry` | Example registry | Destination registry and namespace. |
+| `disconnected_release_image` | Empty | Required digest-pinned mirror pullspec. |
+| `mirror_ca_file` | Empty | CA bundle added to the discovery environment. |
+| `oc_mirror_channel` | Derived stable channel | OpenShift release channel. |
+| `oc_mirror_min_version` | `openshift_version` | Minimum mirrored release. |
+| `oc_mirror_max_version` | `openshift_version` | Maximum mirrored release. |
+| `oc_mirror_architectures` | `[amd64]` | Mirrored architectures. |
+
+Task 1 intentionally does not send `olm_operators` or `operator_bundles` during cluster creation. Operator selection and configuration are Day-2 GitOps concerns. Every other newer top-level field can be supplied through the typed override mappings after confirming it in the service OpenAPI schema.
 
 ## Vault variables
 
 ```yaml
-assisted_offline_token: "..."       # SaaS
-# assisted_access_token: "..."      # On-premises service
-
-vault_bmc_passwords:
-  master-0: "..."
-  master-1: "..."
+vault_pull_secret: '{"auths": {...}}'
+vault_ssh_public_key: ssh-ed25519 ...
+vault_assisted_offline_token: ...
+vault_assisted_access_token: ...
+vault_mirror_auth_json: '{"auths": {...}}'
+vault_bmc_credentials:
+  master-0:
+    username: Administrator
+    password: ...
 ```
 
-Encrypt the active file:
-
-```bash
-ansible-vault encrypt inventories/mycluster/group_vars/vault.yml
-```
+Create the encrypted file with `playbooks/day0/create-vault.yml`; see [Day-0 bare-metal installation](day0-bare-metal-installation.md).

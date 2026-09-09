@@ -1,0 +1,29 @@
+---
+# Required non-secret values. Replace every CHANGE_ME value before installation.
+deployment_mode: connected  # connected | disconnected
+
+cluster_name: CHANGE_ME_CLUSTER_NAME
+base_dns_domain: example.com
+openshift_version: "4.18"
+
+control_plane_count: 3
+compute_count: 2
+
+# The first machine network contains the API and Ingress VIPs.
+machine_networks:
+  - cidr: 192.168.50.0/24
+cluster_networks:
+  - cidr: 10.128.0.0/14
+    host_prefix: 23
+service_networks:
+  - cidr: 172.30.0.0/16
+
+vip_allocation_mode: static  # static | dhcp
+api_vips:
+  - ip: 192.168.50.10
+ingress_vips:
+  - ip: 192.168.50.11
+
+# Secrets are defined only in the encrypted vault.yml file.
+pull_secret: "{{ vault_pull_secret }}"
+ssh_public_key: "{{ vault_ssh_public_key }}"

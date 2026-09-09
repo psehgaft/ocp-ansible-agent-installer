@@ -1,0 +1,20 @@
+---
+oc_mirror_workflow: render_only
+oc_mirror_run_during_install: false
+oc_mirror_binary: oc-mirror
+oc_mirror_workspace: "{{ artifacts_dir }}/{{ cluster_name }}/mirror-workspace"
+oc_mirror_archive_dir: "{{ artifacts_dir }}/{{ cluster_name }}/mirror-archive"
+oc_mirror_registry: ""
+oc_mirror_dest_tls_verify: true
+oc_mirror_src_tls_verify: true
+oc_mirror_parallel_images: 4
+oc_mirror_parallel_layers: 5
+oc_mirror_retry_times: 5
+oc_mirror_archive_size_gb: 4
+oc_mirror_channel: "stable-{{ openshift_version.split('.')[0:2] | join('.') }}"
+oc_mirror_min_version: ""
+oc_mirror_max_version: ""
+oc_mirror_architectures: [amd64]
+oc_mirror_graph: true
+oc_mirror_additional_images: []
+oc_mirror_helm: {}

@@ -4,6 +4,70 @@
     _cluster_state_file: "{{ artifacts_dir }}/{{ cluster_name }}/raw/cluster-create-response.json"
     _infraenv_state_file: "{{ artifacts_dir }}/{{ cluster_name }}/raw/infraenv-create-response.json"
 
+- name: Build static network configuration
+  ansible.builtin.set_fact:
+    _assisted_static_network_config: >-
+      {{
+        lookup('ansible.builtin.template', 'static-network-config.json.j2') | from_json
+        if node_network_config_mode == 'static'
+        else []
+      }}
+  no_log: true
+
+- name: Build cluster API options
+  ansible.builtin.set_fact:
+    _assisted_cluster_options: >-
+      {{
+        assisted_cluster_api
+        | combine({'vip_dhcp_allocation': vip_allocation_mode == 'dhcp'}, recursive=true)
+        | combine(
+            {'ocp_release_image': disconnected_release_image}
+            if deployment_mode == 'disconnected'
+            else {},
+            recursive=true
+          )
+        | combine(assisted_cluster_api_overrides, recursive=true)
+        | compact_dict
+      }}
+    _assisted_infra_env_options: >-
+      {{
+        assisted_infra_env_api
+        | combine(
+            {
+              'image_type': 'disconnected-iso',
+              'additional_trust_bundle': assisted_additional_trust_bundle
+            }
+            if deployment_mode == 'disconnected'
+            else {'additional_trust_bundle': assisted_additional_trust_bundle},
+            recursive=true
+          )
+        | combine(assisted_infra_env_api_overrides, recursive=true)
+        | compact_dict
+      }}
+  no_log: true
+
+- name: Build cluster creation payload
+  ansible.builtin.set_fact:
+    cluster_create_payload: >-
+      {{
+        {
+          'name': cluster_name,
+          'openshift_version': openshift_version,
+          'base_dns_domain': base_dns_domain,
+          'pull_secret': pull_secret,
+          'ssh_public_key': ssh_public_key,
+          'control_plane_count': control_plane_count | int,
+          'machine_networks': machine_networks,
+          'cluster_networks': cluster_networks,
+          'service_networks': service_networks,
+          'api_vips': api_vips if vip_allocation_mode == 'static' else [],
+          'ingress_vips': ingress_vips if vip_allocation_mode == 'static' else []
+        }
+        | combine(_assisted_cluster_options, recursive=true)
+        | compact_dict
+      }}
+  no_log: true
+
 - name: Check persisted cluster state
   ansible.builtin.stat:
     path: "{{ _cluster_state_file }}"
@@ -12,11 +76,6 @@
 - name: Create Assisted Installer cluster
   when: not (assisted_reuse_state | bool and _cluster_state_stat.stat.exists)
   block:
-    - name: Render cluster creation payload
-      ansible.builtin.set_fact:
-        cluster_create_payload: "{{ lookup('ansible.builtin.template', 'cluster-create.json.j2') | from_json }}"
-      no_log: true
-
     - name: Submit cluster definition
       ansible.builtin.uri:
         url: "{{ assisted_api_url }}/clusters"
@@ -48,6 +107,23 @@
     cluster_id: "{{ _cluster_data.id }}"
   no_log: true
 
+- name: Build InfraEnv creation payload
+  ansible.builtin.set_fact:
+    infraenv_create_payload: >-
+      {{
+        {
+          'name': cluster_name ~ '-infraenv',
+          'cluster_id': cluster_id,
+          'pull_secret': pull_secret,
+          'ssh_authorized_key': ssh_public_key,
+          'openshift_version': openshift_version,
+          'static_network_config': _assisted_static_network_config
+        }
+        | combine(_assisted_infra_env_options, recursive=true)
+        | compact_dict
+      }}
+  no_log: true
+
 - name: Check persisted InfraEnv state
   ansible.builtin.stat:
     path: "{{ _infraenv_state_file }}"
@@ -56,11 +132,6 @@
 - name: Create Assisted Installer InfraEnv
   when: not (assisted_reuse_state | bool and _infraenv_state_stat.stat.exists)
   block:
-    - name: Render InfraEnv creation payload
-      ansible.builtin.set_fact:
-        infraenv_create_payload: "{{ lookup('ansible.builtin.template', 'infraenv-create.json.j2') | from_json }}"
-      no_log: true
-
     - name: Submit InfraEnv definition
       ansible.builtin.uri:
         url: "{{ assisted_api_url }}/infra-envs"

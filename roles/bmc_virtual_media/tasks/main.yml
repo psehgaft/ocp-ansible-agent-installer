@@ -151,4 +151,7 @@
     delay: "{{ bmc_boot_wait_delay }}"
     timeout: "{{ bmc_boot_wait_timeout }}"
     state: started
-  when: bmc_wait_for_node_ssh | bool
+  when:
+    - bmc_wait_for_node_ssh | bool
+    - node_network_config_mode == 'static'
+    - node_ipv4_address | default('') | length > 0

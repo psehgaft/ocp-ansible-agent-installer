@@ -1,5 +1,7 @@
 # Workshop: Deploy OpenShift with Assisted Installer, HPE iLO, and Dell iDRAC
 
+> **Task 1 migration notice:** The canonical connected/disconnected inventory, Vault bootstrap, DHCP/static networking, disk selection, and `oc-mirror` v2 workflow are documented in [`docs/day0-bare-metal-installation.md`](docs/day0-bare-metal-installation.md). Some exercises below retain the earlier single-file inventory layout for historical workshop compatibility; do not use those snippets as the production Day-0 source of truth.
+
 ## Overview
 
 This hands-on workshop teaches how to prepare, validate, and execute a vendor-neutral OpenShift bare-metal installation using Ansible, the Red Hat Assisted Installer API, and Redfish management controllers.

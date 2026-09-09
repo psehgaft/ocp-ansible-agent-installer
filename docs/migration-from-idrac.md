@@ -8,10 +8,10 @@ The original workflow used Dell-specific roles and `idrac_*` variables. The cano
 
 | Purpose | Canonical playbook | Compatibility wrapper |
 |---|---|---|
-| Full Day-0 installation | `playbooks/day0/install.yml` | `playbooks/site.yml` |
-| BMC discovery and report | `playbooks/day0/discover-bmc.yml` | `playbooks/01-discover-bmc.yml` |
+| Full Day-0 installation | `playbooks/day0/install.yml` | None |
+| BMC discovery and report | `playbooks/day0/discover-bmc.yml` | None |
 
-The compatibility wrappers remain supported during the migration period and import the canonical playbooks directly, preventing behavior drift.
+Retired compatibility wrappers are intentionally absent so there is only one supported execution path.
 
 ## Role mapping
 
@@ -40,8 +40,8 @@ Recommended:
 server-0:
   bmc_type: idrac
   bmc_endpoint: https://10.10.10.20
-  bmc_username: root
-  bmc_password: "{{ vault_bmc_passwords[inventory_hostname] }}"
+  bmc_username: "{{ vault_bmc_credentials[inventory_hostname].username }}"
+  bmc_password: "{{ vault_bmc_credentials[inventory_hostname].password }}"
 ```
 
 HPE example:
@@ -50,8 +50,8 @@ HPE example:
 server-1:
   bmc_type: ilo
   bmc_endpoint: https://10.10.10.21
-  bmc_username: Administrator
-  bmc_password: "{{ vault_bmc_passwords[inventory_hostname] }}"
+  bmc_username: "{{ vault_bmc_credentials[inventory_hostname].username }}"
+  bmc_password: "{{ vault_bmc_credentials[inventory_hostname].password }}"
 ```
 
 The compatibility layer accepts `idrac_ip`, `idrac_user`, and `idrac_password`, but these aliases are intended only for controlled migration.
@@ -60,7 +60,7 @@ The compatibility layer accepts `idrac_ip`, `idrac_user`, and `idrac_password`, 
 
 1. Copy the old inventory to a new branch.
 2. Rename `idrac_*` variables to `bmc_*` and add `bmc_type`.
-3. Move passwords into `vault_bmc_passwords`.
+3. Move usernames and passwords into `vault_bmc_credentials`.
 4. Install the collections from `collections/requirements.yml`.
 5. Run `playbooks/day0/discover-bmc.yml` without changing server power state.
 6. Compare normalized NICs and selected provisioning MACs with switch and operating-system records.

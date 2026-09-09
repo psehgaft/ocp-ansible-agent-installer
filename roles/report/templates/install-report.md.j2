@@ -7,8 +7,10 @@
 - Requested version: `{{ openshift_version }}`
 - Cluster ID: `{{ cluster_id }}`
 - InfraEnv ID: `{{ infra_env_id }}`
-- API VIP: `{{ api_vip }}`
-- Ingress VIP: `{{ ingress_vip }}`
+- Deployment mode: `{{ deployment_mode }}`
+- Host network mode: `{{ node_network_config_mode }}`
+- API VIPs: `{{ api_vips | default([]) | map(attribute='ip') | join(', ') if vip_allocation_mode == 'static' else 'DHCP allocated' }}`
+- Ingress VIPs: `{{ ingress_vips | default([]) | map(attribute='ip') | join(', ') if vip_allocation_mode == 'static' else 'DHCP allocated' }}`
 
 ## Outputs
 
@@ -23,7 +25,7 @@
 | Host | Role | Node IP | BMC type | BMC endpoint | Model | Serial | Provisioning MAC |
 |---|---|---|---|---|---|---|---|
 {% for h in ansible_play_hosts_all %}
-| `{{ h }}` | `{{ hostvars[h].node_role }}` | `{{ hostvars[h].node_ipv4_address }}` | `{{ hostvars[h].bmc_type_effective | trim }}` | `{{ hostvars[h].bmc_endpoint_effective }}` | `{{ hostvars[h].bmc_system.Model | default('unknown') }}` | `{{ hostvars[h].bmc_system.SerialNumber | default('unknown') }}` | `{{ hostvars[h].provisioning_mac }}` |
+| `{{ h }}` | `{{ hostvars[h].node_role }}` | `{{ hostvars[h].node_ipv4_address | default('DHCP') }}` | `{{ hostvars[h].bmc_type_effective | trim }}` | `{{ hostvars[h].bmc_endpoint_effective }}` | `{{ hostvars[h].bmc_system.Model | default('unknown') }}` | `{{ hostvars[h].bmc_system.SerialNumber | default('unknown') }}` | `{{ hostvars[h].provisioning_mac }}` |
 {% endfor %}
 
 ## Review order after a failure

@@ -1,0 +1,101 @@
+---
+- name: Validate vault bootstrap inputs
+  ansible.builtin.assert:
+    that:
+      - vault_password_file | length > 0
+      - vault_output_file | length > 0
+      - vault_pull_secret_file | length > 0
+      - vault_ssh_public_key_file | length > 0
+      - vault_bmc_credentials_file | length > 0
+    fail_msg: >-
+      Set vault password, output, pull-secret, SSH-key, and BMC-credentials file paths.
+
+- name: Check secret bootstrap files
+  ansible.builtin.stat:
+    path: "{{ item }}"
+  loop:
+    - "{{ vault_password_file }}"
+    - "{{ vault_pull_secret_file }}"
+    - "{{ vault_ssh_public_key_file }}"
+    - "{{ vault_bmc_credentials_file }}"
+  register: _vault_input_stats
+  no_log: true
+
+- name: Assert secret bootstrap files exist
+  ansible.builtin.assert:
+    that:
+      - _vault_input_stats.results | map(attribute='stat.exists') | min
+    fail_msg: "One or more vault bootstrap files do not exist."
+  no_log: true
+
+- name: Load secret values
+  ansible.builtin.set_fact:
+    _vault_pull_secret: "{{ lookup('ansible.builtin.file', vault_pull_secret_file) | trim }}"
+    _vault_ssh_public_key: "{{ lookup('ansible.builtin.file', vault_ssh_public_key_file) | trim }}"
+    _vault_bmc_credentials: "{{ lookup('ansible.builtin.file', vault_bmc_credentials_file) | from_yaml }}"
+    _vault_offline_token: "{{ lookup('ansible.builtin.env', 'OCP_ASSISTED_OFFLINE_TOKEN') }}"
+    _vault_access_token: "{{ lookup('ansible.builtin.env', 'OCP_ASSISTED_ACCESS_TOKEN') }}"
+    _vault_mirror_auth_json: >-
+      {{
+        lookup('ansible.builtin.file', vault_mirror_auth_file) | trim
+        if vault_mirror_auth_file | length > 0
+        else lookup('ansible.builtin.file', vault_pull_secret_file) | trim
+      }}
+  no_log: true
+
+- name: Validate structured secret inputs
+  ansible.builtin.assert:
+    that:
+      - _vault_pull_secret | from_json is mapping
+      - _vault_bmc_credentials is mapping
+      - _vault_ssh_public_key | length > 0
+      - _vault_offline_token | length > 0 or _vault_access_token | length > 0
+    fail_msg: >-
+      Pull secret must be JSON, BMC credentials must be a YAML mapping, an SSH public key
+      is required, and one Assisted Installer token environment variable must be set.
+  no_log: true
+
+- name: Create destination directory
+  ansible.builtin.file:
+    path: "{{ vault_output_file | dirname }}"
+    state: directory
+    mode: "0700"
+
+- name: Build and encrypt vault
+  block:
+    - name: Create temporary plaintext vault file
+      ansible.builtin.tempfile:
+        state: file
+        suffix: .yml
+      register: _plaintext_vault
+
+    - name: Render temporary plaintext vault
+      ansible.builtin.template:
+        src: vault.yml.j2
+        dest: "{{ _plaintext_vault.path }}"
+        mode: "0600"
+      no_log: true
+
+    - name: Encrypt the inventory vault
+      ansible.builtin.command:
+        argv:
+          - ansible-vault
+          - encrypt
+          - --vault-password-file
+          - "{{ vault_password_file }}"
+          - --output
+          - "{{ vault_output_file }}"
+          - "{{ _plaintext_vault.path }}"
+      changed_when: true
+      no_log: true
+  always:
+    - name: Remove temporary plaintext vault
+      ansible.builtin.file:
+        path: "{{ _plaintext_vault.path | default('') }}"
+        state: absent
+      when: _plaintext_vault.path | default('') | length > 0
+
+- name: Protect encrypted vault permissions
+  ansible.builtin.file:
+    path: "{{ vault_output_file }}"
+    mode: "0600"

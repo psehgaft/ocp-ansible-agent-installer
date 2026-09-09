@@ -1,4 +1,4 @@
-# OpenShift Assisted Installer (Dell iDRAC) — Installation Report
+# OpenShift Assisted Installer and Redfish — Installation Report
 
 ## Cluster
 - Name: `{{ cluster_name }}`
@@ -6,8 +6,8 @@
 - Version: `{{ openshift_version }}`
 - Cluster ID: `{{ cluster_id }}`
 - InfraEnv ID: `{{ infra_env_id }}`
-- API VIP: `{{ api_vip }}`
-- Ingress VIP: `{{ ingress_vip }}`
+- API VIPs: `{{ api_vips | default([]) | map(attribute='ip') | join(', ') if vip_allocation_mode == 'static' else 'DHCP allocated' }}`
+- Ingress VIPs: `{{ ingress_vips | default([]) | map(attribute='ip') | join(', ') if vip_allocation_mode == 'static' else 'DHCP allocated' }}`
 
 ## Outputs
 - kubeconfig: `{{ output_kubeconfig }}`
@@ -18,11 +18,11 @@
 
 ## Hosts
 {% for h in ansible_play_batch %}
-- {{ h }} (role={{ hostvars[h].node_role }}, ip={{ hostvars[h].node_ipv4_address }}, idrac={{ hostvars[h].idrac_ip }}, prov_mac={{ hostvars[h].provisioning_mac }})
+- {{ h }} (role={{ hostvars[h].node_role }}, ip={{ hostvars[h].node_ipv4_address | default('DHCP') }}, bmc={{ hostvars[h].bmc_endpoint_effective }}, prov_mac={{ hostvars[h].provisioning_mac }})
 {% endfor %}
 
 ## Notes
 - If the install fails, review:
   1) `events.json`
   2) `cluster-final.json`
-  3) iDRAC raw files under `raw/idrac-*.json`
+  3) BMC raw files under `raw/bmc-*.json`
