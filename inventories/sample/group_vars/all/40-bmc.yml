@@ -1,0 +1,16 @@
+---
+# Vendor-neutral Redfish defaults for HPE iLO, Dell iDRAC, and compatible BMCs.
+bmc_validate_certs: false
+bmc_ca_path: ""
+bmc_timeout: 120
+bmc_system_id: ""
+bmc_manager_id: ""
+bmc_chassis_id: ""
+bmc_boot_device: Cd
+bmc_virtual_media_category: Manager  # Manager | Systems
+bmc_virtual_media_fallback_to_systems: true
+bmc_power_command: PowerForceRestart
+bmc_wait_for_node_ssh: true
+bmc_boot_wait_delay: 30
+bmc_boot_wait_timeout: 1200
+provisioning_nic_match: ""

@@ -1,0 +1,9 @@
+---
+vault_pull_secret: {{ _vault_pull_secret | to_json }}
+vault_ssh_public_key: {{ _vault_ssh_public_key | to_json }}
+vault_assisted_offline_token: {{ _vault_offline_token | to_json }}
+vault_assisted_access_token: {{ _vault_access_token | to_json }}
+vault_mirror_auth_json: {{ _vault_mirror_auth_json | to_json }}
+vault_bmc_credentials:
+{{ _vault_bmc_credentials | to_nice_yaml(indent=2) | indent(2, true) }}
+

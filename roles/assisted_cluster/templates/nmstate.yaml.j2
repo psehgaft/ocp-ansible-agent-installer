@@ -1,3 +1,6 @@
+{% if hostvars[target_host].node_nmstate_config is defined %}
+{{ hostvars[target_host].node_nmstate_config | to_nice_yaml(indent=2) }}
+{% else %}
 interfaces:
 {% if install_network_mode == 'bond' %}
   - name: {{ install_network_bond_name }}
@@ -11,11 +14,11 @@ interfaces:
         - ip: "{{ hostvars[target_host].node_ipv4_address }}"
           prefix-length: {{ node_ipv4_prefix | int }}
     ipv6:
-      enabled: false
+      enabled: {{ install_network_ipv6_enabled | bool | lower }}
     link-aggregation:
       mode: {{ install_network_bond_mode }}
       options:
-        miimon: "100"
+{{ install_network_bond_options | to_nice_yaml(indent=2) | indent(8, true) }}
       port:
 {% for port in install_network_bond_ports %}
         - {{ port }}
@@ -32,7 +35,7 @@ interfaces:
         - ip: "{{ hostvars[target_host].node_ipv4_address }}"
           prefix-length: {{ node_ipv4_prefix | int }}
     ipv6:
-      enabled: false
+      enabled: {{ install_network_ipv6_enabled | bool | lower }}
 {% endif %}
 
 dns-resolver:
@@ -47,3 +50,4 @@ routes:
     - destination: 0.0.0.0/0
       next-hop-address: "{{ node_ipv4_gateway }}"
       next-hop-interface: "{{ install_network_bond_name if install_network_mode == 'bond' else install_network_interface }}"
+{% endif %}

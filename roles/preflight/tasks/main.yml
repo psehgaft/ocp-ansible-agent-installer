@@ -11,7 +11,8 @@
       }}
     bmc_username_effective: "{{ bmc_username | default(idrac_user | default(ilo_user | default(''))) }}"
     bmc_password_effective: "{{ bmc_password | default(idrac_password | default(ilo_password | default(''))) }}"
-    bmc_type_requested: "{{ bmc_type | default('idrac' if idrac_ip is defined else ('ilo' if ilo_ip is defined else 'auto')) | lower }}"
+    bmc_type_requested: >-
+      {{ bmc_type | default('idrac' if idrac_ip is defined else ('ilo' if ilo_ip is defined else 'auto')) | lower }}
   no_log: true
 
 - name: Parse BMC endpoint
@@ -37,10 +38,12 @@
       - bmc_virtual_media_category | default('Manager') in ['Manager', 'Systems']
       - node_role | default('') in ['master', 'worker']
       - node_hostname | default('') | length > 0
-      - node_ipv4_address | default('') is match('^[0-9]{1,3}(\.[0-9]{1,3}){3}$')
+      - >-
+        node_network_config_mode == 'dhcp' or
+        node_ipv4_address | default('') is match('^[0-9]{1,3}(\.[0-9]{1,3}){3}$')
     fail_msg: >-
-      Invalid variables for {{ inventory_hostname }}. Review bmc_type, bmc_endpoint,
-      bmc_username, vaulted bmc_password, node_role, node_hostname, and node_ipv4_address.
+      Invalid host variables for {{ inventory_hostname }}. Review BMC credentials, role,
+      hostname, networking mode, and the static address when static networking is enabled.
   no_log: true
 
 - name: Assert required cluster variables
@@ -48,41 +51,49 @@
     that:
       - assisted_api_url is defined
       - assisted_auth_mode in ['saas', 'onprem']
+      - deployment_mode in ['connected', 'disconnected']
+      - node_network_config_mode in ['dhcp', 'static']
+      - vip_allocation_mode in ['dhcp', 'static']
       - cluster_name is defined
+      - "'CHANGE_ME' not in cluster_name"
       - base_dns_domain is defined
       - openshift_version is defined
-      - pull_secret_file is defined
-      - ssh_public_key_file is defined
-      - api_vip is defined
-      - ingress_vip is defined
-      - machine_network_cidr is defined
+      - pull_secret is defined
+      - pull_secret | length > 0
+      - ssh_public_key is defined
+      - ssh_public_key | length > 0
+      - machine_networks | length > 0
+      - cluster_networks | length > 0
+      - service_networks | length > 0
+      - vip_allocation_mode == 'dhcp' or api_vips | length > 0
+      - vip_allocation_mode == 'dhcp' or ingress_vips | length > 0
       - install_network_mode in ['single', 'bond']
       - iso_delivery_mode in ['local_http', 'existing_http', 'direct_url']
-    fail_msg: "A required cluster variable is missing or invalid. Review inventory group_vars/all.yml."
+    fail_msg: "A required cluster variable is missing or invalid. Review the inventory group_vars."
   when: preflight_require_cluster_inputs | bool
   run_once: true
 
-- name: Check pull secret file
-  ansible.builtin.stat:
-    path: "{{ pull_secret_file }}"
-  register: _pull_secret_stat
-  when: preflight_require_secret_files | bool
+- name: Validate the pull secret as JSON
+  ansible.builtin.set_fact:
+    _validated_pull_secret: "{{ pull_secret | from_json }}"
+  no_log: true
+  when: preflight_require_cluster_inputs | bool
   run_once: true
 
-- name: Check SSH public key file
-  ansible.builtin.stat:
-    path: "{{ ssh_public_key_file }}"
-  register: _ssh_key_stat
-  when: preflight_require_secret_files | bool
-  run_once: true
-
-- name: Assert required local files exist
+- name: Validate disconnected-only requirements
   ansible.builtin.assert:
     that:
-      - _pull_secret_stat.stat.exists
-      - _ssh_key_stat.stat.exists
-    fail_msg: "Create the pull-secret and SSH public-key files configured in group_vars/all.yml."
-  when: preflight_require_secret_files | bool
+      - disconnected_release_image | default('') | length > 0
+      - "'CHANGE_ME' not in disconnected_release_image"
+      - oc_mirror_registry | default('') | length > 0
+      - "'CHANGE_ME' not in oc_mirror_registry"
+      - assisted_auth_mode == 'onprem' or disconnected_environment == 'partially_disconnected'
+    fail_msg: >-
+      Set the mirror registry and digest-pinned release image. Fully air-gapped installations
+      also require assisted_auth_mode=onprem.
+  when:
+    - preflight_require_cluster_inputs | bool
+    - deployment_mode == 'disconnected'
   run_once: true
 
 - name: Validate inventory host counts
@@ -91,7 +102,7 @@
       - groups['control_plane'] | default([]) | length == control_plane_count | int
       - groups['workers'] | default([]) | length == compute_count | int
     fail_msg: >-
-      control_plane_count or compute_count does not match the inventory groups.
+      Inventory counts do not match control_plane_count and compute_count.
       control_plane={{ groups['control_plane'] | default([]) | length }},
       workers={{ groups['workers'] | default([]) | length }}.
   when: preflight_validate_inventory_counts | bool

@@ -1,0 +1,105 @@
+---
+- name: Validate disconnected mirroring variables
+  ansible.builtin.assert:
+    that:
+      - oc_mirror_workflow in ['render_only', 'mirror_to_mirror', 'mirror_to_disk', 'disk_to_mirror']
+      - disconnected_environment in ['partially_disconnected', 'air_gapped']
+      - oc_mirror_registry | length > 0
+      - "'CHANGE_ME' not in oc_mirror_registry"
+      - oc_mirror_min_version | length > 0
+      - oc_mirror_max_version | length > 0
+    fail_msg: >-
+      Review the disconnected variables. The oc-mirror workflow requires a valid destination
+      registry. The installation preflight separately validates the mirrored release pullspec
+      and the Assisted Installer service topology.
+
+- name: Create oc-mirror working directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: "0700"
+  loop:
+    - "{{ oc_mirror_workspace }}"
+    - "{{ oc_mirror_archive_dir }}"
+    - "{{ artifacts_dir }}/{{ cluster_name }}/rendered"
+
+- name: Render oc-mirror v2 ImageSetConfiguration
+  ansible.builtin.template:
+    src: imageset-config.yml.j2
+    dest: "{{ artifacts_dir }}/{{ cluster_name }}/rendered/imageset-config.yml"
+    mode: "0600"
+
+- name: Execute selected oc-mirror v2 workflow
+  when: oc_mirror_workflow != 'render_only'
+  block:
+    - name: Create temporary registry authentication file
+      ansible.builtin.tempfile:
+        state: file
+        suffix: .json
+      register: _oc_mirror_authfile
+
+    - name: Populate temporary registry authentication file
+      ansible.builtin.copy:
+        dest: "{{ _oc_mirror_authfile.path }}"
+        content: "{{ vault_mirror_auth_json | default(pull_secret) }}"
+        mode: "0600"
+      no_log: true
+
+    - name: Mirror directly to the registry
+      ansible.builtin.command:
+        argv:
+          - "{{ oc_mirror_binary }}"
+          - --config
+          - "{{ artifacts_dir }}/{{ cluster_name }}/rendered/imageset-config.yml"
+          - --authfile
+          - "{{ _oc_mirror_authfile.path }}"
+          - --workspace
+          - "file://{{ oc_mirror_workspace }}"
+          - --dest-tls-verify={{ oc_mirror_dest_tls_verify | bool | lower }}
+          - --src-tls-verify={{ oc_mirror_src_tls_verify | bool | lower }}
+          - --parallel-images={{ oc_mirror_parallel_images }}
+          - --parallel-layers={{ oc_mirror_parallel_layers }}
+          - --retry-times={{ oc_mirror_retry_times }}
+          - "docker://{{ oc_mirror_registry }}"
+          - --v2
+      when: oc_mirror_workflow == 'mirror_to_mirror'
+      changed_when: true
+      no_log: true
+
+    - name: Mirror connected content to disk
+      ansible.builtin.command:
+        argv:
+          - "{{ oc_mirror_binary }}"
+          - --config
+          - "{{ artifacts_dir }}/{{ cluster_name }}/rendered/imageset-config.yml"
+          - --authfile
+          - "{{ _oc_mirror_authfile.path }}"
+          - --src-tls-verify={{ oc_mirror_src_tls_verify | bool | lower }}
+          - "file://{{ oc_mirror_archive_dir }}"
+          - --v2
+      when: oc_mirror_workflow == 'mirror_to_disk'
+      changed_when: true
+      no_log: true
+
+    - name: Mirror disk content to the disconnected registry
+      ansible.builtin.command:
+        argv:
+          - "{{ oc_mirror_binary }}"
+          - --config
+          - "{{ artifacts_dir }}/{{ cluster_name }}/rendered/imageset-config.yml"
+          - --authfile
+          - "{{ _oc_mirror_authfile.path }}"
+          - --from
+          - "file://{{ oc_mirror_archive_dir }}"
+          - --dest-tls-verify={{ oc_mirror_dest_tls_verify | bool | lower }}
+          - "docker://{{ oc_mirror_registry }}"
+          - --v2
+      when: oc_mirror_workflow == 'disk_to_mirror'
+      changed_when: true
+      no_log: true
+  always:
+    - name: Remove temporary registry authentication file
+      ansible.builtin.file:
+        path: "{{ _oc_mirror_authfile.path | default('') }}"
+        state: absent
+      when: _oc_mirror_authfile.path | default('') | length > 0

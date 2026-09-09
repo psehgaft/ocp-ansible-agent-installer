@@ -1,7 +1,13 @@
 ---
 # Scope controls let discovery and cleanup playbooks avoid requiring full cluster inputs.
 preflight_require_cluster_inputs: true
-preflight_require_secret_files: true
+preflight_require_secret_files: false
 preflight_validate_inventory_counts: true
 preflight_check_bmc_port: true
 preflight_bmc_port_timeout: 10
+deployment_mode: connected
+disconnected_environment: partially_disconnected
+node_network_config_mode: static
+vip_allocation_mode: static
+api_vips: []
+ingress_vips: []

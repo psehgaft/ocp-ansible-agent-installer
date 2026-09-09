@@ -1,0 +1,14 @@
+---
+- name: Create the encrypted Day-0 credentials vault
+  hosts: localhost
+  gather_facts: false
+  connection: local
+  vars:
+    vault_password_file: "{{ lookup('ansible.builtin.env', 'OCP_VAULT_PASSWORD_FILE') }}"
+    vault_output_file: "{{ lookup('ansible.builtin.env', 'OCP_VAULT_OUTPUT_FILE') }}"
+    vault_pull_secret_file: "{{ lookup('ansible.builtin.env', 'OCP_PULL_SECRET_FILE') }}"
+    vault_ssh_public_key_file: "{{ lookup('ansible.builtin.env', 'OCP_SSH_PUBLIC_KEY_FILE') }}"
+    vault_bmc_credentials_file: "{{ lookup('ansible.builtin.env', 'OCP_BMC_CREDENTIALS_FILE') }}"
+    vault_mirror_auth_file: "{{ lookup('ansible.builtin.env', 'OCP_MIRROR_AUTH_FILE') }}"
+  roles:
+    - role: vault_bootstrap

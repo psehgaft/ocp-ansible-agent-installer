@@ -1,0 +1,53 @@
+---
+# Assisted Installer service and authentication.
+assisted_api_url: https://api.openshift.com/api/assisted-install/v2
+assisted_auth_mode: saas  # saas | onprem
+assisted_sso_url: https://sso.redhat.com/auth/realms/redhat-external/protocol/openid-connect/token
+
+# API defaults are explicit here. Empty values are omitted from API requests.
+assisted_cluster_api:
+  high_availability_mode: Full
+  cpu_architecture: x86_64
+  hyperthreading: all
+  network_type: OVNKubernetes
+  schedulable_masters: false
+  user_managed_networking: false
+  platform:
+    type: baremetal
+  load_balancer:
+    type: cluster-managed
+  disk_encryption:
+    enable_on: none
+    mode: tpmv2
+    tang_servers: ""
+  http_proxy: ""
+  https_proxy: ""
+  no_proxy: ""
+  additional_ntp_source: ""
+  ntp_sources: ""
+  ocp_release_image: ""
+  os_stream: ""
+  tags: ""
+  ignition_endpoint:
+    url: ""
+    ca_certificate: ""
+
+assisted_infra_env_api:
+  image_type: minimal-iso
+  cpu_architecture: x86_64
+  additional_ntp_sources: ""
+  ntp_sources: ""
+  rendezvous_ip: ""
+  ignition_config_override: ""
+  os_stream: ""
+  kernel_arguments: []
+  additional_trust_bundle: ""
+  network_discovery_delay_seconds: 0
+  proxy:
+    http_proxy: ""
+    https_proxy: ""
+    no_proxy: ""
+
+# Forward-compatible escape hatches. Keys must exist in the service OpenAPI schema.
+assisted_cluster_api_overrides: {}
+assisted_infra_env_api_overrides: {}

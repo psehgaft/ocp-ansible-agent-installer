@@ -1,8 +1,10 @@
 # OpenShift Automation Framework
 
-This repository provides a vendor-neutral OpenShift automation framework for bare-metal installation, platform operator lifecycle, GitOps bootstrap, Day-2 configuration, validation, reporting, and workshops.
+This repository provides a vendor-neutral OpenShift automation framework. Its canonical Day-0 path installs OpenShift on bare metal in connected, partially disconnected, or fully air-gapped environments. Day-2 content remains separate and must not be invoked by the installation playbook.
 
-The Day-0 installation path uses the Red Hat Assisted Installer API and standards-based Redfish. HPE iLO, Dell iDRAC, and other standards-compliant BMCs use the same `bmc_*` contract. Dell-specific `idrac_*` variables remain compatibility aliases only.
+The Day-0 installation path uses the Red Hat Assisted Installer API, `oc-mirror` v2, Ansible Vault, and standards-based Redfish. HPE iLO, Dell iDRAC, and other standards-compliant BMCs use the same `bmc_*` contract. Dell-specific `idrac_*` variables remain compatibility aliases only.
+
+For the complete installation procedure, variable catalog, network examples, and disconnected workflows, see [Day-0 bare-metal installation](docs/day0-bare-metal-installation.md).
 
 ## Architecture
 
@@ -34,7 +36,8 @@ workshop/                    Antora workshop source
 - Python 3.11 or later
 - `ansible-core` 2.18 or later
 - `oc`, `curl`, `jq`, Git, Kustomize, and Helm
-- Access to the target BMCs, Assisted Installer, cluster API, and Git repository
+- Access to the target BMCs and the selected Assisted Installer service
+- `oc-mirror` v2 and a registry for disconnected installation
 - Ansible Vault or an external secret manager
 
 Install dependencies:
@@ -46,13 +49,18 @@ ansible-galaxy collection install -r requirements.yml
 
 ## Inventory model
 
-Global non-secret defaults live under:
+The sample inventory separates required values, optional API defaults, networking, disconnected mirroring, BMC settings, runtime controls, and encrypted secrets:
 
 ```text
-group_vars/all/
-├── platform.yml
-├── features.yml
-└── versions.yml
+inventories/sample/group_vars/
+├── all/
+│   ├── 00-required.yml
+│   ├── 10-assisted-installer.yml
+│   ├── 20-network.yml
+│   ├── 30-disconnected.yml
+│   ├── 40-bmc.yml
+│   └── 50-runtime.yml
+└── vault.yml.example
 ```
 
 Environment values override those defaults:
@@ -74,7 +82,7 @@ Recommended precedence is global defaults, environment group variables, environm
 
 ```bash
 cp -a inventories/sample inventories/lab-cluster
-ansible-vault create inventories/lab-cluster/group_vars/vault.yml
+# Use playbooks/day0/create-vault.yml as documented in the Day-0 guide.
 ```
 
 Use generic Redfish host variables:
@@ -82,14 +90,13 @@ Use generic Redfish host variables:
 ```yaml
 bmc_type: auto          # auto | ilo | idrac | generic
 bmc_endpoint: https://10.10.10.11
-bmc_username: Administrator
-bmc_password: "{{ vault_bmc_passwords[inventory_hostname] }}"
+bmc_username: "{{ vault_bmc_credentials[inventory_hostname].username }}"
+bmc_password: "{{ vault_bmc_credentials[inventory_hostname].password }}"
 ```
 
 ### 2. Validate the repository and inventory
 
 ```bash
-./scripts/preflight.sh inventories/lab-cluster/hosts.yml
 ./scripts/validate.sh inventories/lab-cluster/hosts.yml
 ansible-inventory -i inventories/lab-cluster/hosts.yml --list >/dev/null
 ```
@@ -124,6 +131,8 @@ ansible-playbook \
   --ask-vault-pass \
   playbooks/day0/install.yml
 ```
+
+The same entry point is used for all connectivity models. Set `deployment_mode`, `disconnected_environment`, and `oc_mirror_workflow` in inventory. The playbook stops after installation credentials and evidence are downloaded; it does not perform Day-2 cluster mutations.
 
 The canonical installation and discovery entry points are under `playbooks/day0/`. Retired wrapper paths are intentionally absent and are prohibited by repository validation.
 

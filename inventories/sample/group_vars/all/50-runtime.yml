@@ -1,0 +1,21 @@
+---
+# Discovery ISO delivery.
+iso_delivery_mode: local_http  # local_http | existing_http | direct_url
+iso_http_advertise_address: CHANGE_ME_CONTROL_NODE_IP
+iso_http_bind_address: 0.0.0.0
+iso_http_port: 8080
+iso_http_container_name: ocp-assisted-iso-httpd
+iso_http_container_image: registry.access.redhat.com/ubi9/httpd-24:latest
+iso_existing_url: ""
+
+# Local execution and API polling.
+artifacts_dir: ./artifacts
+output_kubeconfig: "{{ artifacts_dir }}/{{ cluster_name }}/auth/kubeconfig"
+output_kubeadmin_password: "{{ artifacts_dir }}/{{ cluster_name }}/auth/kubeadmin-password"
+assisted_reuse_state: true
+assisted_host_registration_retries: 120
+assisted_host_registration_delay: 10
+assisted_ready_retries: 180
+assisted_ready_delay: 20
+assisted_install_retries: 360
+assisted_install_delay: 20

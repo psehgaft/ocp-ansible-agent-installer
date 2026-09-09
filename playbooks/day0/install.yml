@@ -11,6 +11,12 @@
       tags: [bmc, discovery]
     - role: bmc_report
       tags: [bmc, report]
+    - role: oc_mirror
+      when:
+        - deployment_mode == 'disconnected'
+        - oc_mirror_run_during_install | bool
+      run_once: true
+      tags: [mirror]
     - role: assisted_auth
       run_once: true
       tags: [assisted, auth]

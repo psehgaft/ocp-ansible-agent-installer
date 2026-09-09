@@ -1,0 +1,21 @@
+---
+apiVersion: mirror.openshift.io/v2alpha1
+kind: ImageSetConfiguration
+archiveSize: {{ oc_mirror_archive_size_gb | int }}
+mirror:
+  platform:
+    channels:
+      - name: {{ oc_mirror_channel }}
+        minVersion: {{ oc_mirror_min_version | string | to_json }}
+        maxVersion: {{ oc_mirror_max_version | string | to_json }}
+    architectures: {{ oc_mirror_architectures | to_json }}
+    graph: {{ oc_mirror_graph | bool | lower }}
+{% if oc_mirror_additional_images | length > 0 %}
+  additionalImages:
+{{ oc_mirror_additional_images | to_nice_yaml(indent=2) | indent(4, true) }}
+{% endif %}
+{% if oc_mirror_helm | length > 0 %}
+  helm:
+{{ oc_mirror_helm | to_nice_yaml(indent=2) | indent(4, true) }}
+{% endif %}
+

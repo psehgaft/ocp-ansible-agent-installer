@@ -47,8 +47,8 @@ if command -v ansible-inventory >/dev/null 2>&1; then
 fi
 
 if command -v ansible-playbook >/dev/null 2>&1; then
-  for playbook in playbooks/*.yml; do
+  while IFS= read -r playbook; do
     ansible-playbook -i "$INVENTORY" "$playbook" --syntax-check >/dev/null
     echo "Syntax check passed: $playbook"
-  done
+  done < <(find playbooks -type f -name '*.yml' | sort)
 fi

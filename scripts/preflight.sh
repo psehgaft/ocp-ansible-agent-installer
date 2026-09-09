@@ -25,7 +25,7 @@ else
 fi
 
 if grep -R --line-number --exclude='*.example' 'CHANGE_ME' \
-  "$INVENTORY" "$(dirname "$INVENTORY")/group_vars/all.yml" 2>/dev/null; then
+  "$INVENTORY" "$(dirname "$INVENTORY")/group_vars/all" 2>/dev/null; then
   echo "ERROR: unresolved CHANGE_ME placeholders were found." >&2
   FAIL=1
 else

@@ -8,9 +8,30 @@
       Content-Type: application/json
       Accept: application/json
     body_format: json
-    body:
-      host_name: "{{ hostvars[item].node_hostname }}"
-      host_role: "{{ hostvars[item].node_role }}"
+    body: >-
+      {{
+        {
+          'host_name': hostvars[item].node_hostname,
+          'host_role': hostvars[item].node_role
+        }
+        | combine(
+            {
+              'disks_selected_config': [
+                {'id': hostvars[item].installation_disk_id, 'role': 'install'}
+              ]
+            }
+            if hostvars[item].installation_disk_id | default('') | length > 0
+            else {},
+            recursive=true
+          )
+        | combine(
+            {'disks_skip_formatting': hostvars[item].disks_skip_formatting}
+            if hostvars[item].disks_skip_formatting | default([]) | length > 0
+            else {},
+            recursive=true
+          )
+        | combine(hostvars[item].assisted_host_api_overrides | default({}), recursive=true)
+      }}
     status_code: [200, 201, 202]
     return_content: true
   loop: "{{ groups['baremetal'] }}"
