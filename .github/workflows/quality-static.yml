@@ -83,4 +83,4 @@ jobs:
       - name: Documentation link validation
         uses: lycheeverse/lychee-action@v2
         with:
-          args: --no-progress --exclude-mail '**/*.md' '**/*.adoc'
+          args: --no-progress '**/*.md' '**/*.adoc'
