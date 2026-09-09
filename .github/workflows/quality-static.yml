@@ -88,5 +88,6 @@ jobs:
             --exclude '^https://docs\.redhat\.com/'
             --exclude '^https://developers\.redhat\.com/'
             --exclude '^https://docs\.ansible\.com/'
-            --exclude '^https://api\.cluster\.example\.com/'
+            --exclude '^https://api\.cluster\.example\.com'
+            --exclude '^https?://10\.'
             '**/*.md' '**/*.adoc'
