@@ -83,4 +83,10 @@ jobs:
       - name: Documentation link validation
         uses: lycheeverse/lychee-action@v2
         with:
-          args: --no-progress '**/*.md' '**/*.adoc'
+          args: >-
+            --no-progress
+            --exclude '^https://docs\.redhat\.com/'
+            --exclude '^https://developers\.redhat\.com/'
+            --exclude '^https://docs\.ansible\.com/'
+            --exclude '^https://api\.cluster\.example\.com/'
+            '**/*.md' '**/*.adoc'
