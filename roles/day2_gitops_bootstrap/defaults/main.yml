@@ -1,0 +1,20 @@
+---
+day2_gitops_bootstrap_enabled: false
+day2_deployment_mode: gitops
+day2_gitops_bootstrap_allow_unpublished: false
+day2_gitops_bootstrap_kubeconfig: "{{ output_kubeconfig | default(lookup('env', 'KUBECONFIG')) }}"
+day2_gitops_bootstrap_catalog_source: redhat-operators
+day2_gitops_bootstrap_catalog_namespace: openshift-marketplace
+day2_gitops_bootstrap_channel: latest
+day2_gitops_bootstrap_approval: Automatic
+day2_gitops_bootstrap_wait_retries: 90
+day2_gitops_bootstrap_wait_delay: 10
+day2_gitops_bootstrap_validate_catalog: true
+day2_gitops_bootstrap_output_root: >-
+  {{ day2_gitops_checkout_dir if day2_gitops_checkout_enabled else day2_gitops_render_root }}
+
+day2_gitops_bootstrap_private_repo: false
+day2_gitops_bootstrap_repo_auth_mode: https_token
+day2_gitops_bootstrap_repo_username: "{{ vault_git_username | default('oauth2') }}"
+day2_gitops_bootstrap_repo_token: "{{ vault_git_token | default('') }}"
+day2_gitops_bootstrap_repo_ssh_private_key: "{{ vault_git_ssh_private_key | default('') }}"

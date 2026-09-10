@@ -7,3 +7,8 @@ vault_mirror_auth_json: {{ _vault_mirror_auth_json | to_json }}
 vault_bmc_credentials:
 {{ _vault_bmc_credentials | to_nice_yaml(indent=2) | indent(2, true) }}
 
+# Optional Day-2 Git repository credentials. Empty values are harmless when an
+# existing credential helper or SSH agent is used.
+vault_git_username: {{ _vault_git_username | to_json }}
+vault_git_token: {{ _vault_git_token | to_json }}
+vault_git_ssh_private_key: {{ _vault_git_ssh_private_key | to_json }}

@@ -6,6 +6,13 @@ The Day-0 installation path uses the Red Hat Assisted Installer API, `oc-mirror`
 
 For the complete installation procedure, variable catalog, network examples, and disconnected workflows, see [Day-0 bare-metal installation](docs/day0-bare-metal-installation.md).
 
+The canonical Day-2 workflow is GitOps-only after its minimal control-plane
+bootstrap. It selects operators from a catalog of more than 50 Red Hat,
+certified, and requested ecosystem components, resolves dependencies, renders
+Kustomize and Argo CD resources, creates an oc-mirror v2 operator image set,
+and can publish the result to a configurable Git repository. See
+[Day-2 GitOps operator deployment](docs/day2-gitops-operator-deployment.md).
+
 ## Architecture
 
 The framework separates:
@@ -59,7 +66,8 @@ inventories/sample/group_vars/
 │   ├── 20-network.yml
 │   ├── 30-disconnected.yml
 │   ├── 40-bmc.yml
-│   └── 50-runtime.yml
+│   ├── 50-runtime.yml
+│   └── 60-day2-gitops.yml
 └── vault.yml.example
 ```
 
@@ -260,6 +268,17 @@ kubeconform -strict -ignore-missing-schemas /tmp/production.yaml
 Direct and GitOps modes must describe equivalent Kubernetes desired state. Direct mode applies that state immediately; GitOps mode publishes it for Argo CD reconciliation.
 
 ## Deployment modes
+
+For new Day-2 deployments, use the safe render preview and then the explicit
+Git publish/bootstrap workflow:
+
+```bash
+make day2-render
+make day2-deploy
+```
+
+Task 3, the future containerized graphical playbook runner, is recorded in
+[the GUI backlog](docs/task3-gui-backlog.md) and is not part of this change.
 
 Components declare supported modes in `framework/components.yml`:
 

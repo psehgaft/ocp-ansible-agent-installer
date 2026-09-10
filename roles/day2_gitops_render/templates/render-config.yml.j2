@@ -1,0 +1,20 @@
+---
+cluster_name: {{ day2_gitops_cluster_name | to_json }}
+openshift_minor_version: {{ day2_gitops_openshift_minor_version | to_json }}
+profile: {{ day2_gitops_profile | to_json }}
+project: {{ day2_gitops_project | to_json }}
+repository_url: {{ day2_gitops_repository_url | to_json }}
+target_revision: {{ day2_gitops_repository_branch | to_json }}
+repository_path: {{ day2_gitops_repository_path | to_json }}
+install_plan_approval: {{ day2_gitops_install_plan_approval | to_json }}
+adapt_versioned_channels: {{ day2_gitops_adapt_versioned_channels | bool | to_json }}
+enabled_operators:
+{{ day2_gitops_enabled_operators | to_nice_yaml(indent=2) | indent(2, true) }}
+operator_overrides:
+{{ day2_gitops_operator_overrides | to_nice_yaml(indent=2) | indent(2, true) }}
+additional_operators:
+{{ day2_gitops_additional_operators | to_nice_yaml(indent=2) | indent(2, true) }}
+catalog_source_images:
+{{ day2_gitops_catalog_source_images | to_nice_yaml(indent=2) | indent(2, true) }}
+operands:
+{{ day2_gitops_operands | to_nice_yaml(indent=2) | indent(2, true) }}

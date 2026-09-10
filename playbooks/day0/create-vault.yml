@@ -10,5 +10,6 @@
     vault_ssh_public_key_file: "{{ lookup('ansible.builtin.env', 'OCP_SSH_PUBLIC_KEY_FILE') }}"
     vault_bmc_credentials_file: "{{ lookup('ansible.builtin.env', 'OCP_BMC_CREDENTIALS_FILE') }}"
     vault_mirror_auth_file: "{{ lookup('ansible.builtin.env', 'OCP_MIRROR_AUTH_FILE') }}"
+    vault_git_ssh_private_key_file: "{{ lookup('ansible.builtin.env', 'OCP_GIT_SSH_PRIVATE_KEY_FILE') }}"
   roles:
     - role: vault_bootstrap

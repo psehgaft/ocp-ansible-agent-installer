@@ -41,6 +41,14 @@
         if vault_mirror_auth_file | length > 0
         else lookup('ansible.builtin.file', vault_pull_secret_file) | trim
       }}
+    _vault_git_username: "{{ lookup('ansible.builtin.env', 'OCP_GIT_USERNAME') }}"
+    _vault_git_token: "{{ lookup('ansible.builtin.env', 'OCP_GIT_TOKEN') }}"
+    _vault_git_ssh_private_key: >-
+      {{
+        lookup('ansible.builtin.file', vault_git_ssh_private_key_file) | trim
+        if vault_git_ssh_private_key_file | length > 0
+        else ''
+      }}
   no_log: true
 
 - name: Validate structured secret inputs

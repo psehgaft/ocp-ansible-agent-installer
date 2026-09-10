@@ -1,5 +1,18 @@
 # Changelog
 
+## Unreleased
+
+- Added a GitOps-only Day-2 renderer with selectable profiles, dependency
+  resolution, structured operands, Kustomize validation, explicit Git push
+  controls, and minimal OpenShift GitOps bootstrap.
+- Added a curated catalog of 52 Red Hat and requested ecosystem operators plus
+  a generic contract for any additional OperatorHub or private catalog package.
+- Added per-render oc-mirror v2 operator image sets for connected, partially
+  disconnected, and fully air-gapped workflows.
+- Added Vault-backed Git credentials, live PackageManifest validation, secret
+  rejection, deterministic ownership boundaries, tests, and documentation.
+- Recorded the graphical container runner as deferred Task 3 scope.
+
 ## 2.0.0 — 2026-07-30
 
 - Replaced Dell-specific iDRAC discovery with standard Redfish discovery.

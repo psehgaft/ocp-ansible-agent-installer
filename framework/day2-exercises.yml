@@ -392,3 +392,13 @@ exercises:
     role: day2_operational_workflow
     resources_variable: day2_deployment_mode
     gitops_output: rendered/day2/virtualization
+  render_gitops:
+    playbook: playbooks/day2/render-gitops.yml
+    role: day2_gitops_render
+    resources_variable: day2_gitops_enabled_operators
+    gitops_output: rendered/day2/gitops-rendered
+  bootstrap_gitops:
+    playbook: playbooks/day2/bootstrap-gitops.yml
+    role: day2_gitops_bootstrap
+    resources_variable: day2_gitops_bootstrap_enabled
+    gitops_output: rendered/day2/gitops-repository

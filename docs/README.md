@@ -1,5 +1,9 @@
 # OpenShift Bare Metal Install via Assisted Installer + Dell iDRAC (Ansible)
 
+> Canonical guides: [Day-0 bare-metal installation](day0-bare-metal-installation.md),
+> [Day-2 GitOps operator deployment](day2-gitops-operator-deployment.md), and
+> [Task 3 graphical runner backlog](task3-gui-backlog.md).
+
 ## What this does
 This project provisions an OpenShift cluster on Dell bare-metal servers by:
 1. Discovering server MAC/disk inventory via iDRAC (Redfish).
@@ -425,4 +429,3 @@ done
 
 - [Openshift Istaller SWAGER](https://api.openshift.com/?urls.primaryName=assisted-service%20service&extIdCarryOver=true&sc_cid=RHCTG0180000371695#/installer)
 - [Installing OpenShift Container Platform with the Assisted Installer](https://docs.redhat.com/en/documentation/assisted_installer_for_openshift_container_platform/2026/html-single/installing_openshift_container_platform_with_the_assisted_installer/index#getting-cluster-validations-by-using-rest-api_preinstallation-validations)
-
