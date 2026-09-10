@@ -1,0 +1,8 @@
+---
+- name: Render, publish, and initialize OpenShift Day-2 GitOps
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  roles:
+    - role: day2_gitops_render
+    - role: day2_gitops_bootstrap

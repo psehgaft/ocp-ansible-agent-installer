@@ -1,7 +1,7 @@
 INVENTORY ?= inventories/sample/hosts.yml
 VAULT_ARGS ?= --ask-vault-pass
 
-.PHONY: collections vault preflight validate discover test-media mirror boot install eject workshop
+.PHONY: collections vault preflight validate discover test-media mirror boot install eject day2-render day2-deploy workshop
 
 collections:
 	ansible-galaxy collection install -r requirements.yml
@@ -34,6 +34,12 @@ install:
 
 eject:
 	ansible-playbook -i $(INVENTORY) $(VAULT_ARGS) playbooks/90-eject-media.yml
+
+day2-render:
+	ansible-playbook -i $(INVENTORY) $(VAULT_ARGS) playbooks/day2/render-gitops.yml
+
+day2-deploy:
+	ansible-playbook -i $(INVENTORY) $(VAULT_ARGS) playbooks/day2/bootstrap-gitops.yml
 
 workshop:
 	@echo "Standalone guide: WORKSHOP.md"

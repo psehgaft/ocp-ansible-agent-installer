@@ -22,3 +22,12 @@ vault_bmc_credentials:
 
 # Optional. When omitted, oc-mirror uses vault_pull_secret as its auth file.
 # vault_mirror_auth_json: '{"auths":{"registry.example.com:8443":{"auth":"CHANGE_ME"}}}'
+
+# Optional Day-2 Git write/bootstrap credentials. Prefer a short-lived token
+# scoped to the desired-state repository, or an SSH deploy key.
+# vault_git_username: "oauth2"
+# vault_git_token: "CHANGE_ME_GIT_TOKEN"
+# vault_git_ssh_private_key: |
+#   -----BEGIN OPENSSH PRIVATE KEY-----
+#   CHANGE_ME
+#   -----END OPENSSH PRIVATE KEY-----

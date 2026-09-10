@@ -1,0 +1,36 @@
+---
+day2_gitops_catalog_file: "{{ role_path }}/../../framework/day2-operator-catalog.yml"
+day2_deployment_mode: gitops
+day2_gitops_renderer: "{{ role_path }}/../../scripts/render_day2_gitops.py"
+day2_gitops_cluster_name: "{{ cluster_name | default('example') }}"
+day2_gitops_openshift_minor_version: "{{ openshift_version | default('4.18') }}"
+day2_gitops_profile: custom
+day2_gitops_enabled_operators:
+  - gitops
+day2_gitops_operator_overrides: {}
+day2_gitops_additional_operators: {}
+day2_gitops_operands: {}
+day2_gitops_install_plan_approval: Automatic
+day2_gitops_adapt_versioned_channels: true
+day2_gitops_catalog_source_images: {}
+
+day2_gitops_repository_url: ""
+day2_gitops_repository_branch: main
+day2_gitops_repository_path: clusters
+day2_gitops_project: "platform-{{ day2_gitops_cluster_name }}"
+day2_gitops_render_root: "{{ role_path }}/../../artifacts/day2-gitops-rendered"
+day2_gitops_checkout_enabled: "{{ day2_gitops_git_push_enabled }}"
+day2_gitops_checkout_dir: "{{ role_path }}/../../artifacts/day2-gitops-repository"
+
+day2_gitops_git_push_enabled: false
+day2_gitops_git_push_confirmed: false
+day2_gitops_git_auth_mode: existing
+day2_gitops_git_username: "{{ vault_git_username | default('oauth2') }}"
+day2_gitops_git_token: "{{ vault_git_token | default('') }}"
+day2_gitops_git_author_name: OpenShift GitOps Renderer
+day2_gitops_git_author_email: openshift-gitops@example.invalid
+day2_gitops_git_commit_message: >-
+  Render OpenShift Day-2 desired state for {{ day2_gitops_cluster_name }}
+
+day2_gitops_validate_kustomize: true
+day2_gitops_kustomize_bin: kustomize

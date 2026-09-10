@@ -1,0 +1,199 @@
+---
+- name: Validate GitOps bootstrap boundary
+  ansible.builtin.assert:
+    that:
+      - day2_deployment_mode == 'gitops'
+      - day2_gitops_bootstrap_kubeconfig | length > 0
+      - day2_gitops_git_push_enabled | bool or day2_gitops_bootstrap_allow_unpublished | bool
+      - day2_gitops_bootstrap_repo_auth_mode in ['https_token', 'ssh_key']
+    fail_msg: >-
+      Bootstrap requires a kubeconfig and published Git content. Set
+      day2_gitops_bootstrap_allow_unpublished=true only when the same render is
+      already present at the configured repository revision.
+  when: day2_gitops_bootstrap_enabled | bool
+
+- name: Verify bootstrap kubeconfig exists
+  ansible.builtin.stat:
+    path: "{{ day2_gitops_bootstrap_kubeconfig }}"
+  register: day2_gitops_bootstrap_kubeconfig_stat
+  when: day2_gitops_bootstrap_enabled | bool
+
+- name: Reject missing bootstrap kubeconfig
+  ansible.builtin.assert:
+    that: day2_gitops_bootstrap_kubeconfig_stat.stat.exists
+    fail_msg: "Kubeconfig not found: {{ day2_gitops_bootstrap_kubeconfig }}"
+  when: day2_gitops_bootstrap_enabled | bool
+
+- name: Install and initialize the GitOps control plane
+  when: day2_gitops_bootstrap_enabled | bool
+  block:
+    - name: Ensure OpenShift GitOps operator namespace exists
+      kubernetes.core.k8s:
+        kubeconfig: "{{ day2_gitops_bootstrap_kubeconfig }}"
+        state: present
+        definition:
+          apiVersion: v1
+          kind: Namespace
+          metadata:
+            name: openshift-gitops-operator
+
+    - name: Ensure OpenShift GitOps OperatorGroup exists
+      kubernetes.core.k8s:
+        kubeconfig: "{{ day2_gitops_bootstrap_kubeconfig }}"
+        state: present
+        definition:
+          apiVersion: operators.coreos.com/v1
+          kind: OperatorGroup
+          metadata:
+            name: openshift-gitops-operator
+            namespace: openshift-gitops-operator
+          spec:
+            targetNamespaces:
+              - openshift-gitops-operator
+
+    - name: Install OpenShift GitOps operator as the bootstrap exception
+      kubernetes.core.k8s:
+        kubeconfig: "{{ day2_gitops_bootstrap_kubeconfig }}"
+        state: present
+        definition:
+          apiVersion: operators.coreos.com/v1alpha1
+          kind: Subscription
+          metadata:
+            name: openshift-gitops-operator
+            namespace: openshift-gitops-operator
+          spec:
+            name: openshift-gitops-operator
+            channel: "{{ day2_gitops_bootstrap_channel }}"
+            source: "{{ day2_gitops_bootstrap_catalog_source }}"
+            sourceNamespace: "{{ day2_gitops_bootstrap_catalog_namespace }}"
+            installPlanApproval: "{{ day2_gitops_bootstrap_approval }}"
+
+    - name: Wait for OpenShift GitOps Subscription resolution
+      kubernetes.core.k8s_info:
+        kubeconfig: "{{ day2_gitops_bootstrap_kubeconfig }}"
+        api_version: operators.coreos.com/v1alpha1
+        kind: Subscription
+        name: openshift-gitops-operator
+        namespace: openshift-gitops-operator
+      register: day2_gitops_subscription
+      until:
+        - day2_gitops_subscription.resources | length == 1
+        - day2_gitops_subscription.resources[0].status.installedCSV | default('') | length > 0
+      retries: "{{ day2_gitops_bootstrap_wait_retries }}"
+      delay: "{{ day2_gitops_bootstrap_wait_delay }}"
+
+    - name: Wait for OpenShift GitOps CSV success
+      kubernetes.core.k8s_info:
+        kubeconfig: "{{ day2_gitops_bootstrap_kubeconfig }}"
+        api_version: operators.coreos.com/v1alpha1
+        kind: ClusterServiceVersion
+        name: "{{ day2_gitops_subscription.resources[0].status.installedCSV }}"
+        namespace: openshift-gitops-operator
+      register: day2_gitops_csv
+      until:
+        - day2_gitops_csv.resources | length == 1
+        - day2_gitops_csv.resources[0].status.phase | default('') == 'Succeeded'
+      retries: "{{ day2_gitops_bootstrap_wait_retries }}"
+      delay: "{{ day2_gitops_bootstrap_wait_delay }}"
+
+    - name: Wait for the openshift-gitops namespace
+      kubernetes.core.k8s_info:
+        kubeconfig: "{{ day2_gitops_bootstrap_kubeconfig }}"
+        api_version: v1
+        kind: Namespace
+        name: openshift-gitops
+      register: day2_gitops_namespace
+      until: day2_gitops_namespace.resources | length == 1
+      retries: "{{ day2_gitops_bootstrap_wait_retries }}"
+      delay: "{{ day2_gitops_bootstrap_wait_delay }}"
+
+    - name: Read selected PackageManifests from the target cluster
+      kubernetes.core.k8s_info:
+        kubeconfig: "{{ day2_gitops_bootstrap_kubeconfig }}"
+        api_version: packages.operators.coreos.com/v1
+        kind: PackageManifest
+        name: "{{ item.package }}"
+        namespace: "{{ item.source_namespace }}"
+      loop: "{{ day2_gitops_render_summary.selected_packages }}"
+      loop_control:
+        label: "{{ item.component }}"
+      register: day2_gitops_package_manifests
+      when: day2_gitops_bootstrap_validate_catalog | bool
+
+    - name: Validate packages, catalogs, and requested channels
+      ansible.builtin.assert:
+        that:
+          - item.resources | length == 1
+          - item.resources[0].status.catalogSource | default('') == item.item.source
+          - >-
+            item.item.channel | length == 0 or
+            item.item.channel in
+            (item.resources[0].status.channels | default([]) | map(attribute='name') | list)
+        fail_msg: >-
+          Package {{ item.item.package }} or channel {{ item.item.channel | default('catalog default') }}
+          is unavailable from {{ item.item.source }}. Override its channel/source before publishing.
+      loop: "{{ day2_gitops_package_manifests.results | default([]) }}"
+      loop_control:
+        label: "{{ item.item.component }}"
+      when: day2_gitops_bootstrap_validate_catalog | bool
+
+    - name: Validate private repository bootstrap credentials
+      ansible.builtin.assert:
+        that:
+          - >-
+            (day2_gitops_bootstrap_repo_auth_mode == 'https_token' and
+             day2_gitops_bootstrap_repo_token | length > 0) or
+            (day2_gitops_bootstrap_repo_auth_mode == 'ssh_key' and
+             day2_gitops_bootstrap_repo_ssh_private_key | length > 0)
+        fail_msg: Store the selected private repository credential in Ansible Vault.
+      when: day2_gitops_bootstrap_private_repo | bool
+      no_log: true
+
+    - name: Build private repository credential definition
+      ansible.builtin.set_fact:
+        day2_gitops_repository_secret:
+          apiVersion: v1
+          kind: Secret
+          metadata:
+            name: "repo-{{ day2_gitops_cluster_name }}"
+            namespace: openshift-gitops
+            labels:
+              argocd.argoproj.io/secret-type: repository
+          stringData: >-
+            {{ {'type': 'git', 'url': day2_gitops_repository_url}
+               | combine(
+                   {'username': day2_gitops_bootstrap_repo_username,
+                    'password': day2_gitops_bootstrap_repo_token}
+                   if day2_gitops_bootstrap_repo_auth_mode == 'https_token'
+                   else {'sshPrivateKey': day2_gitops_bootstrap_repo_ssh_private_key}
+                 ) }}
+      when: day2_gitops_bootstrap_private_repo | bool
+      no_log: true
+
+    - name: Configure private repository credentials outside Git
+      kubernetes.core.k8s:
+        kubeconfig: "{{ day2_gitops_bootstrap_kubeconfig }}"
+        state: present
+        definition: "{{ day2_gitops_repository_secret }}"
+      when: day2_gitops_bootstrap_private_repo | bool
+      no_log: true
+
+    - name: Apply cluster-scoped Argo CD project
+      kubernetes.core.k8s:
+        kubeconfig: "{{ day2_gitops_bootstrap_kubeconfig }}"
+        state: present
+        src: >-
+          {{ day2_gitops_bootstrap_output_root }}/bootstrap/{{ day2_gitops_cluster_name }}/project.yaml
+
+    - name: Apply root Argo CD Application
+      kubernetes.core.k8s:
+        kubeconfig: "{{ day2_gitops_bootstrap_kubeconfig }}"
+        state: present
+        src: >-
+          {{ day2_gitops_bootstrap_output_root }}/bootstrap/{{ day2_gitops_cluster_name }}/root-application.yaml
+
+    - name: Report GitOps handoff
+      ansible.builtin.debug:
+        msg: >-
+          Bootstrap is complete. Argo CD now owns all selected Day-2 operator
+          and operand reconciliation. Do not run direct Day-2 apply playbooks.

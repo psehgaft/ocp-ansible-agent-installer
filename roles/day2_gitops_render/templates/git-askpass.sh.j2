@@ -1,0 +1,6 @@
+#!/bin/sh
+case "$1" in
+  *Username*) printf '%s\n' "$DAY2_GIT_USERNAME" ;;
+  *Password*) printf '%s\n' "$DAY2_GIT_TOKEN" ;;
+  *) exit 1 ;;
+esac
