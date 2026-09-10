@@ -38,6 +38,8 @@ day2_gitops_repository_url: https://github.com/example/openshift-desired-state.g
 day2_gitops_repository_branch: main
 day2_gitops_repository_path: clusters
 day2_gitops_project: "platform-{{ cluster_name }}"
+day2_gitops_render_root: "{{ artifacts_dir }}/day2-gitops-rendered"
+day2_gitops_checkout_dir: "{{ artifacts_dir }}/day2-gitops-checkout"
 
 # Safe defaults render locally without writing to Git or touching a cluster.
 day2_gitops_git_push_enabled: false

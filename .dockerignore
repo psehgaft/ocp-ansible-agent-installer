@@ -1,0 +1,15 @@
+.git
+.github
+.collections
+.ansible
+.venv
+venv
+artifacts
+reports/output
+node_modules
+workshop/build
+__pycache__
+*.pyc
+*.log
+inventories/*/group_vars/vault.yml
+

@@ -1,0 +1,56 @@
+name: Task 3 GUI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  gui-validation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.23.x'
+          cache: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+      - name: Install Python test dependencies
+        run: pip install -r requirements-ci.txt -r requirements.txt
+      - name: Verify Go formatting
+        run: |
+          gofmt -l cmd internal | tee /tmp/gofmt-files
+          test ! -s /tmp/gofmt-files
+      - name: Go static and race tests
+        run: |
+          go vet ./...
+          go test -race ./...
+      - name: Configuration helper tests
+        run: pytest -q tests/test_gui_config.py
+      - name: Build UI binary
+        run: go build -trimpath -o /tmp/installer-ui ./cmd/installer-ui
+      - name: API smoke test
+        run: |
+          INSTALLER_UI_REPOSITORY_ROOT="$PWD" \
+          INSTALLER_UI_DATA_ROOT=/tmp/installer-ui-data \
+          INSTALLER_UI_LISTEN=127.0.0.1:18080 \
+          /tmp/installer-ui >/tmp/installer-ui.log 2>&1 &
+          ui_pid=$!
+          trap 'kill ${ui_pid} 2>/dev/null || true' EXIT
+          for attempt in $(seq 1 30); do
+            if curl -fsS http://127.0.0.1:18080/healthz >/dev/null; then
+              break
+            fi
+            sleep 1
+          done
+          curl -fsS http://127.0.0.1:18080/healthz | jq -e '.status == "ok"'
+          curl -fsS http://127.0.0.1:18080/api/schema | jq -e '.operators | length >= 52'
+      - name: Build complete runtime container
+        run: docker build -f Containerfile -t ocp-installer-ui:test .

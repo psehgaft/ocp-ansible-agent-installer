@@ -1,7 +1,7 @@
 INVENTORY ?= inventories/sample/hosts.yml
 VAULT_ARGS ?= --ask-vault-pass
 
-.PHONY: collections vault preflight validate discover test-media mirror boot install eject day2-render day2-deploy workshop
+.PHONY: collections vault preflight validate discover test-media mirror boot install eject day2-render day2-deploy gui-test gui-build gui-run workshop
 
 collections:
 	ansible-galaxy collection install -r requirements.yml
@@ -40,6 +40,19 @@ day2-render:
 
 day2-deploy:
 	ansible-playbook -i $(INVENTORY) $(VAULT_ARGS) playbooks/day2/bootstrap-gitops.yml
+
+gui-test:
+	go test -race ./...
+	python3 -m pytest -q tests/test_gui_config.py
+
+gui-build:
+	podman build -f Containerfile -t ocp-ansible-agent-installer-ui:task3 .
+
+gui-run:
+	@test -n "$(INSTALLER_UI_ADMIN_TOKEN)" || (echo "Set INSTALLER_UI_ADMIN_TOKEN to a random token of at least 16 characters"; exit 1)
+	podman run --rm --name ocp-installer-ui -p 127.0.0.1:8080:8080 \
+		-e INSTALLER_UI_AUTH_TOKENS="$(INSTALLER_UI_ADMIN_TOKEN)=admin" \
+		-v ocp-installer-ui-data:/data:Z ocp-ansible-agent-installer-ui:task3
 
 workshop:
 	@echo "Standalone guide: WORKSHOP.md"
