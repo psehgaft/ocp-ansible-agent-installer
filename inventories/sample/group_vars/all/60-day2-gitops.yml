@@ -1,0 +1,53 @@
+---
+# Day-2 is rendered as desired state. Only the GitOps bootstrap boundary talks
+# directly to the cluster; selected operators and operands are reconciled by Argo CD.
+day2_gitops_cluster_name: "{{ cluster_name }}"
+day2_gitops_openshift_minor_version: "{{ openshift_version }}"
+
+# Profiles: custom, minimal, enterprise, observability, virtualization, telco,
+# developer, ai, and openstack. Explicit operators are added to the profile.
+day2_gitops_profile: custom
+day2_gitops_enabled_operators:
+  - gitops
+
+# Per-operator overrides support channel, source, source_namespace, namespace,
+# install_plan_approval, starting_csv, dependencies, and namespace/group creation.
+day2_gitops_operator_overrides: {}
+
+# Any additional OperatorHub package can be selected without changing the role.
+# day2_gitops_additional_operators:
+#   example_operator:
+#     display_name: Example certified operator
+#     package: example-package
+#     channel: stable
+#     source: certified-operators
+#     source_namespace: openshift-marketplace
+#     namespace: example-operator
+#     dependencies: []
+day2_gitops_additional_operators: {}
+
+# Structured Kubernetes resources for operator operands and platform features.
+# Plain Secret objects and common inline secret fields are rejected.
+day2_gitops_operands: {}
+
+day2_gitops_install_plan_approval: Automatic
+day2_gitops_adapt_versioned_channels: true
+day2_gitops_catalog_source_images: {}
+
+day2_gitops_repository_url: https://github.com/example/openshift-desired-state.git
+day2_gitops_repository_branch: main
+day2_gitops_repository_path: clusters
+day2_gitops_project: "platform-{{ cluster_name }}"
+
+# Safe defaults render locally without writing to Git or touching a cluster.
+day2_gitops_git_push_enabled: false
+day2_gitops_git_push_confirmed: false
+day2_gitops_git_auth_mode: existing
+day2_gitops_checkout_enabled: "{{ day2_gitops_git_push_enabled }}"
+
+# Explicit bootstrap switch. When enabled, Ansible installs only OpenShift
+# GitOps, configures repository access if needed, and creates the root app.
+day2_gitops_bootstrap_enabled: false
+day2_gitops_bootstrap_allow_unpublished: false
+day2_gitops_bootstrap_private_repo: false
+day2_gitops_bootstrap_repo_auth_mode: https_token

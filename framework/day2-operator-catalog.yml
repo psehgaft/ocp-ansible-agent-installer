@@ -1,0 +1,86 @@
+---
+# Curated Day-2 catalog. Empty channels intentionally delegate channel selection
+# to the CatalogSource default. Every field can be overridden from inventory.
+catalog_sources:
+  redhat-operators:
+    image: registry.redhat.io/redhat/redhat-operator-index:v4.18
+    source_namespace: openshift-marketplace
+  certified-operators:
+    image: registry.redhat.io/redhat/certified-operator-index:v4.18
+    source_namespace: openshift-marketplace
+  community-operators:
+    image: registry.redhat.io/redhat/community-operator-index:v4.18
+    source_namespace: openshift-marketplace
+
+profiles:
+  minimal: [gitops]
+  enterprise: [gitops, acm, acs, odf, cert_manager, cluster_observability, loki, logging, oadp, compliance]
+  observability: [gitops, cluster_observability, network_observability, opentelemetry, tempo, loki, logging]
+  virtualization: [gitops, openshift_virtualization, mtv, nmstate, nfd]
+  telco: [gitops, acm, nmstate, sriov, ptp, nfd, numa_resources, custom_metrics_autoscaler]
+  developer: [gitops, pipelines, devspaces, web_terminal, serverless, service_mesh, amq_streams]
+  ai: [gitops, openshift_ai, pipelines, nfd]
+  openstack: [gitops, cert_manager, nmstate, metallb, rhoso]
+
+operators:
+  gitops: {display_name: Red Hat OpenShift GitOps, package: openshift-gitops-operator, channel: latest, source: redhat-operators, namespace: openshift-gitops-operator, dependencies: [], official: true}
+  acm: {display_name: Red Hat Advanced Cluster Management, package: advanced-cluster-management, channel: '', source: redhat-operators, namespace: open-cluster-management, dependencies: [gitops], official: true}
+  mce: {display_name: Multicluster Engine, package: multicluster-engine, channel: '', source: redhat-operators, namespace: multicluster-engine, dependencies: [gitops], official: true}
+  multicluster_global_hub: {display_name: Multicluster Global Hub, package: multicluster-global-hub-operator-rh, channel: '', source: redhat-operators, namespace: multicluster-global-hub, dependencies: [acm], official: true}
+  acs: {display_name: Red Hat Advanced Cluster Security, package: rhacs-operator, channel: stable, source: redhat-operators, namespace: rhacs-operator, dependencies: [], official: true}
+  odf: {display_name: Red Hat OpenShift Data Foundation, package: odf-operator, channel: '', source: redhat-operators, namespace: openshift-storage, dependencies: [], official: true}
+  local_storage: {display_name: Local Storage Operator, package: local-storage-operator, channel: stable, source: redhat-operators, namespace: openshift-local-storage, dependencies: [], official: true}
+  lvms: {display_name: LVM Storage, package: lvms-operator, channel: stable-4.18, source: redhat-operators, namespace: openshift-storage, dependencies: [], official: true}
+  openshift_virtualization: {display_name: Red Hat OpenShift Virtualization, package: kubevirt-hyperconverged, channel: stable, source: redhat-operators, namespace: openshift-cnv, dependencies: [], official: true}
+  mtv: {display_name: Migration Toolkit for Virtualization, package: mtv-operator, channel: '', source: redhat-operators, namespace: openshift-mtv, dependencies: [openshift_virtualization], official: true}
+  mta: {display_name: Migration Toolkit for Applications, package: mta-operator, channel: '', source: redhat-operators, namespace: openshift-mta, dependencies: [], official: true}
+  logging: {display_name: Red Hat OpenShift Logging, package: cluster-logging, channel: '', source: redhat-operators, namespace: openshift-logging, dependencies: [loki], official: true}
+  loki: {display_name: Red Hat Loki Operator, package: loki-operator, channel: '', source: redhat-operators, namespace: openshift-operators-redhat, dependencies: [], official: true, create_operator_group: false}
+  cluster_observability: {display_name: Cluster Observability Operator, package: cluster-observability-operator, channel: stable, source: redhat-operators, namespace: openshift-cluster-observability-operator, dependencies: [], official: true}
+  network_observability: {display_name: Network Observability Operator, package: netobserv-operator, channel: stable, source: redhat-operators, namespace: openshift-netobserv-operator, dependencies: [], official: true}
+  distributed_tracing: {display_name: Red Hat OpenShift distributed tracing platform, package: jaeger-product, channel: stable, source: redhat-operators, namespace: openshift-distributed-tracing, dependencies: [], official: true}
+  opentelemetry: {display_name: Red Hat build of OpenTelemetry, package: opentelemetry-product, channel: stable, source: redhat-operators, namespace: openshift-opentelemetry-operator, dependencies: [], official: true}
+  tempo: {display_name: Tempo Operator, package: tempo-product, channel: stable, source: redhat-operators, namespace: openshift-tempo-operator, dependencies: [], official: true}
+  oadp: {display_name: OpenShift API for Data Protection, package: redhat-oadp-operator, channel: stable-1.5, source: redhat-operators, namespace: openshift-adp, dependencies: [], official: true}
+  compliance: {display_name: Compliance Operator, package: compliance-operator, channel: stable, source: redhat-operators, namespace: openshift-compliance, dependencies: [], official: true}
+  file_integrity: {display_name: File Integrity Operator, package: file-integrity-operator, channel: stable, source: redhat-operators, namespace: openshift-file-integrity, dependencies: [], official: true}
+  cert_manager: {display_name: cert-manager Operator for Red Hat OpenShift, package: openshift-cert-manager-operator, channel: stable-v1, source: redhat-operators, namespace: cert-manager-operator, dependencies: [], official: true}
+  sso: {display_name: Red Hat build of Keycloak, package: rhbk-operator, channel: '', source: redhat-operators, namespace: rhbk-operator, dependencies: [], official: true}
+  service_mesh: {display_name: Red Hat OpenShift Service Mesh 3, package: servicemeshoperator3, channel: stable, source: redhat-operators, namespace: openshift-operators, dependencies: [], official: true, create_operator_group: false}
+  serverless: {display_name: Red Hat OpenShift Serverless, package: serverless-operator, channel: stable, source: redhat-operators, namespace: openshift-serverless, dependencies: [], official: true}
+  pipelines: {display_name: Red Hat OpenShift Pipelines, package: openshift-pipelines-operator-rh, channel: latest, source: redhat-operators, namespace: openshift-operators, dependencies: [], official: true, create_operator_group: false}
+  openshift_ai: {display_name: Red Hat OpenShift AI, package: rhods-operator, channel: stable, source: redhat-operators, namespace: redhat-ods-operator, dependencies: [], official: true}
+  amq_streams: {display_name: Red Hat AMQ Streams, package: amq-streams, channel: stable, source: redhat-operators, namespace: openshift-operators, dependencies: [], official: true, create_operator_group: false}
+  amq_broker: {display_name: Red Hat AMQ Broker, package: amq-broker-rhel8, channel: '', source: redhat-operators, namespace: openshift-operators, dependencies: [], official: true, create_operator_group: false}
+  quay: {display_name: Red Hat Quay, package: quay-operator, channel: '', source: redhat-operators, namespace: openshift-operators, dependencies: [cert_manager], official: true, create_operator_group: false}
+  container_security: {display_name: Red Hat Quay Container Security, package: container-security-operator, channel: stable-3.15, source: redhat-operators, namespace: openshift-operators, dependencies: [], official: true, create_operator_group: false}
+  aap: {display_name: Ansible Automation Platform, package: ansible-automation-platform-operator, channel: stable-2.6, source: redhat-operators, namespace: ansible-automation-platform, dependencies: [], official: true}
+  devspaces: {display_name: Red Hat OpenShift Dev Spaces, package: devspaces, channel: stable, source: redhat-operators, namespace: openshift-operators, dependencies: [], official: true, create_operator_group: false}
+  web_terminal: {display_name: Web Terminal Operator, package: web-terminal, channel: fast, source: redhat-operators, namespace: openshift-operators, dependencies: [], official: true, create_operator_group: false}
+  metallb: {display_name: MetalLB Operator, package: metallb-operator, channel: stable, source: redhat-operators, namespace: metallb-system, dependencies: [], official: true}
+  nmstate: {display_name: Kubernetes NMState Operator, package: kubernetes-nmstate-operator, channel: stable, source: redhat-operators, namespace: openshift-nmstate, dependencies: [], official: true}
+  sriov: {display_name: SR-IOV Network Operator, package: sriov-network-operator, channel: stable, source: redhat-operators, namespace: openshift-sriov-network-operator, dependencies: [], official: true}
+  ptp: {display_name: PTP Operator, package: ptp-operator, channel: stable, source: redhat-operators, namespace: openshift-ptp, dependencies: [], official: true}
+  nfd: {display_name: Node Feature Discovery Operator, package: nfd, channel: stable, source: redhat-operators, namespace: openshift-nfd, dependencies: [], official: true}
+  numa_resources: {display_name: NUMA Resources Operator, package: numaresources-operator, channel: '4.18', source: redhat-operators, namespace: openshift-numaresources, dependencies: [nfd], official: true}
+  custom_metrics_autoscaler: {display_name: Custom Metrics Autoscaler, package: openshift-custom-metrics-autoscaler-operator, channel: stable, source: redhat-operators, namespace: openshift-keda, dependencies: [], official: true}
+  sandboxed_containers: {display_name: OpenShift Sandboxed Containers, package: sandboxed-containers-operator, channel: stable, source: redhat-operators, namespace: openshift-sandboxed-containers-operator, dependencies: [nfd], official: true}
+  kernel_module_management: {display_name: Kernel Module Management, package: kernel-module-management, channel: stable, source: redhat-operators, namespace: openshift-kmm, dependencies: [], official: true}
+  node_maintenance: {display_name: Node Maintenance Operator, package: node-maintenance-operator, channel: stable, source: redhat-operators, namespace: openshift-workload-availability, dependencies: [], official: true}
+  self_node_remediation: {display_name: Self Node Remediation, package: self-node-remediation, channel: stable, source: redhat-operators, namespace: openshift-workload-availability, dependencies: [], official: true}
+  fence_agents_remediation: {display_name: Fence Agents Remediation, package: fence-agents-remediation, channel: stable, source: redhat-operators, namespace: openshift-workload-availability, dependencies: [], official: true}
+  node_health_check: {display_name: Node Health Check, package: node-healthcheck-operator, channel: stable, source: redhat-operators, namespace: openshift-workload-availability, dependencies: [], official: true}
+  rhoso: {display_name: Red Hat OpenStack Services on OpenShift, package: openstack-operator, channel: stable-v1.0, source: redhat-operators, namespace: openstack-operators, dependencies: [cert_manager, nmstate], official: true}
+  dell_csm: {display_name: Dell Container Storage Modules (PowerStore and PowerMax), package: dell-csm-operator, channel: stable, source: certified-operators, namespace: dell-csm-operator, dependencies: [], official: false}
+  netapp_trident: {display_name: NetApp Trident, package: trident-operator, channel: stable, source: certified-operators, namespace: trident, dependencies: [], official: false}
+  portworx: {display_name: Portworx Enterprise, package: portworx-certified, channel: stable, source: certified-operators, namespace: portworx, dependencies: [], official: false}
+  external_secrets: {display_name: External Secrets Operator, package: external-secrets-operator, channel: stable, source: community-operators, namespace: external-secrets, dependencies: [], official: false}
+
+# Platform capabilities are configured by manifests rather than OLM Subscriptions.
+platform_features:
+  authentication: {display_name: OpenShift OAuth and identity providers, default_namespace: openshift-config}
+  multus: {display_name: Multus network attachment definitions, default_namespace: default}
+  monitoring: {display_name: Cluster and user workload monitoring, default_namespace: openshift-monitoring}
+  ingress: {display_name: IngressController configuration, default_namespace: openshift-ingress-operator}
+  image_registry: {display_name: Integrated image registry configuration, default_namespace: openshift-image-registry}
+  proxy: {display_name: Cluster-wide proxy and trusted CA, default_namespace: openshift-config}

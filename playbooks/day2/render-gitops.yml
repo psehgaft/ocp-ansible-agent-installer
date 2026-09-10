@@ -1,0 +1,7 @@
+---
+- name: Render and optionally publish OpenShift Day-2 desired state
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  roles:
+    - role: day2_gitops_render

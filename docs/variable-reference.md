@@ -2,6 +2,31 @@
 
 The sample inventory is the authoritative variable example. Values are grouped under `inventories/sample/group_vars/all/`; sensitive values belong only in encrypted `group_vars/vault.yml`.
 
+## Day-2 GitOps variables
+
+| Variable | Required | Default | Purpose |
+|---|---:|---|---|
+| `day2_gitops_cluster_name` | Yes | `cluster_name` | Cluster key used in generated paths and names. |
+| `day2_gitops_openshift_minor_version` | Yes | `openshift_version` or `4.18` | Selects versioned channels and index images. |
+| `day2_gitops_repository_url` | Yes | Empty | Desired-state repository consumed by Argo CD. |
+| `day2_gitops_repository_branch` | No | `main` | Git branch and Argo CD target revision. |
+| `day2_gitops_repository_path` | No | `clusters` | Managed root in the desired-state repository. |
+| `day2_gitops_profile` | No | `custom` | Built-in profile or explicit custom selection. |
+| `day2_gitops_enabled_operators` | No | `[gitops]` | Additional catalog keys to render. |
+| `day2_gitops_operator_overrides` | No | `{}` | Channel, source, namespace, approval, CSV, and dependency overrides. |
+| `day2_gitops_additional_operators` | No | `{}` | Definitions for packages outside the curated catalog. |
+| `day2_gitops_operands` | No | `{}` | Full structured Kubernetes resources reconciled after operators. |
+| `day2_gitops_install_plan_approval` | No | `Automatic` | Global OLM approval default. |
+| `day2_gitops_git_push_enabled` | No | `false` | Enables commit and push. |
+| `day2_gitops_git_push_confirmed` | No | `false` | Independent confirmation required for Git writes. |
+| `day2_gitops_bootstrap_enabled` | No | `false` | Enables minimal GitOps installation and root Application creation. |
+| `day2_gitops_bootstrap_validate_catalog` | No | `true` | Validates PackageManifest source and channel before handoff. |
+| `day2_gitops_bootstrap_private_repo` | No | `false` | Creates repository credentials directly from Vault values. |
+
+Optional Vault keys are `vault_git_username`, `vault_git_token`, and
+`vault_git_ssh_private_key`. See the
+[Day-2 guide](day2-gitops-operator-deployment.md) for the complete workflow.
+
 ## Required cluster variables
 
 | Variable | Type | Purpose |

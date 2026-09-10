@@ -18,7 +18,8 @@ def test_sample_variables_are_grouped_by_responsibility() -> None:
         "20-network.yml",
         "30-disconnected.yml",
         "40-bmc.yml",
-        "50-runtime.yml",
+            "50-runtime.yml",
+            "60-day2-gitops.yml",
     }
     assert {path.name for path in variable_dir.glob("*.yml")} == expected
     assert not (ROOT / "inventories/sample/group_vars/all.yml").exists()

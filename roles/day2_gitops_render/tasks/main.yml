@@ -1,0 +1,190 @@
+---
+- name: Validate Day-2 GitOps rendering inputs
+  ansible.builtin.assert:
+    that:
+      - day2_deployment_mode == 'gitops'
+      - day2_gitops_repository_url | length > 0
+      - day2_gitops_cluster_name | length > 0
+      - day2_gitops_cluster_name is match('^[a-z0-9]([-a-z0-9.]*[a-z0-9])?$')
+      - day2_gitops_profile | length > 0
+      - day2_gitops_install_plan_approval in ['Automatic', 'Manual']
+      - day2_gitops_git_auth_mode in ['existing', 'https_token']
+      - not day2_gitops_git_push_enabled or day2_gitops_git_push_confirmed | bool
+      - not day2_gitops_git_push_enabled or day2_gitops_checkout_enabled | bool
+      - day2_gitops_enabled_operators is sequence
+      - day2_gitops_operator_overrides is mapping
+      - day2_gitops_additional_operators is mapping
+      - day2_gitops_operands is mapping
+    fail_msg: Invalid Day-2 GitOps renderer configuration.
+
+- name: Require a Vault-backed token for HTTPS Git authentication
+  ansible.builtin.assert:
+    that:
+      - day2_gitops_git_token | length > 0
+      - day2_gitops_git_username | length > 0
+    fail_msg: Define vault_git_token and optionally vault_git_username in Ansible Vault.
+  when: day2_gitops_git_auth_mode == 'https_token'
+  no_log: true
+
+- name: Create local renderer workspace
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: '0750'
+  loop:
+    - "{{ day2_gitops_render_root }}"
+    - "{{ day2_gitops_checkout_dir }}"
+
+- name: Create temporary renderer files
+  ansible.builtin.tempfile:
+    state: directory
+    prefix: day2-gitops-
+  register: day2_gitops_tempdir
+
+- name: Render and optionally publish desired state
+  block:
+    - name: Create credential-free Git askpass helper
+      ansible.builtin.template:
+        src: git-askpass.sh.j2
+        dest: "{{ day2_gitops_tempdir.path }}/git-askpass.sh"
+        mode: '0700'
+
+    - name: Check whether the Git checkout already exists
+      ansible.builtin.stat:
+        path: "{{ day2_gitops_checkout_dir }}/.git"
+      register: day2_gitops_checkout_stat
+      when: day2_gitops_checkout_enabled | bool
+
+    - name: Clone desired-state repository
+      ansible.builtin.command:
+        argv:
+          - git
+          - clone
+          - --single-branch
+          - --branch
+          - "{{ day2_gitops_repository_branch }}"
+          - "{{ day2_gitops_repository_url }}"
+          - "{{ day2_gitops_checkout_dir }}"
+      environment: &git_environment
+        GIT_ASKPASS: "{{ day2_gitops_tempdir.path }}/git-askpass.sh"
+        GIT_TERMINAL_PROMPT: '0'
+        DAY2_GIT_USERNAME: "{{ day2_gitops_git_username }}"
+        DAY2_GIT_TOKEN: "{{ day2_gitops_git_token }}"
+      when:
+        - day2_gitops_checkout_enabled | bool
+        - not day2_gitops_checkout_stat.stat.exists
+      no_log: "{{ day2_gitops_git_auth_mode == 'https_token' }}"
+
+    - name: Update existing desired-state checkout
+      ansible.builtin.command:
+        argv: [git, pull, --ff-only, origin, "{{ day2_gitops_repository_branch }}"]
+        chdir: "{{ day2_gitops_checkout_dir }}"
+      environment: *git_environment
+      register: day2_gitops_pull
+      changed_when: "'Already up to date.' not in day2_gitops_pull.stdout"
+      when:
+        - day2_gitops_checkout_enabled | bool
+        - day2_gitops_checkout_stat.stat.exists
+      no_log: "{{ day2_gitops_git_auth_mode == 'https_token' }}"
+
+    - name: Write secret-free renderer configuration
+      ansible.builtin.template:
+        src: render-config.yml.j2
+        dest: "{{ day2_gitops_tempdir.path }}/render-config.yml"
+        mode: '0600'
+
+    - name: Render selected operators and operands
+      ansible.builtin.command:
+        argv:
+          - "{{ ansible_playbook_python }}"
+          - "{{ day2_gitops_renderer }}"
+          - --catalog
+          - "{{ day2_gitops_catalog_file }}"
+          - --config
+          - "{{ day2_gitops_tempdir.path }}/render-config.yml"
+          - --output
+          - "{{ day2_gitops_checkout_dir if day2_gitops_checkout_enabled else day2_gitops_render_root }}"
+      register: day2_gitops_render_result
+      changed_when: true
+
+    - name: Find rendered Kustomize roots
+      ansible.builtin.find:
+        paths: "{{ day2_gitops_checkout_dir if day2_gitops_checkout_enabled else day2_gitops_render_root }}"
+        patterns: kustomization.yaml
+        recurse: true
+      register: day2_gitops_kustomizations
+      when: day2_gitops_validate_kustomize | bool
+
+    - name: Validate every rendered Kustomize root
+      ansible.builtin.command:
+        argv:
+          - "{{ day2_gitops_kustomize_bin }}"
+          - build
+          - "{{ item.path | dirname }}"
+      loop: "{{ day2_gitops_kustomizations.files | default([]) }}"
+      changed_when: false
+      when: day2_gitops_validate_kustomize | bool
+
+    - name: Inspect rendered Git changes
+      ansible.builtin.command:
+        argv: [git, status, --porcelain]
+        chdir: "{{ day2_gitops_checkout_dir }}"
+      register: day2_gitops_git_status
+      changed_when: false
+      when: day2_gitops_git_push_enabled | bool
+
+    - name: Configure Git commit identity
+      ansible.builtin.command:
+        argv: [git, config, "{{ item.key }}", "{{ item.value }}"]
+        chdir: "{{ day2_gitops_checkout_dir }}"
+      loop:
+        - {key: user.name, value: "{{ day2_gitops_git_author_name }}"}
+        - {key: user.email, value: "{{ day2_gitops_git_author_email }}"}
+      changed_when: false
+      when:
+        - day2_gitops_git_push_enabled | bool
+        - day2_gitops_git_status.stdout | length > 0
+
+    - name: Commit rendered desired state
+      ansible.builtin.command:
+        argv: [git, add, --all]
+        chdir: "{{ day2_gitops_checkout_dir }}"
+      changed_when: true
+      when:
+        - day2_gitops_git_push_enabled | bool
+        - day2_gitops_git_status.stdout | length > 0
+
+    - name: Create desired-state commit
+      ansible.builtin.command:
+        argv: [git, commit, -m, "{{ day2_gitops_git_commit_message }}"]
+        chdir: "{{ day2_gitops_checkout_dir }}"
+      register: day2_gitops_commit_result
+      changed_when: true
+      when:
+        - day2_gitops_git_push_enabled | bool
+        - day2_gitops_git_status.stdout | length > 0
+
+    - name: Push desired-state commit
+      ansible.builtin.command:
+        argv: [git, push, origin, "HEAD:{{ day2_gitops_repository_branch }}"]
+        chdir: "{{ day2_gitops_checkout_dir }}"
+      environment: *git_environment
+      changed_when: true
+      when:
+        - day2_gitops_git_push_enabled | bool
+        - day2_gitops_git_status.stdout | length > 0
+      no_log: "{{ day2_gitops_git_auth_mode == 'https_token' }}"
+
+    - name: Publish Day-2 render summary
+      ansible.builtin.set_fact:
+        day2_gitops_render_summary: "{{ day2_gitops_render_result.stdout | from_json }}"
+
+  always:
+    - name: Remove temporary renderer files
+      ansible.builtin.file:
+        path: "{{ day2_gitops_tempdir.path }}"
+        state: absent
+
+- name: Show rendered component summary
+  ansible.builtin.debug:
+    var: day2_gitops_render_summary
