@@ -44,7 +44,7 @@ jobs:
           /tmp/installer-ui >/tmp/installer-ui.log 2>&1 &
           ui_pid=$!
           trap 'kill ${ui_pid} 2>/dev/null || true' EXIT
-          for attempt in $(seq 1 30); do
+          for _ in $(seq 1 30); do
             if curl -fsS http://127.0.0.1:18080/healthz >/dev/null; then
               break
             fi
