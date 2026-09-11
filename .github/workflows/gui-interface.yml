@@ -1,4 +1,4 @@
-name: Task 3 GUI
+name: GUI Interface
 
 on:
   pull_request:

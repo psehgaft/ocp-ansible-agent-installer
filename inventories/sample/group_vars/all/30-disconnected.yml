@@ -25,6 +25,6 @@ oc_mirror_graph: true
 disconnected_release_image: ""
 mirror_ca_file: ""
 
-# Task 1 mirrors only the OpenShift release. Day-2 operator catalogs are intentionally excluded.
+# Day-0 mirrors only the OpenShift release. Day-2 operator catalogs are intentionally excluded.
 oc_mirror_additional_images: []
 oc_mirror_helm: {}

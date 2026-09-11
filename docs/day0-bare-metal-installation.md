@@ -2,6 +2,9 @@
 
 This guide covers only the installation of OpenShift Container Platform on bare metal. It deliberately stops after the cluster is installed and the Assisted Installer credentials are downloaded. Operators and all other Day-2 configuration belong in GitOps.
 
+Use this guide for the variable and API contract. For ordered CLI and GUI
+procedures, start with the [six deployment scenarios](deployment-scenarios.md).
+
 ## Supported paths
 
 | Content access | Assisted Installer | Image workflow | Supported |

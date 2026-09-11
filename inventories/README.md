@@ -13,7 +13,7 @@ inventories/
 
 Each environment may contain `hosts.yml`, `group_vars/`, and `host_vars/`. Copy `inventories/sample` to obtain the categorized Day-0 layout. Secrets belong in encrypted Vault files or external credential systems; create the inventory vault with `playbooks/day0/create-vault.yml`.
 
-Task 2 selection and repository controls belong in
+Day-2 selection and repository controls belong in
 `group_vars/all/60-day2-gitops.yml`. Git credentials belong only in the
 encrypted `group_vars/vault.yml`.
 

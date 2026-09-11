@@ -1,0 +1,53 @@
+= Disconnected OpenShift Installation with Playbooks
+
+== Objective
+
+Prepare OpenShift content with `oc-mirror` v2 and install from a controlled
+registry in a partially disconnected or fully air-gapped environment.
+
+== Procedure
+
+. Complete the inventory, network, host, disk, BMC, runtime, and encrypted Vault
+  preparation from xref:15-connected-playbook.adoc[Connected Installation with
+  Playbooks].
+
+. Set `deployment_mode: disconnected` and configure every key in
+  `30-disconnected.yml`: environment type, workflow, workspace/archive,
+  registry, TLS verification, CA, parallelism, retries, archive size, channel,
+  version range, architecture, graph, release image, and optional content.
+
+. Start with `oc_mirror_workflow: render_only` and inspect the generated
+  ImageSetConfiguration.
++
+[source,bash]
+----
+ansible-playbook -i "$INVENTORY" --vault-password-file "$VAULT_PASSWORD_FILE" playbooks/day0/prepare-mirror.yml
+----
+
+. For partially disconnected installation, select `mirror_to_mirror`. For a
+  fully air-gapped transfer, use `mirror_to_disk` on the connected host,
+  transfer the archive through the approved process, and use `disk_to_mirror`
+  on the disconnected host.
+
+. Run the mirror playbook again with confirmation appropriate to the change
+  process. Record the exact digest-pinned release pullspec in
+  `disconnected_release_image`.
+
+. Set `oc_mirror_run_during_install: false`, validate the final inventory, and
+  run preflight and BMC discovery.
+
+. Install from the mirrored release.
++
+[source,bash]
+----
+./scripts/validate.sh "$INVENTORY"
+ansible-playbook -i "$INVENTORY" --vault-password-file "$VAULT_PASSWORD_FILE" playbooks/day0/install.yml
+----
+
+. Verify the release source, nodes, ClusterOperators, registry trust, mapping
+  resources, mirror logs, and installation evidence.
+
+== Success criteria
+
+The registry contains the approved release, the installation uses its pinned
+digest, and all evidence required to reproduce the offline transfer is retained.

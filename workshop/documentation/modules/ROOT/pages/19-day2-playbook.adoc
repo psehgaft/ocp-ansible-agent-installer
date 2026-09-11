@@ -1,0 +1,53 @@
+= Day-2 Activities with Playbooks
+
+== Objective
+
+Render operator and operand desired state, review it, publish it to Git, and
+perform only the minimal OpenShift GitOps bootstrap directly.
+
+== Procedure
+
+. Activate the installed cluster kubeconfig and confirm nodes and
+  ClusterOperators are healthy.
+
+. Review every key in `60-day2-gitops.yml`. Configure cluster/version, profile,
+  explicit operators, overrides, additional packages, structured operands,
+  approval, version adaptation, catalog images, Git URL/branch/path, project,
+  render/checkout directories, authentication, push, and bootstrap controls.
+
+. Keep push confirmation and bootstrap disabled, then render.
++
+[source,bash]
+----
+ansible-playbook -i "$INVENTORY" --vault-password-file "$VAULT_PASSWORD_FILE" playbooks/day2/render-gitops.yml
+----
+
+. Validate the rendered Kustomize roots, dependency order, channels,
+  namespaces, sync waves, operands, and operator ImageSetConfiguration.
+
+. For disconnected clusters, mirror operator catalogs/packages and apply the
+  generated IDMS, ITMS, and CatalogSource resources before bootstrap.
+
+. After approval, set all three controls:
++
+[source,yaml]
+----
+day2_gitops_git_push_enabled: true
+day2_gitops_git_push_confirmed: true
+day2_gitops_bootstrap_enabled: true
+----
+
+. Run the bootstrap playbook.
++
+[source,bash]
+----
+ansible-playbook -i "$INVENTORY" --vault-password-file "$VAULT_PASSWORD_FILE" playbooks/day2/bootstrap-gitops.yml
+----
+
+. Verify Argo CD Applications, Subscriptions, InstallPlans, CSVs, and operand
+  health. Make all later changes in Git.
+
+== Success criteria
+
+The approved commit is the source of truth, OpenShift GitOps owns reconciliation,
+and plaintext secrets are absent from rendered content.

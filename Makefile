@@ -46,13 +46,13 @@ gui-test:
 	python3 -m pytest -q tests/test_gui_config.py
 
 gui-build:
-	podman build -f Containerfile -t ocp-ansible-agent-installer-ui:task3 .
+	podman build -f Containerfile -t ocp-ansible-agent-installer-ui:gui .
 
 gui-run:
 	@test -n "$(INSTALLER_UI_ADMIN_TOKEN)" || (echo "Set INSTALLER_UI_ADMIN_TOKEN to a random token of at least 16 characters"; exit 1)
 	podman run --rm --name ocp-installer-ui -p 127.0.0.1:8080:8080 \
 		-e INSTALLER_UI_AUTH_TOKENS="$(INSTALLER_UI_ADMIN_TOKEN)=admin" \
-		-v ocp-installer-ui-data:/data:Z ocp-ansible-agent-installer-ui:task3
+		-v ocp-installer-ui-data:/data:Z ocp-ansible-agent-installer-ui:gui
 
 workshop:
 	@echo "Standalone guide: WORKSHOP.md"

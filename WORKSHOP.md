@@ -1,6 +1,26 @@
-# Workshop: Deploy OpenShift with Assisted Installer, HPE iLO, and Dell iDRAC
+# Workshop: Deploy OpenShift with Playbooks or the GUI Interface
 
-> **Task 1 migration notice:** The canonical connected/disconnected inventory, Vault bootstrap, DHCP/static networking, disk selection, and `oc-mirror` v2 workflow are documented in [`docs/day0-bare-metal-installation.md`](docs/day0-bare-metal-installation.md). Some exercises below retain the earlier single-file inventory layout for historical workshop compatibility; do not use those snippets as the production Day-0 source of truth.
+> **Canonical workflow notice:** Connected/disconnected inventory, Vault bootstrap,
+> DHCP/static networking, disk selection, `oc-mirror` v2, the GUI interface, and
+> Day-2 GitOps are documented in [`docs/deployment-scenarios.md`](docs/deployment-scenarios.md).
+> Historical snippets below are retained as learning material; use the six
+> canonical scenario pages for production execution.
+
+## Canonical deployment paths
+
+Choose one Day-0 installation path and one Day-2 path:
+
+1. [Connected installation with playbooks](workshop/documentation/modules/ROOT/pages/15-connected-playbook.adoc)
+2. [Disconnected installation with playbooks](workshop/documentation/modules/ROOT/pages/16-disconnected-playbook.adoc)
+3. [Connected installation with the GUI interface](workshop/documentation/modules/ROOT/pages/17-connected-gui.adoc)
+4. [Disconnected installation with the GUI interface](workshop/documentation/modules/ROOT/pages/18-disconnected-gui.adoc)
+5. [Day-2 activities with playbooks](workshop/documentation/modules/ROOT/pages/19-day2-playbook.adoc)
+6. [Day-2 activities with the GUI interface](workshop/documentation/modules/ROOT/pages/20-day2-gui.adoc)
+
+Each path requires review of every variable group, encrypted credentials,
+preflight validation, explicit confirmation before impactful operations, and a
+retained evidence package. The detailed end-to-end runbook is
+[`docs/deployment-scenarios.md`](docs/deployment-scenarios.md).
 
 ## Overview
 

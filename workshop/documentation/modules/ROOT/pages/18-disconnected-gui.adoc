@@ -1,0 +1,41 @@
+= Disconnected OpenShift Installation with the GUI Interface
+
+== Objective
+
+Configure, mirror, and install an approved OpenShift release through separate
+GUI actions and confirmations.
+
+== Procedure
+
+. Start the GUI and create a profile as described in
+  xref:17-connected-gui.adoc[Connected Installation with the GUI Interface].
+
+. Select disconnected deployment. Complete the **Disconnected** section:
+  environment type, mirror workflow, workspace/archive, registry, TLS/CA,
+  concurrency, retries, archive size, channel, versions, architecture, graph,
+  additional images, Helm content, and release pullspec.
+
+. Add mirror registry authentication in **Credentials and secrets** when it
+  differs from the Red Hat pull secret. For on-premises Assisted Service, use
+  its API URL and access token.
+
+. Select `render_only`, save, validate, and run **Prepare release mirror** with
+  `MIRROR`. Review the ImageSetConfiguration before moving content.
+
+. Select `mirror_to_mirror`, `mirror_to_disk`, or `disk_to_mirror` for the
+  approved phase. Save, validate, and confirm `MIRROR` again.
+
+. Set the exact digest-pinned mirrored release and keep
+  `oc_mirror_run_during_install=false`.
+
+. Run preflight and BMC discovery, correct network/disk selection, boot with
+  `BOOT`, and install with `INSTALL`.
+
+. Preserve `/data`, mirror archives, mappings, execution history, and reports.
+  Air-gapped transfer uses separate GUI instances; the interface never bridges
+  the air gap.
+
+== Success criteria
+
+Mirror and installation are independently approved, the selected release is
+digest-pinned, and the disconnected evidence chain is complete.

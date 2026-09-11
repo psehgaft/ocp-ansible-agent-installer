@@ -124,7 +124,7 @@ Use `assisted_cluster_api_overrides`, `assisted_infra_env_api_overrides`, and pe
 | `oc_mirror_max_version` | `openshift_version` | Maximum mirrored release. |
 | `oc_mirror_architectures` | `[amd64]` | Mirrored architectures. |
 
-Task 1 intentionally does not send `olm_operators` or `operator_bundles` during cluster creation. Operator selection and configuration are Day-2 GitOps concerns. Every other newer top-level field can be supplied through the typed override mappings after confirming it in the service OpenAPI schema.
+The Day-0 installer intentionally does not send `olm_operators` or `operator_bundles` during cluster creation. Operator selection and configuration are Day-2 GitOps concerns. Every other newer top-level field can be supplied through the typed override mappings after confirming it in the service OpenAPI schema.
 
 ## Vault variables
 
@@ -141,9 +141,10 @@ vault_bmc_credentials:
 ```
 
 Create the encrypted file with `playbooks/day0/create-vault.yml`; see [Day-0 bare-metal installation](day0-bare-metal-installation.md).
-## Graphical runner environment
 
-The Task-3 UI reads installation variables from the inventory files described
+## GUI interface environment
+
+The GUI interface reads installation variables from the inventory files described
 below. Its own process configuration is intentionally environment-based:
 
 | Variable | Default | Purpose |
@@ -155,5 +156,6 @@ below. Its own process configuration is intentionally environment-based:
 | `INSTALLER_UI_PYTHON` | `python3` | Python interpreter used for safe YAML and Vault operations. |
 | `INSTALLER_UI_VAULT_PASSWORD_FILE` | Empty | Optional externally mounted Vault password file. |
 
-See [Task 3: Containerized Graphical Playbook Runner](task3-gui-runner.md) for
+See [Containerized GUI Interface](gui-interface.md) and the
+[deployment scenarios](deployment-scenarios.md) for
 the security model and runtime procedure.

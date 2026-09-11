@@ -1,0 +1,62 @@
+= Connected OpenShift Installation with Playbooks
+
+== Objective
+
+Install OpenShift on bare metal through the Assisted Installer while pulling
+release content from Red Hat registries. The installation stops at Day 0.
+
+== Procedure
+
+. Clone the repository and install dependencies.
++
+[source,bash]
+----
+python3 -m pip install -r requirements.txt
+ansible-galaxy collection install -r requirements.yml
+cp -a inventories/sample inventories/production-a
+----
+
+. Review every variable file under
+  `inventories/production-a/group_vars/all/`. Replace every `CHANGE_ME` value.
+  Set `deployment_mode: connected` and choose `assisted_auth_mode: saas` or
+  `onprem`.
+
+. Select DHCP or static networking. For static networking, configure machine,
+  cluster and service CIDRs, API/Ingress VIPs, gateway, DNS, prefix, NIC/bond,
+  MTU, host addresses, and optional complete NMState.
+
+. Configure every host in `hosts.yml`: node name, role, BMC type, HTTPS BMC
+  endpoint, credential references, IP when static, stable installation disk,
+  disks to preserve, NIC map, and Assisted Host overrides.
+
+. Create the encrypted Vault as described in xref:03-vault.adoc[Protect
+  Credentials].
+
+. Validate and discover hardware.
++
+[source,bash]
+----
+export INVENTORY=$PWD/inventories/production-a/hosts.yml
+export VAULT_PASSWORD_FILE=/secure/production-a-vault-password
+./scripts/validate.sh "$INVENTORY"
+ansible-playbook -i "$INVENTORY" --vault-password-file "$VAULT_PASSWORD_FILE" playbooks/00-preflight.yml
+ansible-playbook -i "$INVENTORY" --vault-password-file "$VAULT_PASSWORD_FILE" playbooks/day0/discover-bmc.yml
+----
+
+. Review discovered MAC addresses and disks, update deterministic selections,
+  and validate again.
+
+. Install OpenShift.
++
+[source,bash]
+----
+ansible-playbook -i "$INVENTORY" --vault-password-file "$VAULT_PASSWORD_FILE" playbooks/day0/install.yml
+----
+
+. Verify `artifacts/production-a/auth/kubeconfig`, nodes, ClusterOperators, and
+  retained installation evidence.
+
+== Success criteria
+
+The cluster is installed, all nodes use the intended disks and network
+configuration, credentials are protected, and no Day-2 operator was installed.

@@ -13,10 +13,19 @@ Kustomize and Argo CD resources, creates an oc-mirror v2 operator image set,
 and can publish the result to a configurable Git repository. See
 [Day-2 GitOps operator deployment](docs/day2-gitops-operator-deployment.md).
 
-Task 3 adds an optional containerized Go web interface. It discovers the same
+The optional containerized GUI interface discovers the same
 inventory defaults and operator catalog, creates encrypted profiles, and runs
 only approved playbooks with RBAC, confirmation gates, redacted live output,
-and persistent history. See the [Task-3 graphical runner guide](docs/task3-gui-runner.md).
+and persistent history. See the [GUI interface guide](docs/gui-interface.md).
+
+For complete procedures, use the [deployment scenarios](docs/deployment-scenarios.md):
+
+1. connected OpenShift installation with playbooks;
+2. disconnected OpenShift installation with playbooks;
+3. connected OpenShift installation with the GUI interface;
+4. disconnected OpenShift installation with the GUI interface;
+5. Day-2 GitOps activities with playbooks; and
+6. Day-2 GitOps activities with the GUI interface.
 
 ## Architecture
 
@@ -282,10 +291,9 @@ make day2-render
 make day2-deploy
 ```
 
-Task 3, the containerized graphical playbook runner, is tracked in
-[the GUI backlog](docs/task3-gui-backlog.md). Its Go implementation, container
-runtime, security model, and operating procedure are documented in the
-[Task-3 graphical runner guide](docs/task3-gui-runner.md).
+The containerized GUI interface implementation, runtime, security model, and
+operating procedure are documented in the [GUI interface guide](docs/gui-interface.md).
+Future enhancements are tracked in the [GUI interface roadmap](docs/gui-interface-roadmap.md).
 
 Components declare supported modes in `framework/components.yml`:
 
@@ -338,6 +346,8 @@ Cluster integration tests, destructive tests, and scheduled compatibility tests 
 The Antora workshop contains:
 
 - the architecture-aligned framework learning path; and
+- six canonical deployment labs covering connected/disconnected Day-0 through
+  playbooks or the GUI and Day-2 GitOps through playbooks or the GUI; and
 - the retained Redfish and Assisted Installer source material.
 
 The custom serving-certificate lesson is available at `4.4.8.1 Custom API and Ingress Certificates` and documents validation, rendering, application, endpoint verification, rollout impact, and rollback.

@@ -1,12 +1,12 @@
-# Task 3 Backlog: Graphical Playbook Runner
+# GUI Interface Roadmap
 
-Task 3 was intentionally excluded from Task 2 and is implemented by the
-containerized Go runner described in [Task 3: Containerized Graphical Playbook
-Runner](task3-gui-runner.md).
+The containerized GUI interface is implemented by the Go runner described in
+[Containerized GUI Interface](gui-interface.md). This page records optional
+future enhancements rather than an unfinished delivery milestone.
 
 The delivered baseline packages the validated Ansible runtime, collections,
 OpenShift clients, oc-mirror, Git, Kustomize, and this repository into a
-container. A Java or Go web application will provide:
+container. The Go web application provides:
 
 - schema-driven discovery of inventory and role variables;
 - required-field validation and defaults for optional values;
@@ -23,7 +23,7 @@ container. A Java or Go web application will provide:
 - role-based access, audit history, and concurrent-run protection;
 - container health checks and persistent storage for approved artifacts.
 
-The Task 2 YAML catalog and inventory variable files are the machine-readable
+The Day-2 YAML catalog and inventory variable files are the machine-readable
 contracts consumed by this interface. Future backlog items are external OIDC,
 multi-replica coordination, a Kubernetes Operator deployment, and pluggable
 secret-manager backends.
