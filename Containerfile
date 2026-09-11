@@ -11,10 +11,10 @@ RUN go test ./... && CGO_ENABLED=0 go build -trimpath -ldflags='-s -w' -o /opt/b
 
 FROM registry.access.redhat.com/ubi9/ubi:9.6
 ARG OPENSHIFT_VERSION=4.18.41
-RUN microdnf install -y \
+RUN dnf install -y \
       ca-certificates curl findutils git gzip jq openssh-clients podman \
       python3.12 python3.12-pip shadow-utils tar && \
-    microdnf clean all
+    dnf clean all
 
 WORKDIR /workspace
 COPY requirements.txt requirements.yml ansible.cfg ./
