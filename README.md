@@ -13,6 +13,11 @@ Kustomize and Argo CD resources, creates an oc-mirror v2 operator image set,
 and can publish the result to a configurable Git repository. See
 [Day-2 GitOps operator deployment](docs/day2-gitops-operator-deployment.md).
 
+Task 3 adds an optional containerized Go web interface. It discovers the same
+inventory defaults and operator catalog, creates encrypted profiles, and runs
+only approved playbooks with RBAC, confirmation gates, redacted live output,
+and persistent history. See the [Task-3 graphical runner guide](docs/task3-gui-runner.md).
+
 ## Architecture
 
 The framework separates:
@@ -277,8 +282,10 @@ make day2-render
 make day2-deploy
 ```
 
-Task 3, the future containerized graphical playbook runner, is recorded in
-[the GUI backlog](docs/task3-gui-backlog.md) and is not part of this change.
+Task 3, the containerized graphical playbook runner, is tracked in
+[the GUI backlog](docs/task3-gui-backlog.md). Its Go implementation, container
+runtime, security model, and operating procedure are documented in the
+[Task-3 graphical runner guide](docs/task3-gui-runner.md).
 
 Components declare supported modes in `framework/components.yml`:
 

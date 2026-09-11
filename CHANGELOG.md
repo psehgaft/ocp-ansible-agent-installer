@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- Added the Task-3 Go web interface, dynamic repository-backed forms, encrypted
+  profile generation, role-based access, confirmation gates, streamed and
+  redacted execution logs, persistent audit/run history, and a complete runtime
+  container.
 - Added a GitOps-only Day-2 renderer with selectable profiles, dependency
   resolution, structured operands, Kustomize validation, explicit Git push
   controls, and minimal OpenShift GitOps bootstrap.

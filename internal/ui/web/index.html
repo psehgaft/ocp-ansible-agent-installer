@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>OpenShift Bare-Metal Installer</title>
+  <link rel="stylesheet" href="/app.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><span class="brand-mark">OCP</span><div><strong>OpenShift Installer</strong><small>Bare metal and GitOps control plane</small></div></div>
+    <div class="top-actions"><span id="connection" class="status neutral">Connecting</span><button id="auth-button" class="button ghost" type="button">Access token</button></div>
+  </header>
+  <div class="layout">
+    <aside class="sidebar">
+      <p class="eyebrow">Configuration</p>
+      <nav id="group-nav" aria-label="Configuration groups"></nav>
+      <p class="eyebrow">Workflow</p>
+      <nav aria-label="Deployment workflow">
+        <button class="nav-item" data-panel="hosts" type="button"><span>02</span> Bare-metal hosts</button>
+        <button class="nav-item" data-panel="operators" type="button"><span>03</span> Operators</button>
+        <button class="nav-item" data-panel="review" type="button"><span>04</span> Review and save</button>
+        <button class="nav-item" data-panel="execute" type="button"><span>05</span> Execute</button>
+      </nav>
+      <div class="sidebar-note"><strong>GitOps boundary</strong><p>After bootstrap, Day-2 resources are reconciled only from Git.</p></div>
+    </aside>
+    <main>
+      <section class="hero">
+        <div><p class="eyebrow">Task 3 · Guided deployment</p><h1>Build a validated OpenShift installation profile</h1><p>Defaults come directly from the repository. Secrets are encrypted with Ansible Vault before any playbook can run.</p></div>
+        <div class="profile-box"><label for="profile-name">Profile name</label><input id="profile-name" type="text" value="default" pattern="[A-Za-z0-9_-]+"><small>Stored independently under the persistent data volume.</small></div>
+      </section>
+      <div id="message" class="message hidden"></div>
+      <section id="dynamic-panels"></section>
+      <section id="panel-hosts" class="panel hidden">
+        <div class="panel-heading"><div><p class="step">Step 02</p><h2>Bare-metal hosts</h2><p>Configure BMC access, role, node address, and installation disk for every server.</p></div><button id="add-host" class="button secondary" type="button">Add host</button></div>
+        <div id="host-list" class="host-list"></div>
+      </section>
+      <section id="panel-operators" class="panel hidden">
+        <div class="panel-heading"><div><p class="step">Step 03</p><h2>Day-2 operator selection</h2><p>Choose a profile and refine the resolved catalog selection. Dependencies are added by the renderer.</p></div></div>
+        <div class="profile-selector"><label for="operator-profile">Operator profile</label><select id="operator-profile"></select></div>
+        <div class="operator-toolbar"><input id="operator-search" type="search" placeholder="Search 52 operators by name or package"><span id="operator-count" class="count"></span></div>
+        <div id="operator-list" class="operator-grid"></div>
+      </section>
+      <section id="panel-review" class="panel hidden">
+        <div class="panel-heading"><div><p class="step">Step 04</p><h2>Review and save</h2><p>Validate the complete profile, inspect its non-secret representation, and create the encrypted Vault.</p></div></div>
+        <div class="vault-row"><label for="vault-password">Ansible Vault password</label><input id="vault-password" type="password" autocomplete="new-password"><small>Used to encrypt this profile. Production can mount an external password file instead.</small></div>
+        <div class="review-actions"><button id="validate" class="button secondary" type="button">Validate</button><button id="save" class="button primary" type="button">Save profile and create Vault</button><button id="download-config" class="button ghost" type="button">Download safe preview</button></div>
+        <pre id="preview" class="preview"></pre>
+      </section>
+      <section id="panel-execute" class="panel hidden">
+        <div class="panel-heading"><div><p class="step">Step 05</p><h2>Execute playbooks</h2><p>Only allowlisted repository actions can run. Impacting actions require an exact confirmation phrase.</p></div></div>
+        <div class="execution-grid">
+          <div class="execution-form"><label for="action">Action</label><select id="action"></select><p id="action-description"></p><label for="confirmation">Confirmation phrase</label><input id="confirmation" type="text" autocomplete="off"><small id="confirmation-help">No confirmation is required for this action.</small><div class="run-buttons"><button id="run" class="button danger" type="button">Start action</button><button id="cancel" class="button secondary" type="button" disabled>Cancel active run</button><button id="download-report" class="button ghost" type="button" disabled>Download report</button></div></div>
+          <div class="run-summary"><span id="run-status" class="status neutral">Idle</span><dl><dt>Run ID</dt><dd id="run-id">—</dd><dt>Started</dt><dd id="run-started">—</dd><dt>Exit code</dt><dd id="run-exit">—</dd></dl></div>
+        </div>
+        <pre id="logs" class="terminal" aria-live="polite">Waiting for an execution…</pre>
+      </section>
+    </main>
+  </div>
+  <dialog id="auth-dialog"><form method="dialog"><h2>API access</h2><p>Enter a viewer, operator, or admin bearer token configured for this container.</p><label for="api-token">Bearer token</label><input id="api-token" type="password" autocomplete="off"><div class="dialog-actions"><button value="cancel" class="button ghost" type="submit">Cancel</button><button id="save-token" value="default" class="button primary" type="submit">Use token</button></div></form></dialog>
+  <script src="/app.js" defer></script>
+</body>
+</html>

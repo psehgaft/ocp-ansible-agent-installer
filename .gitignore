@@ -1,4 +1,5 @@
 artifacts/
+reports/output/
 secrets/
 *.retry
 *.log

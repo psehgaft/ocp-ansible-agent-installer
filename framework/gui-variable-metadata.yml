@@ -1,0 +1,75 @@
+---
+# Presentation and validation hints for the Task-3 UI. Defaults are always read
+# from inventories/sample; this file intentionally does not duplicate them.
+groups:
+  00-required: {label: Cluster, order: 10, icon: cluster}
+  10-assisted-installer: {label: Assisted Installer API, order: 15, icon: api}
+  20-network: {label: Network, order: 20, icon: network}
+  30-disconnected: {label: Disconnected, order: 30, icon: mirror}
+  40-bmc: {label: BMC and Redfish, order: 40, icon: server}
+  50-runtime: {label: Runtime, order: 50, icon: runtime}
+  60-day2-gitops: {label: Day-2 GitOps, order: 60, icon: gitops}
+  secrets: {label: Credentials and secrets, order: 70, icon: lock}
+
+variables:
+  deployment_mode: {label: Deployment mode, widget: select, options: [connected, disconnected], required: true}
+  cluster_name: {label: Cluster name, required: true, pattern: '^[a-z0-9]([a-z0-9-]*[a-z0-9])?$'}
+  base_dns_domain: {label: Base DNS domain, required: true}
+  openshift_version: {label: OpenShift version, required: true, pattern: '^4\.[0-9]+(\.[0-9]+)?$'}
+  control_plane_count: {label: Control-plane nodes, widget: number, required: true, minimum: 1}
+  compute_count: {label: Worker nodes, widget: number, required: true, minimum: 0}
+  machine_networks: {label: Machine networks, widget: yaml, required: true}
+  cluster_networks: {label: Cluster networks, widget: yaml, required: true}
+  service_networks: {label: Service networks, widget: yaml, required: true}
+  vip_allocation_mode: {label: VIP allocation, widget: select, options: [static, dhcp], required: true}
+  api_vips: {label: API VIPs, widget: yaml, visible_when: {vip_allocation_mode: static}}
+  ingress_vips: {label: Ingress VIPs, widget: yaml, visible_when: {vip_allocation_mode: static}}
+  node_network_config_mode: {label: Node addressing, widget: select, options: [static, dhcp], required: true}
+  assisted_auth_mode: {label: Assisted Installer authentication, widget: select, options: [saas, onprem], required: true}
+  install_network_mode: {label: Installation interface, widget: select, options: [single, bond], required: true}
+  install_network_bond_mode:
+    {label: Bond mode, widget: select, options: [802.3ad, active-backup, balance-xor, balance-rr], visible_when: {install_network_mode: bond}}
+  disconnected_environment:
+    {label: Disconnected workflow, widget: select, options: [partially_disconnected, air_gapped], visible_when: {deployment_mode: disconnected}}
+  oc_mirror_workflow:
+    label: oc-mirror operation
+    widget: select
+    options: [render_only, mirror_to_mirror, mirror_to_disk, disk_to_mirror]
+    visible_when: {deployment_mode: disconnected}
+  oc_mirror_registry:
+    {label: Mirror registry, required: true, visible_when: {deployment_mode: disconnected, oc_mirror_workflow: [mirror_to_mirror, disk_to_mirror]}}
+  disconnected_release_image: {label: Mirrored release pullspec, required: true, visible_when: {deployment_mode: disconnected}}
+  bmc_validate_certs: {label: Validate BMC certificates, widget: checkbox}
+  bmc_virtual_media_category: {label: Virtual media endpoint, widget: select, options: [Manager, Systems]}
+  iso_delivery_mode: {label: ISO delivery, widget: select, options: [local_http, existing_http, direct_url], required: true}
+  iso_http_advertise_address: {label: Control-node address advertised for ISO delivery, required: true, visible_when: {iso_delivery_mode: local_http}}
+  iso_existing_url: {label: Existing ISO URL, required: true, visible_when: {iso_delivery_mode: existing_http}}
+  day2_gitops_profile: {label: Operator profile, widget: profile, options_from: profiles}
+  day2_gitops_enabled_operators: {label: Operators, widget: operators, options_from: operators}
+  day2_gitops_operands: {label: Structured operands, widget: yaml}
+  day2_gitops_repository_url: {label: Desired-state repository URL}
+  day2_gitops_git_push_enabled: {label: Push rendered state to Git, widget: checkbox}
+  day2_gitops_git_push_confirmed: {label: Confirm Git push, widget: checkbox, visible_when: {day2_gitops_git_push_enabled: true}}
+  day2_gitops_bootstrap_enabled: {label: Bootstrap OpenShift GitOps, widget: checkbox}
+
+secrets:
+  vault_pull_secret: {label: Red Hat pull secret, widget: password, required: true}
+  vault_ssh_public_key: {label: SSH public key, widget: textarea, required: true}
+  vault_assisted_offline_token: {label: Assisted Installer offline token, widget: password, required: true, visible_when: {assisted_auth_mode: saas}}
+  vault_assisted_access_token: {label: On-premise Assisted Service token, widget: password, required: true, visible_when: {assisted_auth_mode: onprem}}
+  vault_mirror_auth_json: {label: Mirror registry authentication JSON, widget: password}
+  vault_git_username: {label: Git username}
+  vault_git_token: {label: Git token, widget: password}
+  vault_git_ssh_private_key: {label: Git SSH private key, widget: password}
+
+host_fields:
+  node_hostname: {label: Hostname, required: true}
+  node_role: {label: OpenShift role, widget: select, options: [master, worker], required: true}
+  bmc_type: {label: BMC type, widget: select, options: [ilo, idrac, generic, auto], required: true}
+  bmc_endpoint: {label: BMC HTTPS endpoint, required: true}
+  bmc_username: {label: BMC username, required: true, sensitive: true}
+  bmc_password: {label: BMC password, widget: password, required: true, sensitive: true}
+  node_ipv4_address: {label: Node IPv4 address, visible_when: {node_network_config_mode: static}}
+  installation_disk_id: {label: Installation disk ID}
+  disks_skip_formatting: {label: Disks to preserve, widget: yaml}
+  assisted_host_api_overrides: {label: Assisted Host API overrides, widget: yaml}

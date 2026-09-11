@@ -1,0 +1,52 @@
+---
+actions:
+  validate:
+    label: Validate configuration
+    description: Run repository and inventory validation without changing infrastructure.
+    role: viewer
+    command: [scripts/validate.sh, '{inventory}']
+  preflight:
+    label: Run preflight
+    description: Validate prerequisites and Assisted Installer inputs.
+    role: operator
+    playbook: playbooks/00-preflight.yml
+  discover:
+    label: Discover BMC inventory
+    description: Read Redfish inventory and resolve stable installation disks.
+    role: operator
+    playbook: playbooks/day0/discover-bmc.yml
+  mirror:
+    label: Prepare release mirror
+    description: Render or execute the configured oc-mirror workflow.
+    role: operator
+    playbook: playbooks/day0/prepare-mirror.yml
+    confirmation: MIRROR
+  boot:
+    label: Boot discovery ISO
+    description: Attach virtual media and boot all selected bare-metal hosts.
+    role: admin
+    playbook: playbooks/02-boot-discovery-iso.yml
+    confirmation: BOOT
+  install:
+    label: Install OpenShift
+    description: Start and monitor the Assisted Installer bare-metal installation.
+    role: admin
+    playbook: playbooks/day0/install.yml
+    confirmation: INSTALL
+  eject:
+    label: Eject virtual media
+    description: Eject installation media from the configured BMCs.
+    role: admin
+    playbook: playbooks/90-eject-media.yml
+    confirmation: EJECT
+  day2-render:
+    label: Render Day-2 GitOps
+    description: Render desired state locally without touching Git or the cluster.
+    role: operator
+    playbook: playbooks/day2/render-gitops.yml
+  day2-deploy:
+    label: Publish and bootstrap GitOps
+    description: Push approved desired state and initialize OpenShift GitOps.
+    role: admin
+    playbook: playbooks/day2/bootstrap-gitops.yml
+    confirmation: GITOPS

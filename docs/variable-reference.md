@@ -141,3 +141,19 @@ vault_bmc_credentials:
 ```
 
 Create the encrypted file with `playbooks/day0/create-vault.yml`; see [Day-0 bare-metal installation](day0-bare-metal-installation.md).
+## Graphical runner environment
+
+The Task-3 UI reads installation variables from the inventory files described
+below. Its own process configuration is intentionally environment-based:
+
+| Variable | Default | Purpose |
+|---|---|---|
+| `INSTALLER_UI_REPOSITORY_ROOT` | `.` | Repository containing playbooks and schema sources. |
+| `INSTALLER_UI_DATA_ROOT` | `artifacts/gui` | Persistent generated inventories, Vaults, artifacts, runs, and audit history. |
+| `INSTALLER_UI_LISTEN` | `127.0.0.1:8080` | HTTP listen address. Non-loopback listeners require authentication tokens. |
+| `INSTALLER_UI_AUTH_TOKENS` | Empty | Comma-separated `token=viewer`, `token=operator`, or `token=admin` entries. |
+| `INSTALLER_UI_PYTHON` | `python3` | Python interpreter used for safe YAML and Vault operations. |
+| `INSTALLER_UI_VAULT_PASSWORD_FILE` | Empty | Optional externally mounted Vault password file. |
+
+See [Task 3: Containerized Graphical Playbook Runner](task3-gui-runner.md) for
+the security model and runtime procedure.

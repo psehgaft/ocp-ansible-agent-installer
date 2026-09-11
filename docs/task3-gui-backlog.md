@@ -1,8 +1,10 @@
 # Task 3 Backlog: Graphical Playbook Runner
 
-Task 3 is intentionally not implemented in Task 2.
+Task 3 was intentionally excluded from Task 2 and is implemented by the
+containerized Go runner described in [Task 3: Containerized Graphical Playbook
+Runner](task3-gui-runner.md).
 
-The future deliverable will package the validated Ansible runtime, collections,
+The delivered baseline packages the validated Ansible runtime, collections,
 OpenShift clients, oc-mirror, Git, Kustomize, and this repository into a
 container. A Java or Go web application will provide:
 
@@ -21,6 +23,7 @@ container. A Java or Go web application will provide:
 - role-based access, audit history, and concurrent-run protection;
 - container health checks and persistent storage for approved artifacts.
 
-The Task 2 YAML catalog and render summary are machine-readable contracts for
-this interface. Task 3 should consume them instead of duplicating operator or
-variable definitions in application code.
+The Task 2 YAML catalog and inventory variable files are the machine-readable
+contracts consumed by this interface. Future backlog items are external OIDC,
+multi-replica coordination, a Kubernetes Operator deployment, and pluggable
+secret-manager backends.
