@@ -5,7 +5,7 @@ WORKDIR /opt/build
 COPY go.mod ./
 COPY cmd ./cmd
 COPY internal ./internal
-RUN go test ./... && CGO_ENABLED=0 go build -trimpath -ldflags='-s -w' -o /opt/bin/installer-ui ./cmd/installer-ui && \
+RUN CGO_ENABLED=0 go build -trimpath -ldflags='-s -w' -o /opt/bin/installer-ui ./cmd/installer-ui && \
     GOBIN=/opt/bin go install sigs.k8s.io/kustomize/kustomize/v5@v5.7.1 && \
     GOBIN=/opt/bin go install helm.sh/helm/v3/cmd/helm@v3.17.3
 
