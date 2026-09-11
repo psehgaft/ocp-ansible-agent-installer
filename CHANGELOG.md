@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-- Added the Task-3 Go web interface, dynamic repository-backed forms, encrypted
+- Added the containerized GUI interface, dynamic repository-backed forms, encrypted
   profile generation, role-based access, confirmation gates, streamed and
   redacted execution logs, persistent audit/run history, and a complete runtime
   container.
@@ -15,7 +15,7 @@
   disconnected, and fully air-gapped workflows.
 - Added Vault-backed Git credentials, live PackageManifest validation, secret
   rejection, deterministic ownership boundaries, tests, and documentation.
-- Recorded the graphical container runner as deferred Task 3 scope.
+- Recorded the graphical container runner as deferred GUI interface scope.
 
 ## 2.0.0 — 2026-07-30
 

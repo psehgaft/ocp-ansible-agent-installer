@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Schema discovery, validation, and safe inventory/Vault generation for Task 3."""
+"""Schema discovery, validation, and safe inventory/Vault generation for the GUI."""
 
 from __future__ import annotations
 
@@ -8,10 +8,10 @@ import copy
 import ipaddress
 import json
 import os
-from pathlib import Path
 import re
 import subprocess
 import sys
+from pathlib import Path
 from typing import Any
 
 import yaml

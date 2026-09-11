@@ -13,9 +13,11 @@ After completing the workshop, you can:
 
 * Explain the framework, profile, dependency, and inventory models.
 * Execute vendor-neutral Redfish discovery and Assisted Installer workflows.
+* Install connected or disconnected OpenShift through playbooks or the GUI interface.
 * Select `direct`, `render`, or `gitops` deployment mode.
 * Install platform operators separately from their operands.
 * Configure identity, PKI, registries, networking, observability, and backup.
+* Render and bootstrap Day-2 desired state through playbooks or the GUI interface.
 * Generate consistent validation evidence and reports.
 * Add a component with dependency metadata, tests, documentation, and GitOps content.
 

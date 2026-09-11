@@ -1,3 +1,10 @@
+* Canonical Deployment Scenarios
+** xref:15-connected-playbook.adoc[Connected Installation with Playbooks]
+** xref:16-disconnected-playbook.adoc[Disconnected Installation with Playbooks]
+** xref:17-connected-gui.adoc[Connected Installation with the GUI]
+** xref:18-disconnected-gui.adoc[Disconnected Installation with the GUI]
+** xref:19-day2-playbook.adoc[Day-2 Activities with Playbooks]
+** xref:20-day2-gui.adoc[Day-2 Activities with the GUI]
 * Module 1: Foundations
 ** xref:ARCHITECTURE:legacy-workshop.adoc[1.0 Workshop Source Map]
 ** xref:index.adoc[1.1 Workshop Overview]

@@ -1,0 +1,47 @@
+= Connected OpenShift Installation with the GUI Interface
+
+== Objective
+
+Create a complete connected installation profile and execute only the approved
+Day-0 actions from the containerized GUI.
+
+== Procedure
+
+. Build and start the interface.
++
+[source,bash]
+----
+export INSTALLER_UI_AUTH_TOKENS="$(openssl rand -hex 24)=admin"
+podman compose up --build
+----
+
+. Open `http://127.0.0.1:8080` through an approved secure access path and enter
+  the bearer token.
+
+. Create a profile. Complete **Cluster**, **Assisted Installer API**,
+  **Network**, **BMC and Redfish**, **Runtime**, **Hosts**, and **Credentials and
+  secrets**. Review every displayed default. Select connected mode and DHCP or
+  static networking.
+
+. Add exactly the configured number of masters and workers. For each host set
+  iLO/iDRAC/generic/auto, HTTPS endpoint, credentials, role, hostname, address
+  when static, stable disk, disks to preserve, NIC mapping, and API overrides.
+
+. Leave Day-2 Git push and bootstrap disabled. Enter a Vault password, save the
+  profile, and run **Validate configuration**.
+
+. Run **Run preflight** and **Discover BMC inventory**. Review discovered disks
+  and NICs, correct the profile, and validate again.
+
+. Run **Boot discovery ISO** and enter `BOOT`.
+
+. Run **Install OpenShift** and enter `INSTALL`. Monitor the redacted stream and
+  download the execution report.
+
+. Retrieve protected installation credentials from `/data/artifacts/<profile>/`
+  and optionally run **Eject virtual media** with `EJECT`.
+
+== Success criteria
+
+The GUI profile is valid and encrypted, execution history is retained, the
+cluster is installed, and no arbitrary command or Day-2 mutation was executed.

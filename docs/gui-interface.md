@@ -1,7 +1,7 @@
-# Task 3: Containerized Graphical Playbook Runner
+# Containerized GUI Interface
 
-Task 3 provides a Go web application that turns the repository's existing YAML
-contracts into guided forms. It creates isolated installation profiles,
+The GUI interface provides a Go web application that turns the repository's
+existing YAML contracts into guided forms. It creates isolated installation profiles,
 encrypts credentials with Ansible Vault, and runs only an allowlisted set of
 Day-0 and Day-2 playbooks. It does not replace Ansible, Assisted Installer, or
 OpenShift GitOps.
@@ -37,7 +37,7 @@ variable appears automatically in the UI even when it has no custom metadata.
   installation, BMC/Redfish, runtime, GitOps, and secrets;
 - dynamic host cards for iLO, iDRAC, generic Redfish, and automatic detection;
 - static or DHCP node networking and explicit installation disk selection;
-- profiles and individual selection for all Task-2 operators;
+- profiles and individual selection for all Day-2 operators;
 - complete structured values represented as JSON, which is valid YAML;
 - conditional and server-side validation;
 - encrypted Vault creation without writing credentials into the source tree;
@@ -140,16 +140,16 @@ the same controls as other deployment credentials.
 | Action | Minimum role | Confirmation |
 |---|---:|---:|
 | Validate configuration | viewer | None |
-| Preflight | operator | None |
+| Run preflight | operator | None |
 | Discover BMC inventory | operator | None |
-| Prepare mirror | operator | `MIRROR` |
+| Prepare release mirror | operator | `MIRROR` |
 | Boot discovery ISO | admin | `BOOT` |
 | Install OpenShift | admin | `INSTALL` |
 | Eject virtual media | admin | `EJECT` |
 | Render Day-2 GitOps | operator | None |
-| Publish/bootstrap GitOps | admin | `GITOPS` |
+| Publish and bootstrap GitOps | admin | `GITOPS` |
 
-The Task-2 double-confirmation variables still apply to Git push. The GUI
+The Day-2 double-confirmation variables still apply to Git push. The GUI
 confirmation authorizes the action but does not silently set
 `day2_gitops_git_push_enabled` or `day2_gitops_git_push_confirmed`.
 
@@ -173,6 +173,12 @@ python3 scripts/gui_config.py schema --root . | jq '.variables | length'
 podman build --target ui-builder -f Containerfile .
 ```
 
-The Task-3 CI workflow runs formatting, `go vet`, Go race-enabled tests, Python
-tests, a binary/API smoke test, and the full container build. Existing repository
-validation workflows continue to run unchanged.
+The GUI interface CI workflow runs formatting, `go vet`, Go race-enabled tests,
+Python tests, a binary/API smoke test, and the full container build. Existing
+repository validation workflows continue to run unchanged.
+
+## End-to-end procedures
+
+Use the canonical [OpenShift deployment scenarios](deployment-scenarios.md) for
+complete, ordered procedures for connected and disconnected installation with
+the CLI or GUI, followed by Day-2 GitOps through either interface.

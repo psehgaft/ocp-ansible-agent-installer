@@ -1,5 +1,5 @@
 ---
-# Presentation and validation hints for the Task-3 UI. Defaults are always read
+# Presentation and validation hints for the GUI interface. Defaults are always read
 # from inventories/sample; this file intentionally does not duplicate them.
 groups:
   00-required: {label: Cluster, order: 10, icon: cluster}

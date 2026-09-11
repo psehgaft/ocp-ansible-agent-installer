@@ -1,8 +1,9 @@
 # OpenShift Bare Metal Install via Assisted Installer + Dell iDRAC (Ansible)
 
 > Canonical guides: [Day-0 bare-metal installation](day0-bare-metal-installation.md),
-> [Day-2 GitOps operator deployment](day2-gitops-operator-deployment.md), and
-> [Task-3 graphical runner](task3-gui-runner.md).
+> [Day-2 GitOps operator deployment](day2-gitops-operator-deployment.md),
+> [GUI interface](gui-interface.md), and the
+> [six deployment scenarios](deployment-scenarios.md).
 
 ## What this does
 This project provisions an OpenShift cluster on Dell bare-metal servers by:

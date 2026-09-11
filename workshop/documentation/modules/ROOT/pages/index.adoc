@@ -4,6 +4,10 @@ This workshop provides a progressive, hands-on path for automating bare-metal di
 
 The curriculum uses one canonical navigation tree. Each module has a distinct purpose and builds on the evidence, variables, and artifacts produced by the previous module.
 
+The **Canonical Deployment Scenarios** at the top of the navigation provide
+complete operational paths. Choose the connected or disconnected Day-0 lab and
+the playbook or GUI interface, then complete one Day-2 GitOps lab.
+
 == Workshop Outcomes
 
 By completing the workshop, you will be able to:
@@ -11,7 +15,9 @@ By completing the workshop, you will be able to:
 * Prepare a repeatable Ansible execution environment and protect sensitive data.
 * Discover and validate mixed-vendor HPE iLO and Dell iDRAC systems through Redfish.
 * Install and verify OpenShift with the Assisted Installer workflow.
+* Execute connected or disconnected installation through playbooks or the GUI interface.
 * Configure ordered Day-2 foundations and platform operators through direct or GitOps delivery.
+* Render and bootstrap Day-2 GitOps through playbooks or the GUI interface.
 * Run health checks, generate evidence, and extend the automation framework safely.
 * Generate, validate, and deploy a managed cluster from Red Hat Advanced Cluster Management.
 * Complete an integrated challenge that exercises the full automation lifecycle.

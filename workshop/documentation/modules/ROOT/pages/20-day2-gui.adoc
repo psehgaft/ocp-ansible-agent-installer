@@ -1,0 +1,40 @@
+= Day-2 Activities with the GUI Interface
+
+== Objective
+
+Use the GUI to select operators, configure complete operands, preview desired
+state, and explicitly authorize Git publication and GitOps bootstrap.
+
+== Procedure
+
+. Open the saved cluster profile and navigate to **Day-2 GitOps**.
+
+. Select a built-in profile or `custom`, then select only required operators.
+  Review automatically resolved dependencies.
+
+. Configure every Day-2 field: OpenShift version, approval, channel adaptation,
+  overrides, additional packages, catalog images, Git coordinates, project,
+  paths, authentication, and complete structured operand resources.
+
+. Enter Git credentials only in **Credentials and secrets**. Do not render
+  Kubernetes Secrets or inline passwords in operands.
+
+. Leave Git push, push confirmation, and bootstrap disabled. Save, validate,
+  and run **Render Day-2 GitOps**.
+
+. Download and inspect the rendered tree and report. For disconnected clusters,
+  complete the generated operator mirror workflow first.
+
+. After approval, enable Git push, its independent confirmation, and bootstrap.
+  Save and validate the profile again.
+
+. Run **Publish and bootstrap GitOps**, enter `GITOPS`, and follow the redacted
+  stream to completion.
+
+. Verify the root Application, child Applications, Subscriptions, InstallPlans,
+  CSVs, and operands. Perform subsequent lifecycle changes through Git.
+
+== Success criteria
+
+The GUI audit identifies the actor and approved action, Git contains the desired
+state, Argo CD is healthy, and no secret appears in Git or execution output.
