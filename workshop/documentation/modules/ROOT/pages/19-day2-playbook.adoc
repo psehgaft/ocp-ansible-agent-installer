@@ -2,52 +2,98 @@
 
 == Objective
 
-Render operator and operand desired state, review it, publish it to Git, and
-perform only the minimal OpenShift GitOps bootstrap directly.
+Run explicit, validated Day-2 operational workflows after the cluster is
+healthy. GitOps initialization is a separate procedure in
+xref:21-gitops-playbook.adoc[1.4 GitOps Initialization].
+
+== Select the activity
+
+Use the implementation catalog to identify the canonical playbook and its
+input file. Typical activity groups are:
+
+|===
+| Activity | Examples | Entry points
+
+| Read-only validation
+| Cluster health, etcd health, certificate audit, upgrade prechecks
+| `health-checks.yml`, `etcd-health.yml`, `certificate-audit.yml`, `upgrade-prechecks.yml`
+
+| Node foundation
+| NTP, labels, machine configuration
+| `ntp.yml`, `node-labels.yml`, `machineconfig.yml`
+
+| Identity and trust
+| OAuth, LDAP, HTPasswd, trusted CA, certificates
+| `oauth.yml`, `ldap.yml`, `htpasswd.yml`, `trusted-ca.yml`, `install_certs.yml`
+
+| Data protection and evidence
+| etcd backup, OADP backup, must-gather, reports
+| `etcd-backup.yml`, `backup-oadp.yml`, `must-gather.yml`, `reports.yml`
+|===
+
+Do not run a direct-change playbook against a resource already owned by Argo
+CD. Change its Git desired state instead.
 
 == Procedure
 
-. Activate the installed cluster kubeconfig and confirm nodes and
-  ClusterOperators are healthy.
-
-. Review every key in `60-day2-gitops.yml`. Configure cluster/version, profile,
-  explicit operators, overrides, additional packages, structured operands,
-  approval, version adaptation, catalog images, Git URL/branch/path, project,
-  render/checkout directories, authentication, push, and bootstrap controls.
-
-. Keep push confirmation and bootstrap disabled, then render.
+. Activate the exact cluster credentials and record the starting state.
 +
 [source,bash]
 ----
-ansible-playbook -i "$INVENTORY" --vault-password-file "$VAULT_PASSWORD_FILE" playbooks/day2/render-gitops.yml
+export KUBECONFIG=$PWD/artifacts/production-a/auth/kubeconfig
+oc whoami
+oc get clusterversion
+oc get nodes -o wide
+oc get clusteroperators
 ----
 
-. Validate the rendered Kustomize roots, dependency order, channels,
-  namespaces, sync waves, operands, and operator ImageSetConfiguration.
+. Open the selected playbook and its role defaults. Configure every required
+  variable in the environment inventory; keep secrets in Ansible Vault.
 
-. For disconnected clusters, mirror operator catalogs/packages and apply the
-  generated IDMS, ITMS, and CatalogSource resources before bootstrap.
-
-. After approval, set all three controls:
-+
-[source,yaml]
-----
-day2_gitops_git_push_enabled: true
-day2_gitops_git_push_confirmed: true
-day2_gitops_bootstrap_enabled: true
-----
-
-. Run the bootstrap playbook.
+. Run syntax and inventory validation.
 +
 [source,bash]
 ----
-ansible-playbook -i "$INVENTORY" --vault-password-file "$VAULT_PASSWORD_FILE" playbooks/day2/bootstrap-gitops.yml
+ansible-inventory -i "$INVENTORY" --list >/dev/null
+ansible-playbook -i "$INVENTORY" \
+  --vault-password-file "$VAULT_PASSWORD_FILE" \
+  playbooks/day2/health-checks.yml --syntax-check
 ----
 
-. Verify Argo CD Applications, Subscriptions, InstallPlans, CSVs, and operand
-  health. Make all later changes in Git.
+. Begin with a read-only check or the playbook's documented `validate`/`render`
+  mode. Example:
++
+[source,bash]
+----
+ansible-playbook -i "$INVENTORY" \
+  --vault-password-file "$VAULT_PASSWORD_FILE" \
+  playbooks/day2/health-checks.yml
+----
+
+. Back up the affected resource before an approved mutation.
++
+[source,bash]
+----
+mkdir -p evidence/production-a
+oc get nodes -o yaml > evidence/production-a/nodes-before.yaml
+oc get clusteroperators -o yaml > evidence/production-a/operators-before.yaml
+----
+
+. Run only the selected workflow. The following examples require their
+  corresponding input files to be completed first.
++
+[source,bash]
+----
+ansible-playbook -i "$INVENTORY" \
+  --vault-password-file "$VAULT_PASSWORD_FILE" playbooks/day2/ntp.yml
+ansible-playbook -i "$INVENTORY" \
+  --vault-password-file "$VAULT_PASSWORD_FILE" playbooks/day2/node-labels.yml
+----
+
+. Verify the specific resource, ClusterOperator conditions, affected pods, and
+  application smoke tests. Retain before/after evidence and the Ansible log.
 
 == Success criteria
 
-The approved commit is the source of truth, OpenShift GitOps owns reconciliation,
-and plaintext secrets are absent from rendered content.
+Only the approved component changed, its health checks pass, no GitOps-owned
+resource drift was introduced, and evidence supports rollback.

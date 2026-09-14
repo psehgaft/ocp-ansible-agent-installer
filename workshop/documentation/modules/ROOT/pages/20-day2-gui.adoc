@@ -2,39 +2,46 @@
 
 == Objective
 
-Use the GUI to select operators, configure complete operands, preview desired
-state, and explicitly authorize Git publication and GitOps bootstrap.
+Configure and preview Day-2 desired state through the GUI without pushing Git
+content or changing the cluster. Publication and bootstrap are a separate
+procedure in xref:22-gitops-gui.adoc[2.4 GitOps Initialization].
 
 == Procedure
 
 . Open the saved cluster profile and navigate to **Day-2 GitOps**.
 
-. Select a built-in profile or `custom`, then select only required operators.
-  Review automatically resolved dependencies.
+. Confirm the cluster name and OpenShift minor version. Select a built-in
+  profile or `custom`, then select only the operators required by the approved
+  architecture. Dependencies are resolved automatically.
 
-. Configure every Day-2 field: OpenShift version, approval, channel adaptation,
-  overrides, additional packages, catalog images, Git coordinates, project,
-  paths, authentication, and complete structured operand resources.
+. Configure every applicable field: install-plan approval, channel adaptation,
+  per-operator overrides, additional packages, catalog images, Git URL, branch,
+  repository path, project, render root, checkout directory, and authentication
+  mode.
 
-. Enter Git credentials only in **Credentials and secrets**. Do not render
-  Kubernetes Secrets or inline passwords in operands.
+. Add complete Kubernetes Custom Resources in the structured operands editor.
+  Do not add `Secret` objects or inline credentials. Use an approved secret
+  operator or encrypted bootstrap mechanism.
 
-. Leave Git push, push confirmation, and bootstrap disabled. Save, validate,
-  and run **Render Day-2 GitOps**.
+. Keep **Git push**, **Git push confirmed**, and **GitOps bootstrap** disabled.
+  This makes the activity a local preview.
 
-. Download and inspect the rendered tree and report. For disconnected clusters,
-  complete the generated operator mirror workflow first.
+. Save the profile and run **Validate configuration**. Resolve every error.
 
-. After approval, enable Git push, its independent confirmation, and bootstrap.
-  Save and validate the profile again.
+. Select **Render Day-2 GitOps**. This action needs no impact confirmation
+  because it does not write to Git or contact the cluster.
 
-. Run **Publish and bootstrap GitOps**, enter `GITOPS`, and follow the redacted
-  stream to completion.
+. Follow the redacted live log and download `render-summary.json` plus the
+  rendered desired-state tree.
 
-. Verify the root Application, child Applications, Subscriptions, InstallPlans,
-  CSVs, and operands. Perform subsequent lifecycle changes through Git.
+. Review Kustomize builds, operator dependencies, namespaces, channels, catalog
+  sources, sync waves, operands, and the generated operator mirror
+  configuration.
+
+. For a disconnected cluster, complete the approved operator mirror process
+  before attempting GitOps initialization.
 
 == Success criteria
 
-The GUI audit identifies the actor and approved action, Git contains the desired
-state, Argo CD is healthy, and no secret appears in Git or execution output.
+The desired state renders successfully, all values have been reviewed, Git and
+the cluster remain unchanged, and the preview contains no plaintext secret.

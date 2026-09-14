@@ -1,0 +1,92 @@
+= GitOps Initialization with Playbooks
+
+== Objective
+
+Render the initial desired state, review it, publish the approved commit, and
+perform the minimum direct bootstrap required for OpenShift GitOps.
+
+== Procedure
+
+. Confirm that the cluster is healthy and that the intended kubeconfig is
+  active.
++
+[source,bash]
+----
+export KUBECONFIG=$PWD/artifacts/production-a/auth/kubeconfig
+oc whoami
+oc get nodes
+oc get clusteroperators
+----
+
+. Review every key in `60-day2-gitops.yml`. Configure the cluster name,
+  OpenShift minor version, Git URL, branch, repository path, project, render
+  root, checkout directory, and authentication mode.
+
+. Start with the minimum bootstrap selection and safe controls.
++
+[source,yaml]
+----
+day2_gitops_profile: custom
+day2_gitops_enabled_operators:
+  - gitops
+day2_gitops_git_push_enabled: false
+day2_gitops_git_push_confirmed: false
+day2_gitops_bootstrap_enabled: false
+----
+
+. Store Git credentials only in the encrypted Vault. Use an SSH agent or
+  credential helper when possible; otherwise configure the documented HTTPS
+  token variables in Vault.
+
+. Render without modifying Git or the cluster.
++
+[source,bash]
+----
+ansible-playbook -i "$INVENTORY" \
+  --vault-password-file "$VAULT_PASSWORD_FILE" \
+  playbooks/day2/render-gitops.yml
+kustomize build artifacts/day2-gitops-rendered/clusters/production-a
+----
+
+. Review the generated root Application, AppProject, Kustomize trees, repository
+  coordinates, sync waves, and `render-summary.json`.
+
+. After approval, enable all three independent controls.
++
+[source,yaml]
+----
+day2_gitops_git_push_enabled: true
+day2_gitops_git_push_confirmed: true
+day2_gitops_bootstrap_enabled: true
+----
+
+. Publish and bootstrap.
++
+[source,bash]
+----
+ansible-playbook -i "$INVENTORY" \
+  --vault-password-file "$VAULT_PASSWORD_FILE" \
+  playbooks/day2/bootstrap-gitops.yml
+----
+
+. Verify reconciliation.
++
+[source,bash]
+----
+git -C artifacts/day2-gitops-checkout log -1 --oneline
+oc get subscriptions.operators.coreos.com -n openshift-gitops-operator
+oc get csv -n openshift-gitops-operator
+oc get applications.argoproj.io -n openshift-gitops
+----
+
+== Control boundary
+
+Ansible directly installs only the OpenShift GitOps bootstrap resources and
+creates the root project/application. Argo CD reconciles all later desired
+state. A render alone never pushes Git content or changes the cluster.
+
+== Success criteria
+
+The approved commit is in the configured branch, the root Application is
+healthy, no plaintext secret is present in Git, and later changes follow the
+Git review workflow.

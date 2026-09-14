@@ -11,6 +11,31 @@ The following compatibility wrappers have been removed. CI fails if any path is 
 | `playbooks/01-discover-bmc.yml` | `playbooks/day0/discover-bmc.yml` |
 | `playbooks/site.yml` | `playbooks/day0/install.yml` |
 | `playbooks/test-preflight.yml` | `playbooks/00-preflight.yml` |
+| `hosts_lexample.yml` | `inventories/sample/hosts.yml` |
+| `roles/assisted_cluster/tasks/main-old.yml` | `roles/assisted_cluster/tasks/main.yml` |
+| `roles/assisted_hosts/tasks/main-old.yml` | `roles/assisted_hosts/tasks/main.yml` |
+| `roles/assisted_hosts/tasks/main-pooll-host.yml` | `roles/assisted_hosts/tasks/main.yml` |
+| `roles/rhoso_nmstate_nncp/tasks/main-old.yml` | `roles/rhoso_nmstate_nncp/tasks/main.yml` |
+| `playbooks/assited-test-network.yml` | `playbooks/00-preflight.yml` plus offline payload validation |
+| `playbooks/02-install-operators.yml` | `playbooks/day2/render-gitops.yml` and `playbooks/day2/bootstrap-gitops.yml` |
+| `playbooks/03-configure-rhoso.yml` | `playbooks/day2/platform-rhoso.yml` |
+| `playbooks/04-configure-rhoso-network.yml` | `playbooks/day2/rhoso-day2.yml` with structured GitOps resources |
+| `MANIFEST.sha256` | Release-generated checksums; source-tree manifests are not maintained manually |
+
+The dedicated `openstack_operator` and `rhoso_*` roles used only by the retired
+wrappers were also removed. RHOSO operator lifecycle now uses the shared
+catalog renderer; control-plane, data-plane, networking, and secret references
+are supplied as reviewed structured resources rather than repository-specific
+templates containing environment assumptions.
+
+Experimental Assisted Installer Cluster/InfraEnv payload templates and NMState
+variants with no callers were removed as well. The canonical role constructs
+the API payloads from validated dictionaries and renders static networking only
+through `static-network-config.json.j2` and `nmstate.yaml.j2`.
+
+The two seven-line milestone summaries `day2-cluster-operations-a.md` and
+`day2-cluster-operations-b.md` were removed after their content was superseded
+by `day2-implementation-catalog.md` and the executive deployment runbook.
 
 The root-level `audit_vmware_network.yml` was previously retired and replaced by `playbooks/audit_vmware_network.yml`.
 
@@ -31,8 +56,8 @@ These workflows are not legacy and must not be deleted merely because they are s
 
 The following content is retained as architecture and migration evidence, not as executable compatibility code:
 
-- `workshop/documentation/modules/ROOT/`
-- `workshop/WORKSHOP.md`
+- `workshop/documentation/modules/ROOT/pages/01-environment.adoc` through the
+  foundational Redfish and Assisted Installer lessons
 - `docs/migration-from-idrac.md`
 
 ## Enforcement

@@ -7,6 +7,8 @@ secrets/
 .collections/
 node_modules/
 workshop/build/
+www/
+.cache/antora/
 inventories/*/group_vars/vault.yml
 !inventories/sample/group_vars/vault.yml.example
 __pycache__/
