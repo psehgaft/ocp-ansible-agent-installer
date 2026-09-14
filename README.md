@@ -18,14 +18,16 @@ inventory defaults and operator catalog, creates encrypted profiles, and runs
 only approved playbooks with RBAC, confirmation gates, redacted live output,
 and persistent history. See the [GUI interface guide](docs/gui-interface.md).
 
-For complete procedures, use the [deployment scenarios](docs/deployment-scenarios.md):
+For complete procedures, use the
+[executive deployment runbook](docs/deployment-scenarios.md). It is organized
+into three operating paths:
 
-1. connected OpenShift installation with playbooks;
-2. disconnected OpenShift installation with playbooks;
-3. connected OpenShift installation with the GUI interface;
-4. disconnected OpenShift installation with the GUI interface;
-5. Day-2 GitOps activities with playbooks; and
-6. Day-2 GitOps activities with the GUI interface.
+1. **Playbooks** — connected installation, disconnected installation, Day-2
+   activities, and GitOps initialization.
+2. **GUI interface** — the same four procedures through validated forms and
+   allowlisted actions.
+3. **Operators** — GitOps deployment and configuration of selected operators
+   and their operands.
 
 ## Architecture
 
@@ -293,7 +295,6 @@ make day2-deploy
 
 The containerized GUI interface implementation, runtime, security model, and
 operating procedure are documented in the [GUI interface guide](docs/gui-interface.md).
-Future enhancements are tracked in the [GUI interface roadmap](docs/gui-interface-roadmap.md).
 
 Components declare supported modes in `framework/components.yml`:
 
@@ -346,8 +347,8 @@ Cluster integration tests, destructive tests, and scheduled compatibility tests 
 The Antora workshop contains:
 
 - the architecture-aligned framework learning path; and
-- six canonical deployment labs covering connected/disconnected Day-0 through
-  playbooks or the GUI and Day-2 GitOps through playbooks or the GUI; and
+- three canonical learning paths covering playbooks, the GUI interface, and
+  GitOps-managed operators; and
 - the retained Redfish and Assisted Installer source material.
 
 The custom serving-certificate lesson is available at `4.4.8.1 Custom API and Ingress Certificates` and documents validation, rendering, application, endpoint verification, rollout impact, and rollback.

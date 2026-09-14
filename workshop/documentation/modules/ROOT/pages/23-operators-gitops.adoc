@@ -1,0 +1,97 @@
+= Deploy and Configure Operators with GitOps
+
+== Objective
+
+Select required operators, resolve dependencies, configure complete operands,
+and let Argo CD reconcile the approved desired state.
+
+== Configure the selection
+
+. Choose a built-in profile (`minimal`, `enterprise`, `observability`,
+  `virtualization`, `telco`, `developer`, `ai`, or `openstack`) or `custom`.
+
+. Select only capabilities required by the architecture. Do not select every
+  operator: entitlements, hardware, storage, architecture, and compatibility
+  requirements differ.
+
+. In YAML, edit `60-day2-gitops.yml`; in the GUI, use **Day-2 GitOps**.
++
+[source,yaml]
+----
+day2_gitops_profile: enterprise
+day2_gitops_enabled_operators:
+  - acm
+  - acs
+  - odf
+  - openshift_virtualization
+day2_gitops_install_plan_approval: Manual
+----
+
+. Override channel, catalog source, namespace, or approval only when the target
+  OpenShift version and OperatorHub catalog have been verified.
++
+[source,yaml]
+----
+day2_gitops_operator_overrides:
+  acm:
+    channel: release-2.15
+    install_plan_approval: Manual
+----
+
+. Add complete Custom Resources under `day2_gitops_operands`. The renderer
+  rejects Kubernetes Secrets and common inline credential fields.
++
+[source,yaml]
+----
+day2_gitops_operands:
+  acm:
+    - apiVersion: operator.open-cluster-management.io/v1
+      kind: MultiClusterHub
+      metadata:
+        name: multiclusterhub
+        namespace: open-cluster-management
+      spec:
+        availabilityConfig: High
+----
+
+== Render and deploy
+
+. Use xref:21-gitops-playbook.adoc[1.4 GitOps Initialization with Playbooks] or
+  xref:20-day2-gui.adoc[2.3 Day-2 Activities with the GUI] to render safely.
+
+. Review dependency closure, Namespace, OperatorGroup, Subscription, channel,
+  source, install approval, Argo CD sync waves, and every operand specification.
+
+. For disconnected clusters, mirror the generated operator
+  `ImageSetConfiguration`, then apply the `oc-mirror` IDMS, ITMS, and
+  CatalogSource resources before bootstrap.
+
+. Publish and bootstrap with xref:21-gitops-playbook.adoc[the playbook path] or
+  xref:22-gitops-gui.adoc[the GUI path].
+
+. Verify installation and configuration.
++
+[source,bash]
+----
+oc get applications.argoproj.io -n openshift-gitops
+oc get subscriptions.operators.coreos.com -A
+oc get installplans.operators.coreos.com -A
+oc get csv -A
+----
+
+. Verify each operand with its product-specific status conditions and smoke
+  test. An installed CSV does not prove that storage, networking, identity, or
+  another operand is correctly configured.
+
+== Change and rollback
+
+Make changes in Git and allow Argo CD to reconcile them. Roll back by reverting
+the commit. Before removing an operator, review its product-specific uninstall
+and persistent-data retention procedure; pruning a Subscription is not always
+a complete or safe uninstall.
+
+== Success criteria
+
+All selected Applications are healthy, expected CSVs are `Succeeded`, operands
+report healthy conditions, dependencies were installed in order, and the Git
+commit remains the source of truth.

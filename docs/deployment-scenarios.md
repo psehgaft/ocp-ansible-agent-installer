@@ -1,20 +1,24 @@
-# OpenShift deployment scenarios
+# Executive OpenShift Deployment Runbook
 
 This is the canonical operator runbook for the repository. It covers the same
 validated variable model through Ansible CLI or the containerized GUI
-interface. Choose one Day-0 path and, only after the cluster is installed,
-choose one Day-2 GitOps path.
+interface. It is organized around the three supported operating paths:
+playbooks, the GUI interface, and GitOps-managed operators. Choose one Day-0
+installation interface and initialize GitOps only after the cluster is healthy.
 
-## Supported paths
+## Executive workflow map
 
-| Path | Day | Entry point | Infrastructure changes |
+| ID | Path | Entry point | Infrastructure changes |
 |---|---:|---|---|
-| Connected installation with playbooks | 0 | `playbooks/day0/install.yml` | Bare-metal installation |
-| Disconnected installation with playbooks | 0 | `prepare-mirror.yml`, then `install.yml` | Mirror and bare-metal installation |
-| Connected installation with GUI | 0 | GUI actions | Bare-metal installation after confirmation |
-| Disconnected installation with GUI | 0 | GUI actions | Mirror and installation after separate confirmations |
-| Day-2 with playbooks | 2 | `render-gitops.yml`, then `bootstrap-gitops.yml` | Git push and minimal GitOps bootstrap when enabled |
-| Day-2 with GUI | 2 | **Render Day-2 GitOps**, then **Publish and bootstrap GitOps** | Same GitOps boundary after confirmation |
+| 1.1 | Connected installation with playbooks | `playbooks/day0/install.yml` | Bare-metal installation |
+| 1.2 | Disconnected installation with playbooks | `prepare-mirror.yml`, then `install.yml` | Mirror and bare-metal installation |
+| 1.3 | Day-2 activities with playbooks | Selected `playbooks/day2/*.yml` | Validation, rendering, or explicit apply, depending on the playbook mode |
+| 1.4 | GitOps initialization with playbooks | `render-gitops.yml`, then `bootstrap-gitops.yml` | Git push and minimal GitOps bootstrap when enabled |
+| 2.1 | Connected installation with GUI | GUI installation actions | Bare-metal installation after confirmation |
+| 2.2 | Disconnected installation with GUI | GUI mirror and installation actions | Mirror and installation after separate confirmations |
+| 2.3 | Day-2 activities with GUI | **Render Day-2 GitOps** | Local desired-state preview only |
+| 2.4 | GitOps initialization with GUI | **Publish and bootstrap GitOps** | Git push and minimal bootstrap after confirmation |
+| 3.1 | Operators with GitOps | Operator selection plus either GitOps initialization path | Argo CD reconciliation of operators and operands |
 
 The Day-0 installer stops after downloading installation credentials and
 evidence. It does not install operators. Day-2 renders desired state to Git;
@@ -115,9 +119,11 @@ ansible-playbook -i "$INVENTORY" \
 
 Resolve every blocking validation before continuing.
 
-## Scenario 1: connected installation with playbooks
+## 1. Deployment with playbooks
 
-### Configure connected mode
+### 1.1 Install connected OpenShift
+
+#### Configure connected mode
 
 In `00-required.yml`:
 
@@ -159,7 +165,7 @@ ingress_vips: [{ip: 192.168.50.11}]
 Set every host BMC, role, hostname, address when static, and stable
 `installation_disk_id` in `hosts.yml`.
 
-### Discover, review, and install
+#### Discover, review, and install
 
 ```bash
 ansible-playbook -i "$INVENTORY" \
@@ -180,7 +186,7 @@ oc get nodes -o wide
 oc get clusteroperators
 ```
 
-## Scenario 2: disconnected installation with playbooks
+### 1.2 Install disconnected OpenShift
 
 Complete the common inventory first, then set:
 
@@ -195,7 +201,7 @@ mirror_ca_file: /etc/pki/ca-trust/source/anchors/registry-ca.pem
 disconnected_release_image: registry.example.com:8443/ocp4/openshift-release-dev/ocp-release@sha256:REPLACE
 ```
 
-### Partially disconnected: mirror to mirror
+#### Partially disconnected: mirror to mirror
 
 First render and inspect the generated ImageSetConfiguration:
 
@@ -210,7 +216,7 @@ record the digest-pinned release pullspec, and place it in
 `disconnected_release_image`. Keep `oc_mirror_run_during_install: false` to
 avoid repeating a completed mirror.
 
-### Fully air-gapped: disk transfer
+#### Fully air-gapped: disk transfer
 
 On the connected transfer host use:
 
@@ -232,7 +238,7 @@ oc_mirror_workflow: disk_to_mirror
 Run `prepare-mirror.yml` again to populate the disconnected registry. Set the
 exact release digest produced by `oc-mirror`.
 
-### Install from the mirror
+#### Install from the mirror
 
 ```bash
 ./scripts/validate.sh "$INVENTORY"
@@ -244,9 +250,87 @@ ansible-playbook -i "$INVENTORY" \
 Verify that nodes use the mirrored release and retain the mirror workspace,
 mapping resources, logs, and installation evidence.
 
-## Scenario 3: connected installation with the GUI interface
+### 1.3 Perform Day-2 activities with playbooks
 
-### Start the GUI
+Day-2 playbooks are explicit operational entry points. Inspect the selected
+playbook and its defaults before execution, activate the intended kubeconfig,
+and begin with its validation or render mode when available.
+
+```bash
+export KUBECONFIG="$PWD/artifacts/production-a/auth/kubeconfig"
+oc whoami
+oc get clusterversion,nodes
+
+# Read-only health collection
+ansible-playbook -i "$INVENTORY" \
+  --vault-password-file "$VAULT_PASSWORD_FILE" \
+  playbooks/day2/health-checks.yml
+
+# Examples of explicit Day-2 changes; configure their documented variables first
+ansible-playbook -i "$INVENTORY" \
+  --vault-password-file "$VAULT_PASSWORD_FILE" \
+  playbooks/day2/ntp.yml
+ansible-playbook -i "$INVENTORY" \
+  --vault-password-file "$VAULT_PASSWORD_FILE" \
+  playbooks/day2/node-labels.yml
+```
+
+Use [the Day-2 implementation catalog](day2-implementation-catalog.md) to
+choose the supported playbook for identity, PKI, registry, networking,
+storage, backup, health, or reporting. Do not use direct playbooks for
+resources already owned by Argo CD. For a new GitOps-managed cluster, continue
+with 1.4.
+
+### 1.4 Initialize GitOps with playbooks
+
+Do not begin until the target cluster is healthy and its kubeconfig is active.
+
+#### Configure desired state
+
+In `60-day2-gitops.yml`, review every variable and start with Git writes and
+bootstrap disabled:
+
+```yaml
+day2_gitops_cluster_name: production-a
+day2_gitops_openshift_minor_version: "4.18"
+day2_gitops_profile: custom
+day2_gitops_enabled_operators:
+  - gitops
+day2_gitops_repository_url: git@github.com:example/openshift-desired-state.git
+day2_gitops_repository_branch: main
+day2_gitops_repository_path: clusters
+day2_gitops_git_push_enabled: false
+day2_gitops_git_push_confirmed: false
+day2_gitops_bootstrap_enabled: false
+```
+
+Render and inspect without touching Git or the cluster:
+
+```bash
+ansible-playbook -i "$INVENTORY" \
+  --vault-password-file "$VAULT_PASSWORD_FILE" \
+  playbooks/day2/render-gitops.yml
+kustomize build artifacts/day2-gitops-rendered/clusters/production-a
+```
+
+After approval, enable Git push, its independent confirmation, and bootstrap.
+Store Git credentials in the encrypted Vault, then run:
+
+```bash
+ansible-playbook -i "$INVENTORY" \
+  --vault-password-file "$VAULT_PASSWORD_FILE" \
+  playbooks/day2/bootstrap-gitops.yml
+oc get applications.argoproj.io -n openshift-gitops
+```
+
+This direct bootstrap installs only OpenShift GitOps and creates the project
+and root Application. Argo CD owns everything after that boundary.
+
+## 2. Deployment with the GUI interface
+
+### 2.1 Install connected OpenShift
+
+#### Start the GUI
 
 ```bash
 export INSTALLER_UI_AUTH_TOKENS="$(openssl rand -hex 24)=admin"
@@ -256,7 +340,7 @@ podman compose up --build
 Open `http://127.0.0.1:8080` through an SSH tunnel or approved TLS reverse
 proxy and enter the token value before `=admin`.
 
-### Create the profile
+#### Configure every variable
 
 1. Create a uniquely named profile such as `production-a`.
 2. In **Cluster**, set connected mode, identity, version, topology, networks,
@@ -276,7 +360,7 @@ proxy and enter the token value before `=admin`.
 9. Review **Day-2 GitOps** but leave push and bootstrap disabled during Day-0.
 10. Select **Validate configuration**, correct all errors, and save the profile.
 
-### Execute the connected workflow
+#### Execute the connected workflow
 
 Run these allowlisted actions in order:
 
@@ -290,9 +374,9 @@ Run these allowlisted actions in order:
    protected `/data/artifacts/<profile>/` volume.
 8. Optionally **Eject virtual media**, entering `EJECT`.
 
-## Scenario 4: disconnected installation with the GUI interface
+### 2.2 Install disconnected OpenShift
 
-Create the profile as in Scenario 3, but configure **Disconnected** completely:
+Create the profile as in 2.1, but configure **Disconnected** completely:
 
 1. Select `deployment_mode=disconnected`.
 2. Select partially disconnected or air-gapped.
@@ -320,77 +404,7 @@ Air-gapped environments require separate GUI instances on the connected and
 disconnected hosts, with the `/data` content and mirror archive transferred by
 the approved offline process. The GUI does not bypass an air gap.
 
-## Scenario 5: Day-2 activities with playbooks
-
-Do not begin until the target cluster is healthy and its kubeconfig is active.
-
-### Configure desired state
-
-In `60-day2-gitops.yml`, review every variable and set at least:
-
-```yaml
-day2_gitops_cluster_name: production-a
-day2_gitops_openshift_minor_version: "4.18"
-day2_gitops_profile: enterprise
-day2_gitops_enabled_operators:
-  - gitops
-  - acm
-  - acs
-  - odf
-  - openshift_virtualization
-day2_gitops_operator_overrides: {}
-day2_gitops_additional_operators: {}
-day2_gitops_operands: {}
-day2_gitops_repository_url: git@github.com:example/openshift-desired-state.git
-day2_gitops_repository_branch: main
-day2_gitops_repository_path: clusters
-day2_gitops_git_push_enabled: false
-day2_gitops_git_push_confirmed: false
-day2_gitops_bootstrap_enabled: false
-```
-
-Replace `day2_gitops_operands` with complete Custom Resources for the selected
-operators. Plain Kubernetes Secrets and common inline credential fields are
-rejected. Store Git credentials only in the encrypted Vault.
-
-### Render and validate without changes
-
-```bash
-ansible-playbook -i "$INVENTORY" \
-  --vault-password-file "$VAULT_PASSWORD_FILE" \
-  playbooks/day2/render-gitops.yml
-kustomize build artifacts/day2-gitops-rendered/clusters/production-a
-```
-
-Review operator channels, dependencies, namespaces, install-plan approval,
-sync waves, operands, and the Day-2 `oc-mirror` configuration.
-
-### Publish and bootstrap
-
-After approval set:
-
-```yaml
-day2_gitops_git_push_enabled: true
-day2_gitops_git_push_confirmed: true
-day2_gitops_bootstrap_enabled: true
-```
-
-Then run:
-
-```bash
-ansible-playbook -i "$INVENTORY" \
-  --vault-password-file "$VAULT_PASSWORD_FILE" \
-  playbooks/day2/bootstrap-gitops.yml
-oc get applications.argoproj.io -n openshift-gitops
-oc get subscriptions.operators.coreos.com -A
-oc get csv -A
-```
-
-For disconnected Day-2, mirror the generated operator ImageSetConfiguration
-and apply the `oc-mirror` IDMS, ITMS, and CatalogSource outputs before GitOps
-bootstrap.
-
-## Scenario 6: Day-2 activities with the GUI interface
+### 2.3 Perform Day-2 activities with the GUI interface
 
 1. Open the saved cluster profile.
 2. In **Day-2 GitOps**, select a built-in profile or `custom`.
@@ -401,19 +415,53 @@ bootstrap.
 5. Enter complete operand resources in the structured editor.
 6. Enter Git username/token or SSH key in **Credentials and secrets** only when
    the selected authentication mode requires it.
-7. Leave push and bootstrap disabled, save, validate, and select
+7. Keep Git push and bootstrap disabled, save, validate, and select
    **Render Day-2 GitOps**.
 8. Download and review the render report and desired-state tree.
 9. For disconnected clusters, execute the generated operator mirror workflow
    outside or through the approved mirror action and apply its mapping/catalog
    resources before bootstrap.
-10. Enable both Git push switches and bootstrap only after approval.
-11. Save and validate again.
-12. Select **Publish and bootstrap GitOps**, enter `GITOPS`, and monitor the
-    redacted execution stream.
-13. Verify root and child Applications, Subscriptions, InstallPlans, CSVs, and
-    operand health from OpenShift. Subsequent changes are Git commits reconciled
-    by Argo CD, not ad-hoc GUI or Ansible mutations.
+
+At this point the interface has only rendered and validated the Day-2 desired
+state. It has not pushed Git content or changed the cluster.
+
+### 2.4 Initialize GitOps with the GUI interface
+
+1. Review and approve the render produced in 2.3.
+2. Return to **Day-2 GitOps** and enable Git push, push confirmation, and
+   bootstrap.
+3. Select the configured Git authentication mode. Enter tokens or keys only in
+   **Credentials and secrets**.
+4. Save the profile and run **Validate configuration** again.
+5. Select **Publish and bootstrap GitOps**, enter `GITOPS`, and monitor the
+   redacted execution stream.
+6. Verify the root and child Applications. Subsequent changes are Git commits
+   reconciled by Argo CD, not ad-hoc GUI or Ansible mutations.
+
+## 3. Operators
+
+### 3.1 Deploy and configure operators with GitOps
+
+Use either `60-day2-gitops.yml` or the GUI **Day-2 GitOps** form to select a
+built-in profile and explicit operators. Configure channel/source overrides,
+additional packages, install-plan approval, and complete operand resources.
+Dependencies are resolved automatically.
+
+Always follow this order:
+
+1. Select only the operators required by the architecture.
+2. Add complete operand Custom Resources under `day2_gitops_operands`.
+3. Render with 1.4 or 2.3 and review Kustomize roots, namespaces, channels,
+   sync waves, and the dependency closure.
+4. In disconnected environments, mirror the generated operator
+   `ImageSetConfiguration` and apply its IDMS, ITMS, and CatalogSource output.
+5. Publish and initialize GitOps with 1.4 or 2.4.
+6. Verify Applications, Subscriptions, InstallPlans, CSVs, and operand health.
+
+Plain Kubernetes Secrets and common inline credential fields are rejected.
+Use an approved secret operator or an encrypted bootstrap mechanism. See the
+[GitOps operator deployment guide](day2-gitops-operator-deployment.md) for the
+catalog, profiles, override schema, disconnected workflow, and rollback.
 
 ## Completion evidence
 
@@ -431,3 +479,10 @@ See [Day-0 bare-metal installation](day0-bare-metal-installation.md),
 [Day-2 GitOps operator deployment](day2-gitops-operator-deployment.md), and
 [Containerized GUI Interface](gui-interface.md) for detailed contracts and
 troubleshooting boundaries.
+
+## Authoritative product references
+
+- [OpenShift 4.18 Assisted Installer](https://docs.redhat.com/en/documentation/assisted_installer_for_openshift_container_platform/2025/html/installing_openshift_container_platform_with_the_assisted_installer/)
+- [OpenShift disconnected environments and oc-mirror v2](https://docs.redhat.com/en/documentation/openshift_container_platform/4.18/html/disconnected_environments/about-installing-oc-mirror-v2)
+- [OpenShift Operators and Operator Lifecycle Manager](https://docs.redhat.com/en/documentation/openshift_container_platform/4.18/html/operators/understanding-operators)
+- [Red Hat OpenShift GitOps](https://docs.redhat.com/en/documentation/red_hat_openshift_gitops/)

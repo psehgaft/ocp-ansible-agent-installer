@@ -308,5 +308,5 @@ removing storage, backup, registry, or database operators.
 - [oc-mirror plugin v2 for disconnected environments](https://docs.redhat.com/en/documentation/openshift_container_platform/4.18/html/disconnected_environments/about-installing-oc-mirror-v2)
 - [Red Hat OpenShift GitOps documentation](https://docs.redhat.com/en/documentation/red_hat_openshift_gitops/)
 
-For ordered CLI and GUI procedures, use the
-[six deployment scenarios](deployment-scenarios.md).
+For ordered playbook and GUI procedures, use the
+[executive deployment runbook](deployment-scenarios.md).

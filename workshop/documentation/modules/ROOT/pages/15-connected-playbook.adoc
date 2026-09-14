@@ -20,6 +20,20 @@ cp -a inventories/sample inventories/production-a
   `inventories/production-a/group_vars/all/`. Replace every `CHANGE_ME` value.
   Set `deployment_mode: connected` and choose `assisted_auth_mode: saas` or
   `onprem`.
++
+[source,bash]
+----
+python3 scripts/gui_config.py schema --root . |
+  jq -r '.variables[] | [.group, .name, (.required // false), .type, .source, (.default | tojson)] | @tsv' \
+  > variable-review-checklist.tsv
+grep -R "CHANGE_ME" inventories/production-a
+----
++
+Use the generated checklist to review every field from `00-required.yml`,
+`10-assisted-installer.yml`, `20-network.yml`, `30-disconnected.yml`,
+`40-bmc.yml`, `50-runtime.yml`, `60-day2-gitops.yml`, `hosts.yml`, and the
+encrypted `vault.yml`. In connected Day-0, explicitly accept the disconnected
+and Day-2 safe defaults rather than deleting those groups.
 
 . Select DHCP or static networking. For static networking, configure machine,
   cluster and service CIDRs, API/Ingress VIPs, gateway, DNS, prefix, NIC/bond,

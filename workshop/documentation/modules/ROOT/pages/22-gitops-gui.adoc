@@ -1,0 +1,48 @@
+= GitOps Initialization with the GUI Interface
+
+== Objective
+
+Publish an approved GUI render and initialize OpenShift GitOps through the
+allowlisted, confirmation-gated action.
+
+== Procedure
+
+. Complete xref:20-day2-gui.adoc[2.3 Day-2 Activities with the GUI] and approve
+  the downloaded desired-state preview.
+
+. Reopen the same profile and confirm the target cluster, repository URL,
+  branch, repository path, project, render root, and checkout directory.
+
+. Select `existing` authentication when the container receives an approved SSH
+  agent or credential helper. For HTTPS authentication, enter the Git username
+  and token only in **Credentials and secrets** so they are stored in Vault.
+
+. Enable **Git push**, **Git push confirmed**, and **GitOps bootstrap**. These
+  three switches must remain independent so an accidental selection cannot
+  authorize publication.
+
+. Save the profile and run **Validate configuration** again.
+
+. Select **Publish and bootstrap GitOps**, enter the exact confirmation
+  `GITOPS`, and start the execution.
+
+. Follow the redacted log stream. Do not close or delete the persistent `/data`
+  volume while the run is active.
+
+. Verify Git and the cluster.
++
+[source,bash]
+----
+oc get subscriptions.operators.coreos.com -n openshift-gitops-operator
+oc get csv -n openshift-gitops-operator
+oc get applications.argoproj.io -n openshift-gitops
+----
+
+. Download the execution report and record the Git commit SHA. Perform later
+  changes through Git rather than direct cluster edits.
+
+== Success criteria
+
+The GUI audit identifies the actor and action, Git contains the approved
+desired state, the root Application is healthy, and neither Git nor the
+redacted log contains credentials.

@@ -15,7 +15,12 @@
   disconnected, and fully air-gapped workflows.
 - Added Vault-backed Git credentials, live PackageManifest validation, secret
   rejection, deterministic ownership boundaries, tests, and documentation.
-- Recorded the graphical container runner as deferred GUI interface scope.
+- Reorganized the documentation and Antora workshop into executive Playbook,
+  GUI Interface, and Operators paths, including separate Day-2 and GitOps
+  initialization procedures.
+- Removed superseded test wrappers, fixed-function operator/RHOSO roles,
+  unused Assisted Installer templates, temporary planning documents, and the
+  stale source-tree checksum manifest.
 
 ## 2.0.0 — 2026-07-30
 

@@ -23,6 +23,17 @@ podman compose up --build
   secrets**. Review every displayed default. Select connected mode and DHCP or
   static networking.
 
+. Expand each section and account for every displayed field. A field is ready
+  only when it contains the target-environment value or its documented default
+  has been explicitly accepted. The GUI reads the same variable schema as the
+  playbook; a CLI-side review copy can be generated with:
++
+[source,bash]
+----
+python3 scripts/gui_config.py schema --root . |
+  jq -r '.variables[] | [.group, .name, (.required // false), .type, .source, (.default | tojson)] | @tsv'
+----
+
 . Add exactly the configured number of masters and workers. For each host set
   iLO/iDRAC/generic/auto, HTTPS endpoint, credentials, role, hostname, address
   when static, stable disk, disks to preserve, NIC mapping, and API overrides.

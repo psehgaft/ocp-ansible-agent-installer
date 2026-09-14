@@ -1,10 +1,15 @@
-* Canonical Deployment Scenarios
-** xref:15-connected-playbook.adoc[Connected Installation with Playbooks]
-** xref:16-disconnected-playbook.adoc[Disconnected Installation with Playbooks]
-** xref:17-connected-gui.adoc[Connected Installation with the GUI]
-** xref:18-disconnected-gui.adoc[Disconnected Installation with the GUI]
-** xref:19-day2-playbook.adoc[Day-2 Activities with Playbooks]
-** xref:20-day2-gui.adoc[Day-2 Activities with the GUI]
+* 1. Deployment with Playbooks
+** xref:15-connected-playbook.adoc[1.1 Connected OpenShift]
+** xref:16-disconnected-playbook.adoc[1.2 Disconnected OpenShift]
+** xref:19-day2-playbook.adoc[1.3 Day-2 Activities]
+** xref:21-gitops-playbook.adoc[1.4 GitOps Initialization]
+* 2. Deployment with the GUI Interface
+** xref:17-connected-gui.adoc[2.1 Connected OpenShift]
+** xref:18-disconnected-gui.adoc[2.2 Disconnected OpenShift]
+** xref:20-day2-gui.adoc[2.3 Day-2 Activities]
+** xref:22-gitops-gui.adoc[2.4 GitOps Initialization]
+* 3. Operators
+** xref:23-operators-gitops.adoc[3.1 GitOps Deployment and Configuration]
 * Module 1: Foundations
 ** xref:ARCHITECTURE:legacy-workshop.adoc[1.0 Workshop Source Map]
 ** xref:index.adoc[1.1 Workshop Overview]
