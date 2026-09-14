@@ -90,4 +90,5 @@ jobs:
             --exclude '^https://docs\.ansible\.com/'
             --exclude '^https://api\.cluster\.example\.com'
             --exclude '^https?://10\.'
+            --exclude '^https?://127\.0\.0\.1'
             '**/*.md' '**/*.adoc'
