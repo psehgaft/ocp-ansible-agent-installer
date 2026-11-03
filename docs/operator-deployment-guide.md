@@ -58,6 +58,13 @@ ansible-playbook -i inventories/sample/hosts.yml \
 
 ## Supported components
 
+The ordered Day-2 foundation applies the platform components in this order:
+
+```mermaid
+flowchart TB
+  A["<b>observability</b><br/>Metrics, dashboards & alerts"] --> B["<b>security-compliance</b><br/>Compliance & policy enforcement"] --> C["<b>logging</b><br/>Log aggregation & forwarding"] --> D["<b>service-mesh</b><br/>Traffic & mTLS between services"] --> E["<b>connectivity</b><br/>Cluster & application connectivity"] --> F["<b>virtualization-storage</b><br/>VMs & persistent storage"] --> G["<b>gitops</b><br/>GitOps engine & sync"] --> H["<b>identity</b><br/>Authentication & SSO"] --> I["<b>backup</b><br/>Backup & restore"] --> J["<b>developer-hub</b><br/>Developer portal & catalog"] --> K["<b>pipelines</b><br/>CI/CD pipelines"] --> L["<b>ai</b><br/>AI/ML platform services"]
+```
+
 | Component key | Product or function | Installation path | Example |
 |---|---|---|---|
 | `gitops` | Red Hat OpenShift GitOps | OLM | `-e component_name=gitops` |
