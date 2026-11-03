@@ -90,6 +90,28 @@ INSTALLER_UI_AUTH_TOKENS="viewer-token-at-least-16=viewer,operator-token-at-leas
 Use TLS at the ingress or reverse proxy. Bearer tokens must not traverse an
 unencrypted external network.
 
+## Container build troubleshooting
+
+The image pins Kustomize and Helm in `build-tools/go.mod` and locks their
+module checksums in `build-tools/go.sum`. The build retrieves those modules
+through the configured Go module proxy and verifies them against the committed
+checksums. It no longer downloads Kustomize or Helm release archives from
+GitHub Releases, which avoids the curl TLS error (exit code 35) seen on some
+Mac container-engine networks.
+
+If your environment requires an HTTP(S) proxy or a custom trusted CA, configure
+it in the container engine's build environment. After pulling the updated
+checkout, rebuild the image:
+
+```bash
+podman compose build --no-cache installer-ui
+podman compose up -d
+```
+
+Use `docker compose` in place of `podman compose` when running Docker. The
+Compose Bake/BuildKit warning is informational and is not itself a build
+failure.
+
 ## Container runtime contents
 
 The image builds and tests the Go application, installs the repository's
@@ -189,3 +211,11 @@ repository validation workflows continue to run unchanged.
 Use the canonical [OpenShift deployment scenarios](deployment-scenarios.md) for
 complete, ordered procedures for connected and disconnected installation with
 the CLI or GUI, followed by Day-2 GitOps through either interface.
+
+
+## References
+
+- [Go Modules Reference: go.sum files](https://go.dev/ref/mod#go-sum-files)
+- [Kustomize v5.7.1 module definition](https://github.com/kubernetes-sigs/kustomize/blob/kustomize/v5.7.1/kustomize/go.mod)
+- [Helm v3.17.3 module definition](https://github.com/helm/helm/blob/v3.17.3/go.mod)
+- [OpenShift oc-mirror architecture support](https://docs.redhat.com/en/documentation/openshift_container_platform/4.20/html/disconnected_environments/about-installing-oc-mirror-v2)
