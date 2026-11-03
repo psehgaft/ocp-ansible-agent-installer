@@ -192,6 +192,10 @@ The project requires `ansible-core` 2.18 or later. Using the system Ansible
 2.17 (or older) causes the collection compatibility error shown in the
 troubleshooting report.
 
+Official references: [Podman installation](https://podman.io/docs/installation),
+[Podman Compose provider](https://docs.podman.io/en/latest/markdown/podman-compose.1.html),
+and [Ansible installation](https://docs.ansible.com/projects/ansible/latest/installation_guide/intro_installation.html).
+
 ## 4. Verify CLI tools
 
 ```bash
