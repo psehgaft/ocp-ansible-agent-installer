@@ -59,7 +59,11 @@ podman compose version
 
 Persist `$HOME/.local/bin` in the shell's `PATH` by adding the export
 command to `~/.bashrc` or `~/.zshrc`. On macOS, continue to use Podman
-Machine or Docker Desktop; see the [GUI guide](../../../../../../docs/gui-interface.md).
+Machine or Docker Desktop; see the link:https://github.com/psehgaft/ocp-ansible-agent-installer/blob/main/docs/gui-interface.md[GUI guide].
+
+Official references: link:https://podman.io/docs/installation[Podman installation],
+link:https://docs.podman.io/en/latest/markdown/podman-compose.1.html[Podman Compose],
+and link:https://docs.ansible.com/projects/ansible/latest/installation_guide/intro_installation.html[Ansible installation].
 
 == 2. Create a Python environment
 
