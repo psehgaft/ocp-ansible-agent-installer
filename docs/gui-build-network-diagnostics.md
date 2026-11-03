@@ -1,6 +1,6 @@
-# GUI Container Build Network Troubleshooting
+# GUI Container Build Troubleshooting
 
-Use this guide when `podman compose build` or `docker compose build` fails while downloading Go modules, UBI packages, Python packages, or Ansible collections.
+Use this guide when `podman compose build` or `docker compose build` fails while downloading Go modules, UBI packages, Python packages, or Ansible collections, or when a build process exits with an illegal instruction.
 
 ## Identify the failure
 
@@ -12,7 +12,7 @@ These messages point to outbound HTTPS connectivity from the image builder:
 
 Retries in the Containerfile handle brief interruptions. They cannot fix a blocked route, unavailable VPN, missing proxy, or a TLS-inspection CA that the build environment does not trust.
 
-The following are generally not the cause of these messages:
+The following are generally not the cause of download errors:
 
 - `Unable to read consumer identity` / “not registered with an entitlement server”: UBI informational warning.
 - The Compose Bake/BuildKit warning: not a build failure by itself.
@@ -39,6 +39,32 @@ podman machine ssh curl -Iv --connect-timeout 15 --max-time 30 https://cdn-ubi.r
 A TLS connection or an HTTP response (including a 403 at a bare CDN root) confirms that the handshake reached the server. A timeout or TLS handshake error from the VM while the host succeeds means the VM's network or proxy path needs configuration. If both fail, check the host's VPN, firewall, DNS, or upstream network policy.
 
 The build may also need access to `storage.googleapis.com`, `pypi.org`, `files.pythonhosted.org`, `galaxy.ansible.com`, and `mirror.openshift.com`.
+
+## Diagnose illegal instruction (SIGILL) on Apple Silicon
+
+A build message such as `container exited on illegal instruction` is different from a network timeout. In an ARM64 build, it means a process inside the Linux VM received SIGILL. A known Podman-on-macOS issue affects some Apple Silicon systems using the `applehv` machine provider: the VM can advertise CPU features that the hypervisor does not correctly execute. This can crash native ARM64 libraries, including code loaded by Python. The ansible-galaxy step may be the command running when the process exits, without Galaxy itself being the cause.
+
+Check the VM provider, Podman version, and advertised CPU features:
+
+```bash
+podman version
+podman machine inspect
+podman machine ssh "grep -m1 '^Features' /proc/cpuinfo"
+```
+
+If the machine uses `applehv` and the feature line includes `sme` or `sme2`, this matches the reported Apple hypervisor issue. Do not downgrade cryptographic libraries as a first fix; the underlying failure may be in the VM's exposed CPU features.
+
+A safer workaround is to use the `libkrun` provider on a supported Podman version, or build and run the GUI with Docker Desktop. Keep the existing Podman machine until the new setup is verified; deleting a machine also removes its local containers, images, and volumes. Podman 6 uses `libkrun` by default for new macOS machines. If creating a second machine, select its connection explicitly after creation:
+
+```bash
+podman machine init --provider libkrun --now installer-ui-libkrun
+podman machine list
+podman system connection list
+# Set the new machine's connection as default using its listed connection name:
+podman system connection default <connection-name>
+```
+
+For current details on provider support, use the [Podman Machine documentation](https://docs.podman.io/en/stable/markdown/podman-machine.1.html) and the [upstream Podman report](https://github.com/containers/podman/issues/28312).
 
 ## Configure a proxy
 
@@ -94,7 +120,7 @@ Follow your organization's certificate installation procedure when the CA is not
 
 ## Retry the build
 
-After correcting connectivity or proxy trust, reload the GUI token in the current shell and rebuild:
+After correcting connectivity or changing the VM provider, reload the GUI token in the current shell and rebuild:
 
 ```bash
 set -a
@@ -104,4 +130,4 @@ podman compose build --no-cache installer-ui
 podman compose up -d
 ```
 
-For Docker, use `docker compose` in place of `podman compose`. If the host and builder can reach the endpoints but a build still fails, keep the full output from the first failed download and check whether a particular endpoint is blocked by a firewall or proxy policy.
+For Docker, use `docker compose` in place of `podman compose`. If the host and builder can reach the endpoints but a build still fails, keep the full output from the first failed step and check whether it reports a network error, compatibility error, or SIGILL.
