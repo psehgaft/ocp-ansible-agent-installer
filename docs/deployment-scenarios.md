@@ -334,8 +334,16 @@ and root Application. Argo CD owns everything after that boundary.
 
 ```bash
 export INSTALLER_UI_AUTH_TOKENS="$(openssl rand -hex 24)=admin"
+set -a
+. ./.installer-ui.vault
+set +a
+printf 'INSTALLER_UI_AUTH_TOKENS=%s\n' "$INSTALLER_UI_AUTH_TOKENS" > .installer-ui.vault
+chmod 600 .installer-ui.vault
+podman compose config --quiet
 podman compose build --no-cache installer-ui
-podman compose up -d
+podman compose up -d installer-ui
+curl --fail --retry 10 --retry-connrefused --retry-delay 2 \
+  http://127.0.0.1:8080/healthz
 ```
 
 Open `http://127.0.0.1:8080` through an SSH tunnel or approved TLS reverse
