@@ -51,7 +51,7 @@ variable appears automatically in the UI even when it has no custom metadata.
 - downloadable non-sensitive configuration previews and execution reports;
 - liveness health check and persistent `/data` volume.
 
-## Build and start on Linux and macOS
+## Build and start
 
 The GUI runs in a Linux container, so the host can be Linux or macOS.
 Compose builds the image for the architecture of the container engine. The
@@ -72,30 +72,39 @@ podman machine start
 ```
 
 Generate an unpredictable admin token and start the GUI with Podman Compose:
+Generate the access token and export it in the canonical form (the random
+token has 48 characters; the minimum is 16). Also save it in a vault file
+under the same variable name so later sessions can reload it:
 
 ```bash
 export INSTALLER_UI_AUTH_TOKENS="$(openssl rand -hex 24)=admin"
-podman compose up --build -d
+printf 'INSTALLER_UI_AUTH_TOKENS=%s\n' "$INSTALLER_UI_AUTH_TOKENS" > .installer-ui.vault
+chmod 600 .installer-ui.vault
+# Later sessions: set -a; . ./.installer-ui.vault; set +a
+podman compose build --no-cache installer-ui
+podman compose up -d
 ```
 
-For Docker Compose, use the same token variable:
+Open `http://127.0.0.1:8080`, select **Access token**, and enter the token —
+the part before the `=` in `INSTALLER_UI_AUTH_TOKENS`. The `make gui-run`
+target stores profiles and run history in the named volume
+`ocp-installer-ui-data`. (The legacy `INSTALLER_UI_ADMIN_TOKEN` variable is
+still accepted by `make gui-run` and is mapped to an `=admin` token.)
+
+Make is also supported as a launcher:
 
 ```bash
 export INSTALLER_UI_AUTH_TOKENS="$(openssl rand -hex 24)=admin"
-docker compose up --build -d
+make gui-build
+make gui-run
 ```
 
-Open `http://127.0.0.1:8080`, select **Access token**, and enter the token.
-The named volume `installer-ui-data` retains profiles and run history across
-container restarts. Stop the GUI with `podman compose down` or
-`docker compose down`; this keeps the volume. Use `down --volumes` only when
-you intend to delete the stored profiles and history.
-
-The first build downloads pinned Kustomize and Helm release archives and checks
-their SHA-256 digests. This avoids resolving their full Go module graphs during
-the image build. If Compose prints a Docker Compose Bake/BuildKit warning, it
-is informational; the build can continue. The auth token must be set in the
-same shell that runs Compose.
+On Windows, `scripts/gui-run.ps1` is the PowerShell equivalent of
+`make gui-build` + `make gui-run` (it uses Podman or Docker Desktop, which
+run the same Linux container). On macOS, use Podman Machine or Docker
+Desktop. The container is the supported GUI path on every platform; the
+Ansible control node itself runs natively on Linux and macOS and under
+WSL2 on Windows.
 
 The container fails closed when it listens on a non-loopback address without
 `INSTALLER_UI_AUTH_TOKENS`. The variable accepts comma-separated `token=role`
@@ -108,19 +117,23 @@ INSTALLER_UI_AUTH_TOKENS="viewer-token-at-least-16=viewer,operator-token-at-leas
 Use TLS at the ingress or reverse proxy. Bearer tokens must not traverse an
 unencrypted external network.
 
-## Troubleshooting the container build
+## Container build troubleshooting
 
-An error beginning with `verifying module: sigs.k8s.io/kustomize/kustomize/v5`
-comes from the former version-suffixed `go install` step. That form resolves
-the requested tool in a separate module context and does not use this
-repository's `go.mod` or `go.sum`. The current Containerfile instead downloads
-pinned upstream release archives and verifies their SHA-256 digests.
+The image pins Kustomize and Helm in `build-tools/go.mod` and locks their
+module checksums in `build-tools/go.sum`. The build retrieves those modules
+through the configured Go module proxy and verifies them against the committed
+checksums. It no longer downloads Kustomize or Helm release archives from
+GitHub Releases, which avoids the curl TLS error (exit code 35) seen on some
+Mac container-engine networks.
 
 If DNF reports a conflict between `coreutils` and `coreutils-single`, update
 to this branch: the build uses UBI's existing `sha256sum` utility and no longer
 tries to replace that package.
 
 After updating the checkout, rebuild the GUI image:
+If your environment requires an HTTP(S) proxy or a custom trusted CA, configure
+it in the container engine's build environment. After pulling the updated
+checkout, rebuild the image:
 
 ```bash
 podman compose build --no-cache installer-ui
@@ -128,10 +141,61 @@ podman compose up -d
 ```
 
 Use `docker compose` in place of `podman compose` when running Docker. The
-Compose Bake/BuildKit warning in Docker's output is separate from the earlier
-module verification failure and is not itself a build failure. Keep checksum
-verification enabled; do not work around this error by disabling Go's checksum
-database.
+Compose Bake/BuildKit warning is informational and is not itself a build
+failure.
+
+## Variables: groups, filling rules, and token origins
+
+The GUI never asks you to edit YAML by hand. Its forms are generated from
+the defaults in `inventories/sample/group_vars/all/*.yml` and presented
+preloaded; change only what differs in your environment. Required fields
+are marked, conditional fields appear from your choices (the Disconnected
+group only with `deployment_mode: disconnected`, the offline token only
+with `assisted_auth_mode: saas`), and list fields such as the networks are
+edited as YAML in place. Saving asks for a Vault password, writes the
+profile inventory under `/data`, and encrypts every secret; saved secrets
+are never displayed again — the GUI only reports whether they are set.
+
+Groups and the variables that matter in each:
+
+- **Cluster** (00-required): `deployment_mode`, `cluster_name`,
+  `base_dns_domain`, `openshift_version`, `control_plane_count`,
+  `compute_count`, `machine_networks`, `cluster_networks`,
+  `service_networks`, `vip_allocation_mode`, `api_vips`, `ingress_vips`.
+- **Assisted Installer API** (10-assisted-installer): `assisted_api_url`
+  and `assisted_auth_mode` (`saas` or `onprem`).
+- **Networking** (20-network): `node_network_config_mode` (static or
+  dhcp), `node_dns_servers`, and the install-network mode (single or
+  bond, with its bond ports).
+- **Disconnected** (30-disconnected): `disconnected_environment`,
+  `oc_mirror_workflow`, `oc_mirror_registry` — only in disconnected mode.
+- **BMC / Redfish** (40-bmc): `bmc_validate_certs`, timeouts, and
+  `bmc_boot_device`, plus one card per host carrying `bmc_type` (auto,
+  ilo, idrac, generic), `bmc_endpoint`, `node_role`, `node_hostname`,
+  `node_ipv4_address`, the optional `installation_disk_id`, and static or
+  DHCP node networking.
+- **Runtime** (50-runtime): `artifacts_dir` and the ISO delivery mode
+  (`iso_delivery_mode`, `iso_http_advertise_address`).
+- **Day-2 GitOps** (60-day2-gitops): the desired-state Git repository and
+  branch, bootstrap profiles, and the operator selection.
+- **Secrets** (Vault): `vault_pull_secret`, `vault_ssh_public_key`,
+  `vault_assisted_offline_token` (or `vault_assisted_access_token`
+  on-prem), and `vault_bmc_credentials` keyed by inventory hostname.
+
+Where each token comes from:
+
+- **GUI access token** — self-generated; it does not come from Red Hat or
+  any service. Canonical form:
+  `export INSTALLER_UI_AUTH_TOKENS="$(openssl rand -hex 24)=admin"`,
+  persisted in the `.installer-ui.vault` file under the same variable name
+  (see Build and start). Format `token=role`; roles are `viewer`,
+  `operator`, and `admin`.
+- **Assisted Installer offline token** — created in your Red Hat account
+  at cloud.redhat.com (the OpenShift API token page); SaaS mode only. On
+  premises, the local Assisted service access token is used instead.
+- **Pull secret** — downloaded from the Red Hat console. **BMC
+  credentials** — the administrator user and password of each server's
+  iLO or iDRAC.
 
 ## Container runtime contents
 
@@ -236,8 +300,7 @@ the CLI or GUI, followed by Day-2 GitOps through either interface.
 
 ## References
 
-- [Kustomize v5.7.1 release artifacts and checksums](https://github.com/kubernetes-sigs/kustomize/releases/tag/kustomize/v5.7.1)
-- [Helm installation and binary verification](https://helm.sh/docs/intro/install/)
-- [Podman machine on macOS](https://docs.podman.io/en/latest/markdown/podman-machine.1.html)
-- [Docker Compose build specification](https://docs.docker.com/compose/compose-file/build/)
-- [OpenShift CLI downloads and supported architectures](https://docs.openshift.com/container-platform/latest/cli_reference/openshift_cli/getting-started-cli.html)
+- [Go Modules Reference: go.sum files](https://go.dev/ref/mod#go-sum-files)
+- [Kustomize v5.7.1 module definition](https://github.com/kubernetes-sigs/kustomize/blob/kustomize/v5.7.1/kustomize/go.mod)
+- [Helm v3.17.3 module definition](https://github.com/helm/helm/blob/v3.17.3/go.mod)
+- [OpenShift oc-mirror architecture support](https://docs.redhat.com/en/documentation/openshift_container_platform/4.20/html/disconnected_environments/about-installing-oc-mirror-v2)

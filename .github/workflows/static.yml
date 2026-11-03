@@ -1,12 +1,12 @@
-name: Build and publish Showroom
+name: Build and publish workshop site
 
 on:
   workflow_dispatch:
   push:
     branches: [main]
     paths:
-      - "workshop/documentation/**"
-      - "default-site.yml"
+      - "workshop/index.html"
+      - "workshop/open-demo-days-logo.png"
       - ".github/workflows/static.yml"
 
 permissions:
@@ -26,14 +26,25 @@ jobs:
         uses: actions/checkout@v4
       - name: Configure Pages
         uses: actions/configure-pages@v5
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-      - name: Install Antora
-        run: npm install --global @antora/cli@3.1 @antora/site-generator@3.1
-      - name: Generate Showroom
-        run: antora generate default-site.yml --stacktrace
+      - name: Assemble static site from the Open Demo Days template
+        run: |
+          mkdir -p www/ocp-redfish-installer/main
+          cp workshop/index.html www/index.html
+          cp workshop/open-demo-days-logo.png www/open-demo-days-logo.png
+          cat > www/ocp-redfish-installer/main/index.html <<'REDIRECT'
+          <!DOCTYPE html>
+          <html lang="en">
+          <head>
+            <meta charset="utf-8">
+            <meta http-equiv="refresh" content="0; url=../../">
+            <link rel="canonical" href="../../">
+            <title>OpenShift Automation Framework Workshop</title>
+          </head>
+          <body>
+            <p>The workshop moved to the <a href="../../">OpenShift Automation Framework Workshop</a> home.</p>
+          </body>
+          </html>
+          REDIRECT
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:

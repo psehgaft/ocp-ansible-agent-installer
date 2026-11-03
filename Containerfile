@@ -30,6 +30,17 @@ RUN set -eux; \
     mkdir -p /tmp/tool-downloads/helm; \
     tar -xzf "/tmp/tool-downloads/${helm_archive}" -C /tmp/tool-downloads/helm; \
     install -m 0755 "/tmp/tool-downloads/helm/linux-${target_arch}/helm" /opt/bin/helm
+WORKDIR /opt/build/ui
+COPY go.mod ./
+COPY cmd ./cmd
+COPY internal ./internal
+RUN CGO_ENABLED=0 go build -trimpath -ldflags='-s -w' -o /opt/bin/installer-ui ./cmd/installer-ui
+
+WORKDIR /opt/build/tools
+COPY build-tools/go.mod ./go.mod
+COPY build-tools/go.sum ./go.sum
+RUN GOBIN=/opt/bin go install sigs.k8s.io/kustomize/kustomize/v5 && \
+    GOBIN=/opt/bin go install helm.sh/helm/v3/cmd/helm
 
 FROM registry.access.redhat.com/ubi9/ubi:9.6
 ARG OPENSHIFT_VERSION=4.18.41

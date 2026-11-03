@@ -1,5 +1,10 @@
 # Workshop: Deploy OpenShift with Playbooks or the GUI Interface
 
+> **Published workshop:** the **OpenShift Automation Framework Workshop** at
+> <https://psehgaft.github.io/ocp-ansible-agent-installer/> is a single static
+> page (`workshop/index.html`) built on the Open Demo Days workshop template
+> and mirrors the canonical paths and Modules 1–7 summarized here.
+
 > **Canonical workflow notice:** Connected/disconnected inventory, Vault bootstrap,
 > DHCP/static networking, disk selection, `oc-mirror` v2, the GUI interface, and
 > Day-2 GitOps are documented in [`docs/deployment-scenarios.md`](docs/deployment-scenarios.md).
