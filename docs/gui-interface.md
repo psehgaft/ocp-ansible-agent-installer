@@ -51,26 +51,52 @@ variable appears automatically in the UI even when it has no custom metadata.
 - downloadable non-sensitive configuration previews and execution reports;
 - liveness health check and persistent `/data` volume.
 
-## Build and start
+## Build and start on Linux and macOS
 
-Generate an unpredictable token of at least 16 characters:
+The GUI runs in a Linux container, so the host can be Linux or macOS. The
+Compose service targets `linux/amd64` because the bundled OpenShift client and
+`oc-mirror` artifacts are currently downloaded for amd64. Intel Macs and
+x86_64 Linux run natively. Apple Silicon Macs need Docker Desktop or a Podman
+machine configured to run amd64 containers through emulation.
+
+Install one container runtime:
+
+- Linux: Podman with Compose support, or Docker Engine and the Compose plugin.
+- macOS: Podman Desktop with a running Podman machine, or Docker Desktop with
+  amd64 emulation enabled.
+
+For Podman on macOS, initialize and start its Linux VM once:
 
 ```bash
-export INSTALLER_UI_ADMIN_TOKEN="$(openssl rand -hex 24)"
-make gui-build
-make gui-run
+podman machine init
+podman machine start
 ```
 
-Open `http://127.0.0.1:8080`, select **Access token**, and enter the generated
-token. The `make gui-run` target stores profiles and run history in the named
-volume `ocp-installer-ui-data`.
-
-Podman Compose is also supported:
+Generate an unpredictable admin token and start the GUI with Podman Compose:
 
 ```bash
 export INSTALLER_UI_AUTH_TOKENS="$(openssl rand -hex 24)=admin"
-podman compose up --build
+podman compose up --build -d
 ```
+
+For Docker Compose, use the same token variable:
+
+```bash
+export INSTALLER_UI_AUTH_TOKENS="$(openssl rand -hex 24)=admin"
+docker compose up --build -d
+```
+
+Open `http://127.0.0.1:8080`, select **Access token**, and enter the token.
+The named volume `installer-ui-data` retains profiles and run history across
+container restarts. Stop the GUI with `podman compose down` or
+`docker compose down`; this keeps the volume. Use `down --volumes` only when
+you intend to delete the stored profiles and history.
+
+The first build downloads pinned Kustomize and Helm release archives and checks
+their SHA-256 digests. This avoids resolving their full Go module graphs during
+the image build. If Compose prints a Docker Compose Bake/BuildKit warning, it
+is informational; the build can continue. The auth token must be set in the
+same shell that runs Compose.
 
 The container fails closed when it listens on a non-loopback address without
 `INSTALLER_UI_AUTH_TOKENS`. The variable accepts comma-separated `token=role`
