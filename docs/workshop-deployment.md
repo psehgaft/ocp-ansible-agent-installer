@@ -1,1 +1,64 @@
-IyBEZXBsb3lpbmcgdGhlIHdvcmtzaG9wCgpUaGUgcHVibGlzaGVkIHdvcmtzaG9wIOKAlCAqKk9wZW5TaGlmdCBBdXRvbWF0aW9uIEZyYW1ld29yayBXb3Jrc2hvcCoqIOKAlCBpcyBhCnNpbmdsZSBzdGF0aWMgcGFnZSwgYHdvcmtzaG9wL2luZGV4Lmh0bWxgLCBidWlsdCBvbiB0aGUKW09wZW4gRGVtbyBEYXlzIHdvcmtzaG9wIHRlbXBsYXRlXShodHRwczovL2dpdGh1Yi5jb20vT3BlbkRlbW9EYXlzL29wZW4tZGVtby1kYXktdGVtcGxhdGUpLgpJdCBuZWVkcyBubyBidWlsZCBzdGVwLCBkZXBlbmRlbmNpZXMsIG9yIGNvbXBpbGF0aW9uOiB0aGUgcGFnZSBpcyBiaWxpbmd1YWwKKEVTL0VOIHZpYSBgP2xhbmc9YCksIGFuZCBpdHMgc2VjdGlvbnMsIGNhcmRzLCBuYXZpZ2F0aW9uLCB0YWJsZSBvZiBjb250ZW50cywKYW5kIHByZXZpb3VzL25leHQgYnV0dG9ucyBhcmUgZ2VuZXJhdGVkIGZyb20gdGhlIGBzdGVwc2AgYW5kIGBjYXJkc2AgYXJyYXlzIGluCnRoYXQgZmlsZS4KClRoZSBmdWxsIEFzY2lpRG9jIHNvdXJjZXMgcmVtYWluIHVuZGVyIGB3b3Jrc2hvcC9kb2N1bWVudGF0aW9uYCBhcyByZWZlcmVuY2UKbWF0ZXJpYWwgYW5kIGFyZSBsaW5rZWQgZnJvbSB0aGUgc2l0ZSdzIFJlc291cmNlcyBzZWN0aW9uLgoKIyMgR2l0SHViIFBhZ2VzCgoxLiBPcGVuICoqU2V0dGluZ3Mg4oaSIFBhZ2VzKiogaW4gdGhlIHJlcG9zaXRvcnkuCjIuIFNlbGVjdCAqKkdpdEh1YiBBY3Rpb25zKiogYXMgdGhlIGJ1aWxkIHNvdXJjZS4KMy4gTWVyZ2Ugb3IgcHVzaCBjaGFuZ2VzIHRvIGB3b3Jrc2hvcC9pbmRleC5odG1sYCwgb3IgbWFudWFsbHkgcnVuICoqQnVpbGQgYW5kCiAgIHB1Ymxpc2ggd29ya3Nob3Agc2l0ZSoqIGZyb20gdGhlIEFjdGlvbnMgdGFiLgo0LiBUaGUgd29ya2Zsb3cgY29waWVzIGB3b3Jrc2hvcC9pbmRleC5odG1sYCB0byB0aGUgc2l0ZSByb290IG9mIHRoZSBQYWdlcwogICBhcnRpZmFjdCBhbmQgYWRkcyBhIHJlZGlyZWN0IGF0IHRoZSBsZWdhY3kgQW50b3JhIFVSTAogICAoYG9jcC1yZWRmaXNoLWluc3RhbGxlci9tYWluL2ApIHBvaW50aW5nIHRvIHRoZSBuZXcgaG9tZS4KClB1Ymxpc2hlZCBVUkw6CgpgYGB0ZXh0Cmh0dHBzOi8vcHNlaGdhZnQuZ2l0aHViLmlvL29jcC1hbnNpYmxlLWFnZW50LWluc3RhbGxlci8KYGBgCgpMb2NhbCBwcmV2aWV3OgoKYGBgYmFzaApweXRob24zIC1tIGh0dHAuc2VydmVyIDgwODAgLS1kaXJlY3Rvcnkgd29ya3Nob3AKIyBvcGVuIGh0dHA6Ly8xMjcuMC4wLjE6ODA4MC9pbmRleC5odG1sIChhZGQgP2xhbmc9ZW4gZm9yIEVuZ2xpc2gpCmBgYAoKIyMgRWRpdGluZyB0aGUgd29ya3Nob3AKCjEuIEVkaXQgYHdvcmtzaG9wL2luZGV4Lmh0bWxgLgoyLiBBZGQgb3IgY2hhbmdlIHNlY3Rpb25zIGluIHRoZSBgc3RlcHNgIGFycmF5OyBhZGQgYSBtYXRjaGluZyBlbnRyeSB0bwogICBgY2FyZHNgIGZvciBldmVyeSBzZWN0aW9uIHRoYXQgbXVzdCBhcHBlYXIgb24gdGhlIGhvbWUgcGFnZS4KMy4gS2VlcCB2aXNpYmxlIHRleHQgYmlsaW5ndWFsOiB0aXRsZXMgYW5kIHN1bW1hcmllcyB1c2UgdGhlIHRlbXBsYXRlJ3MKICAgYGxhbmdgIGV4cHJlc3Npb25zLCBhbmQgZWFjaCBzdGVwIGNhcnJpZXMgaXRzIFNwYW5pc2ggYW5kIEVuZ2xpc2ggSFRNTC4KNC4gUHVzaCB0byBgbWFpbmA7IEdpdEh1YiBQYWdlcyBkZXBsb3lzIHRoZSBwYWdlIGF1dG9tYXRpY2FsbHkuCgojIyBPcGVuU2hpZnQKClNlcnZlIHRoZSBzdGF0aWMgZmlsZSB3aXRoIGFueSB3ZWIgc2VydmVyIGltYWdlLCBmb3IgZXhhbXBsZSBhbiBOR0lOWCBiaW5hcnkKYnVpbGQgdXNpbmcgYHdvcmtzaG9wL2luZGV4Lmh0bWxgIGFzIHRoZSBvbmx5IHNpdGUgY29udGVudDoKCmBgYGJhc2gKb2MgbmV3LXByb2plY3Qgb2NwLXJlZGZpc2gtd29ya3Nob3AKb2MgbmV3LWJ1aWxkIC0tbmFtZT1vY3AtcmVkZmlzaC13b3Jrc2hvcCAtLWJpbmFyeSAtLXN0cmF0ZWd5PWRvY2tlcgpta2RpciAtcCB3d3cgJiYgY3Agd29ya3Nob3AvaW5kZXguaHRtbCB3d3cvCmNhdCA+IHd3dy9Eb2NrZXJmaWxlIDw8J0RPQ0tFUkZJTEUnCkZST00gcmVnaXN0cnkuYWNjZXNzLnJlZGhhdC5jb20vdWJpOS9uZ2lueC0xMjQ6bGF0ZXN0CkNPUFkgLiAvdG1wL3NyYwpSVU4gY3AgLWEgL3RtcC9zcmMvLiAvb3B0L2FwcC1yb290L3NyYy8KRE9DS0VSRklMRQpvYyBzdGFydC1idWlsZCBvY3AtcmVkZmlzaC13b3Jrc2hvcCAtLWZyb20tZGlyPXd3dyAtLWZvbGxvdwpvYyBuZXctYXBwIG9jcC1yZWRmaXNoLXdvcmtzaG9wCm9jIGV4cG9zZSBzZXJ2aWNlL29jcC1yZWRmaXNoLXdvcmtzaG9wCm9jIGdldCByb3V0ZSBvY3AtcmVkZmlzaC13b3Jrc2hvcCAtbyBqc29ucGF0aD0naHR0cHM6Ly97LnNwZWMuaG9zdH17IlxuIn0nCmBgYAo=
+# Deploying the workshop
+
+The published workshop — **OpenShift Automation Framework Workshop** — is a
+single static page, `workshop/index.html`, built on the
+[Open Demo Days workshop template](https://github.com/OpenDemoDays/open-demo-day-template).
+It needs no build step, dependencies, or compilation: the page is bilingual
+(ES/EN via `?lang=`), and its sections, cards, navigation, table of contents,
+and previous/next buttons are generated from the `steps` and `cards` arrays in
+that file.
+
+The full AsciiDoc sources remain under `workshop/documentation` as reference
+material and are linked from the site's Resources section.
+
+## GitHub Pages
+
+1. Open **Settings → Pages** in the repository.
+2. Select **GitHub Actions** as the build source.
+3. Merge or push changes to `workshop/index.html`, or manually run **Build and
+   publish workshop site** from the Actions tab.
+4. The workflow copies `workshop/index.html` to the site root of the Pages
+   artifact and adds a redirect at the legacy Antora URL
+   (`ocp-redfish-installer/main/`) pointing to the new home.
+
+Published URL:
+
+```text
+https://psehgaft.github.io/ocp-ansible-agent-installer/
+```
+
+Local preview:
+
+```bash
+python3 -m http.server 8080 --directory workshop
+# open http://127.0.0.1:8080/index.html (add ?lang=en for English)
+```
+
+## Editing the workshop
+
+1. Edit `workshop/index.html`.
+2. Add or change sections in the `steps` array; add a matching entry to
+   `cards` for every section that must appear on the home page.
+3. Keep visible text bilingual: titles and summaries use the template's
+   `lang` expressions, and each step carries its Spanish and English HTML.
+4. Push to `main`; GitHub Pages deploys the page automatically.
+
+## OpenShift
+
+Serve the static file with any web server image, for example an NGINX binary
+build using `workshop/index.html` as the only site content:
+
+```bash
+oc new-project ocp-redfish-workshop
+oc new-build --name=ocp-redfish-workshop --binary --strategy=docker
+mkdir -p www && cp workshop/index.html www/
+cat > www/Dockerfile <<'DOCKERFILE'
+FROM registry.access.redhat.com/ubi9/nginx-124:latest
+COPY . /tmp/src
+RUN cp -a /tmp/src/. /opt/app-root/src/
+DOCKERFILE
+oc start-build ocp-redfish-workshop --from-dir=www --follow
+oc new-app ocp-redfish-workshop
+oc expose service/ocp-redfish-workshop
+oc get route ocp-redfish-workshop -o jsonpath='https://{.spec.host}{"\n"}'
+```
