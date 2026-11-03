@@ -1,0 +1,105 @@
+apiVersion: v1
+baseDomain: {{ item.baseDomain }}
+metadata:
+  name: {{ item.metadata.name }}
+platform:
+  vsphere:
+    apiVIPs:
+{% for vip in item.platform.vsphere.apiVIPs %}
+    - {{ vip }}
+{% endfor %}
+    ingressVIPs:
+{% for vip in item.platform.vsphere.ingressVIPs %}
+    - {{ vip }}
+{% endfor %}
+    vcenters:
+{% for vc in item.platform.vsphere.vcenters %}
+    - server: {{ vc.server }}
+      user: "{{ vc.user }}"
+      password: {{ vc.password }}
+      datacenters:
+{% for dc in vc.datacenters %}
+        - {{ dc }}
+{% endfor %}
+{% endfor %}
+    failureDomains:
+{% for fd in item.platform.vsphere.failureDomains %}
+      - name: {{ fd.name }}
+        region: {{ fd.region }}
+        zone: {{ fd.zone }}
+        server: {{ fd.server }}
+        topology:
+          datacenter: {{ fd.topology.datacenter }}
+          computeCluster: {{ fd.topology.computeCluster }}
+          datastore: {{ fd.topology.datastore }}
+          networks:
+{% for net in fd.topology.networks %}
+            - {{ net }}
+{% endfor %}
+          folder: {{ fd.topology.folder }}
+{% endfor %}
+    hosts:
+{% for h in item.platform.vsphere.hosts %}
+    - role: {{ h.role }}
+      networkDevice:
+        ipAddrs:
+{% for ip in h.networkDevice.ipAddrs %}
+        - {{ ip }}
+{% endfor %}
+        gateway: {{ h.networkDevice.gateway }}
+        nameservers:
+{% for ns in h.networkDevice.nameservers %}
+        - {{ ns }}
+{% endfor %}
+{% endfor %}
+controlPlane:
+  name: {{ item.controlPlane.name }}
+  hyperthreading: {{ item.controlPlane.hyperthreading }}
+  replicas: {{ item.controlPlane.replicas }}
+  platform:
+    vsphere:
+      cpus: {{ item.controlPlane.platform.vsphere.cpus }}
+      coresPerSocket: {{ item.controlPlane.platform.vsphere.coresPerSocket }}
+      memoryMB: {{ item.controlPlane.platform.vsphere.memoryMB }}
+      osDisk:
+        diskSizeGB: {{ item.controlPlane.platform.vsphere.osDisk.diskSizeGB }}
+compute:
+{% for cmp in item.compute %}
+  - name: {{ cmp.name }}
+    hyperthreading: {{ cmp.hyperthreading }}
+    replicas: {{ cmp.replicas }}
+    platform:
+      vsphere:
+        cpus: {{ cmp.platform.vsphere.cpus }}
+        coresPerSocket: {{ cmp.platform.vsphere.coresPerSocket }}
+        memoryMB: {{ cmp.platform.vsphere.memoryMB }}
+        osDisk:
+          diskSizeGB: {{ cmp.platform.vsphere.osDisk.diskSizeGB }}
+{% endfor %}
+networking:
+  networkType: {{ item.networking.networkType }}
+  clusterNetwork:
+{% for cn in item.networking.clusterNetwork %}
+    - cidr: {{ cn.cidr }}
+      hostPrefix: {{ cn.hostPrefix }}
+{% endfor %}
+  machineNetwork:
+{% for mn in item.networking.machineNetwork %}
+    - cidr: {{ mn.cidr }}
+{% endfor %}
+  serviceNetwork:
+{% for sn in item.networking.serviceNetwork %}
+    - {{ sn }}
+{% endfor %}
+{% if item.proxy is defined %}
+proxy:
+{% if item.proxy.httpProxy is defined %}  httpProxy: {{ item.proxy.httpProxy }}{% endif %}
+{% if item.proxy.httpsProxy is defined %}  httpsProxy: {{ item.proxy.httpsProxy }}{% endif %}
+{% if item.proxy.noProxy is defined %}  noProxy: {{ item.proxy.noProxy }}{% endif %}
+{% endif %}
+pullSecret: '{{ item.pullSecret | replace("\n", "") }}'
+sshKey: {{ item.sshKey }}
+{% if item.additionalTrustBundle is defined %}
+additionalTrustBundle: |-
+{{ item.additionalTrustBundle | indent(4) }}
+{% endif %}

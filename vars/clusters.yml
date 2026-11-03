@@ -1,0 +1,146 @@
+# vars/clusters.yml
+clusters:
+  - baseDomain: osedatacenter1.example.com
+    metadata:
+      name: dev
+    labels:
+      environment: dev
+      team: kubernetes
+    acm:
+      clusterset: default
+    platform:
+      vsphere:
+        apiVIPs: [10.81.192.6]
+        ingressVIPs: [10.81.192.254]
+        vcenters:
+          - server: vmc-1datacenter1ose01.dev.example.com
+            user: "##REDACTED##"
+            password: ##REDACTED##
+            datacenters: [datacenter1]
+        failureDomains:
+          - name: vmc-1datacenter1ose01.dev.example.com
+            region: region-1
+            zone: zone1
+            server: vmc-1datacenter1ose01.dev.example.com
+            topology:
+              datacenter: datacenter1
+              computeCluster: /datacenter1/host/datacenter1-ose-dev-shared-01
+              datastore: /datacenter1/datastore/datacenter1-ose-dev-shared-01-dsc/predatacenter1-fa01--datacenter1-ose-dev-shared-01--vol01
+              networks: [10.81.192.0_24-1027-openshift-dev-cluster]
+              folder: /datacenter1/vm/servers/dev
+        hosts:
+          - role: bootstrap
+            networkDevice:
+              ipAddrs: [10.81.192.10/24]
+              gateway: 10.81.192.1
+              nameservers: [10.53.53.1, 10.53.53.2]
+          - role: control-plane
+            networkDevice:
+              ipAddrs: [10.81.192.11/24]
+              gateway: 10.81.192.1
+              nameservers: [10.53.53.1, 10.53.53.2]
+          - role: control-plane
+            networkDevice:
+              ipAddrs: [10.81.192.12/24]
+              gateway: 10.81.192.1
+              nameservers: [10.53.53.1, 10.53.53.2]
+          - role: control-plane
+            networkDevice:
+              ipAddrs: [10.81.192.13/24]
+              gateway: 10.81.192.1
+              nameservers: [10.53.53.1, 10.53.53.2]
+          - role: compute
+            networkDevice:
+              ipAddrs: [10.81.192.21/24]
+              gateway: 10.81.192.1
+              nameservers: [10.53.53.1, 10.53.53.2]
+          - role: compute
+            networkDevice:
+              ipAddrs: [10.81.192.22/24]
+              gateway: 10.81.192.1
+              nameservers: [10.53.53.1, 10.53.53.2]
+          - role: compute
+            networkDevice:
+              ipAddrs: [10.81.192.23/24]
+              gateway: 10.81.192.1
+              nameservers: [10.53.53.1, 10.53.53.2]
+          - role: compute
+            networkDevice:
+              ipAddrs: [10.81.192.31/24]
+              gateway: 10.81.192.1
+              nameservers: [10.53.53.1, 10.53.53.2]
+          - role: compute
+            networkDevice:
+              ipAddrs: [10.81.192.32/24]
+              gateway: 10.81.192.1
+              nameservers: [10.53.53.1, 10.53.53.2]
+          - role: compute
+            networkDevice:
+              ipAddrs: [10.81.192.33/24]
+              gateway: 10.81.192.1
+              nameservers: [10.53.53.1, 10.53.53.2]
+    controlPlane:
+      name: master
+      hyperthreading: Enabled
+      replicas: 3
+      platform:
+        vsphere:
+          cpus: 8
+          coresPerSocket: 2
+          memoryMB: 16384
+          osDisk:
+            diskSizeGB: 120
+    compute:
+      - name: worker
+        hyperthreading: Enabled
+        replicas: 6
+        platform:
+          vsphere:
+            cpus: 16
+            coresPerSocket: 2
+            memoryMB: 32768
+            osDisk:
+              diskSizeGB: 120
+    networking:
+      networkType: OVNKubernetes
+      clusterNetwork:
+        - cidr: 10.8.0.0/14
+          hostPrefix: 23
+      machineNetwork:
+        - cidr: 10.81.192.0/24
+      serviceNetwork: [10.5.0.0/16]
+    proxy:
+      httpProxy: ##REDACTED##
+      httpsProxy: ##REDACTED##
+      noProxy: example.com
+    pullSecret: ""
+    sshKey: ##REDACTED##
+    additionalTrustBundle: |-
+      ##REDACTED##
+
+    # Hive/ACM specific fields
+    hive:
+      installAttemptsLimit: 1
+      imageSetRef: img4.16.46-multi-appsub
+      vsphere:
+        vcenter: vmc-1datacenter1ose01.dev.example.com
+        datacenter: datacenter1
+        cluster: datacenter1-ose-dev-shared-01
+        defaultDatastore: datacenter1-fa01--datacenter1-ose-dev-shared-01--vol01
+        network: 10.81.192.0_24-1027-openshift-dev-cluster
+        folder: /datacenter1/vm/servers/dev
+        credentials:
+          username: SVCOSEVMC-Install@dev.example.com
+          password: ##REDACTED##
+        cacert: |-
+          ##REDACTED##
+    secrets:
+      sshPrivateKey: |-
+        ##REDACTED##
+    klusterlet:
+      proxyPolicy: OCPGlobalProxy
+      applicationManager: { enabled: true }
+      policyController: { enabled: true }
+      searchCollector: { enabled: true }
+      certPolicyController: { enabled: true }
+      iamPolicyController: { enabled: true }

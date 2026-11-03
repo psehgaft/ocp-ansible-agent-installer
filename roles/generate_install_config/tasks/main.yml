@@ -1,0 +1,24 @@
+---
+# Ensure per-cluster output directory
+- name: Ensure output directory exists per cluster
+  file:
+    path: "{{ playbook_dir }}/output/{{ item.metadata.name }}"
+    state: directory
+    mode: "0755"
+  loop: "{{ clusters }}"
+
+# Render install-config.yaml
+- name: Render install-config.yaml for each cluster
+  template:
+    src: "install-config.yaml.j2"
+    dest: "{{ playbook_dir }}/output/{{ item.metadata.name }}/install-config.yaml"
+    mode: "0644"
+  loop: "{{ clusters }}"
+
+# Render ACM/Hive CRDs
+- name: Render ACM/Hive CRDs (cluster.yaml)
+  template:
+    src: "cluster.yaml.j2"
+    dest: "{{ playbook_dir }}/output/{{ item.metadata.name }}/cluster.yaml"
+    mode: "0644"
+  loop: "{{ clusters }}"

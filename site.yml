@@ -1,0 +1,8 @@
+---
+- name: Generate install-config.yaml and ACM/Hive CRDs for clusters
+  hosts: localhost
+  gather_facts: false
+  vars_files:
+    - vars/clusters.yml
+  roles:
+    - role: generate_install_config
