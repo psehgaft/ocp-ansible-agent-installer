@@ -53,9 +53,10 @@ OpenShift version the Assisted Installer and `oc-mirror` v2 support:
   export INSTALLER_UI_AUTH_TOKENS="$(openssl rand -hex 24)=admin"
   printf 'INSTALLER_UI_AUTH_TOKENS=%s\n' "$INSTALLER_UI_AUTH_TOKENS" > .installer-ui.vault
   chmod 600 .installer-ui.vault
-  make gui-build
-  make gui-run    # or: podman compose up --build
+  podman compose build --no-cache installer-ui
+  podman compose up -d
   # open http://127.0.0.1:8080 and sign in with the token before the "=" above
+  # (make gui-build + make gui-run remains as an alternative launcher)
   ```
 
   On Windows, use the PowerShell equivalent instead of `make`:
