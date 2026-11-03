@@ -53,6 +53,25 @@ variable appears automatically in the UI even when it has no custom metadata.
 
 ## Build and start
 
+The GUI runs in a Linux container, so the host can be Linux or macOS.
+Compose builds the image for the architecture of the container engine. The
+Containerfile detects `amd64` or `arm64` and installs matching Kustomize,
+Helm, OpenShift CLI, and `oc-mirror` binaries. Intel Macs and x86_64 Linux use
+`amd64`; Apple Silicon Macs and ARM64 Linux use `arm64`.
+
+Install one container runtime:
+
+- Linux: Podman with Compose support, or Docker Engine and the Compose plugin.
+- macOS: Podman Desktop with a running Podman machine, or Docker Desktop.
+
+For Podman on macOS, initialize and start its Linux VM once:
+
+```bash
+podman machine init
+podman machine start
+```
+
+Generate an unpredictable admin token and start the GUI with Podman Compose:
 Generate the access token and export it in the canonical form (the random
 token has 48 characters; the minimum is 16). Also save it in a vault file
 under the same variable name so later sessions can reload it:
@@ -107,6 +126,11 @@ checksums. It no longer downloads Kustomize or Helm release archives from
 GitHub Releases, which avoids the curl TLS error (exit code 35) seen on some
 Mac container-engine networks.
 
+If DNF reports a conflict between `coreutils` and `coreutils-single`, update
+to this branch: the build uses UBI's existing `sha256sum` utility and no longer
+tries to replace that package.
+
+After updating the checkout, rebuild the GUI image:
 If your environment requires an HTTP(S) proxy or a custom trusted CA, configure
 it in the container engine's build environment. After pulling the updated
 checkout, rebuild the image:
