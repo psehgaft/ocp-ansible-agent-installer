@@ -52,7 +52,7 @@ podman machine inspect
 podman machine ssh "grep -m1 '^Features' /proc/cpuinfo"
 ```
 
-If the machine uses `applehv` and the feature line includes `sme` or `sme2`, this matches the reported Apple hypervisor issue. Do not downgrade cryptographic libraries as a first fix; the underlying failure may be in the VM's exposed CPU features.
+If the machine uses `applehv`, features such as `sve2`, `bti`, `paca`, or `pacg` are also relevant even when `sme`/`sme2` are absent. A reported Apple Silicon Podman failure involved an ARM64 `cryptography` wheel built for `manylinux_2_34`; importing its native extension raised SIGILL under the Apple hypervisor. If the build log shows `cryptography` installed immediately before `container exited on illegal instruction`, this is a strong match, though the exact triggering instruction can vary by Mac and VM version. Do not downgrade cryptographic libraries as a first fix; the underlying failure may be in the VM's exposed CPU features.
 
 A safer workaround is to use the `libkrun` provider on a supported Podman version, or build and run the GUI with Docker Desktop. Keep the existing Podman machine until the new setup is verified; deleting a machine also removes its local containers, images, and volumes. Podman 6 uses `libkrun` by default for new macOS machines. If creating a second machine, select its connection explicitly after creation:
 
