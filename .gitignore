@@ -10,6 +10,7 @@ workshop/build/
 www/
 .cache/antora/
 inventories/*/group_vars/vault.yml
+.installer-ui.vault
 !inventories/sample/group_vars/vault.yml.example
 __pycache__/
 *.pyc
