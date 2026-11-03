@@ -62,8 +62,8 @@ export INSTALLER_UI_AUTH_TOKENS="$(openssl rand -hex 24)=admin"
 printf 'INSTALLER_UI_AUTH_TOKENS=%s\n' "$INSTALLER_UI_AUTH_TOKENS" > .installer-ui.vault
 chmod 600 .installer-ui.vault
 # Later sessions: set -a; . ./.installer-ui.vault; set +a
-make gui-build
-make gui-run
+podman compose build --no-cache installer-ui
+podman compose up -d
 ```
 
 Open `http://127.0.0.1:8080`, select **Access token**, and enter the token —
@@ -72,11 +72,12 @@ target stores profiles and run history in the named volume
 `ocp-installer-ui-data`. (The legacy `INSTALLER_UI_ADMIN_TOKEN` variable is
 still accepted by `make gui-run` and is mapped to an `=admin` token.)
 
-Podman Compose is also supported:
+Make is also supported as a launcher:
 
 ```bash
 export INSTALLER_UI_AUTH_TOKENS="$(openssl rand -hex 24)=admin"
-podman compose up --build
+make gui-build
+make gui-run
 ```
 
 On Windows, `scripts/gui-run.ps1` is the PowerShell equivalent of
