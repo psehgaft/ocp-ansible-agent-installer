@@ -71,10 +71,9 @@ podman machine init
 podman machine start
 ```
 
-Generate an unpredictable admin token and start the GUI with Podman Compose:
-Generate the access token and export it in the canonical form (the random
-token has 48 characters; the minimum is 16). Also save it in a vault file
-under the same variable name so later sessions can reload it:
+Generate an unpredictable admin token and export it in canonical form
+(the random token has 48 characters; the minimum is 16). Save it in a vault
+file under the same variable name so later sessions can reload it:
 
 ```bash
 export INSTALLER_UI_AUTH_TOKENS="$(openssl rand -hex 24)=admin"
@@ -126,14 +125,12 @@ checksums. It no longer downloads Kustomize or Helm release archives from
 GitHub Releases, which avoids the curl TLS error (exit code 35) seen on some
 Mac container-engine networks.
 
-If DNF reports a conflict between `coreutils` and `coreutils-single`, update
-to this branch: the build uses UBI's existing `sha256sum` utility and no longer
-tries to replace that package.
+The Containerfile uses UBI's existing `sha256sum` utility and does not
+install `coreutils`, avoiding conflicts with `coreutils-single` on UBI 9.
 
-After updating the checkout, rebuild the GUI image:
 If your environment requires an HTTP(S) proxy or a custom trusted CA, configure
-it in the container engine's build environment. After pulling the updated
-checkout, rebuild the image:
+it in the container engine's build environment. After updating the checkout,
+rebuild the GUI image:
 
 ```bash
 podman compose build --no-cache installer-ui
@@ -143,6 +140,20 @@ podman compose up -d
 Use `docker compose` in place of `podman compose` when running Docker. The
 Compose Bake/BuildKit warning is informational and is not itself a build
 failure.
+
+On macOS, if a retry fails while mounting an overlay with `input/output
+error`, inspect Podman Machine storage and restart the VM before rebuilding:
+
+```bash
+podman machine ssh df -h
+podman machine stop
+podman machine start
+podman compose build --no-cache installer-ui
+```
+
+This error is raised by the Podman VM's container storage layer. The build log
+should also be checked for the original package-download failure; the overlay
+error by itself does not identify why an earlier DNF transaction stopped.
 
 ## Variables: groups, filling rules, and token origins
 
