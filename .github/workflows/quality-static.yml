@@ -78,18 +78,18 @@ jobs:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
       - name: Build workshop
         run: |
-                    test -f workshop/index.html
+          test -f workshop/index.html
           ! grep -q 'CHANGEME' workshop/index.html
-                    grep -q 'OpenShift Automation Framework Workshop' workshop/index.html
-                              grep -q '1. Deployment with Playbooks' workshop/index.html
-                                        grep -q '2. Deployment with the GUI Interface' workshop/index.html
-                                                  grep -q '3. Operators' workshop/index.html
-                                                            grep -q 'Module 1: Foundations' workshop/index.html
-                                                                      grep -q 'Module 7: Challenge' workshop/index.html
+          grep -q 'OpenShift Automation Framework Workshop' workshop/index.html
+          grep -q '1. Deployment with Playbooks' workshop/index.html
+          grep -q '2. Deployment with the GUI Interface' workshop/index.html
+          grep -q '3. Operators' workshop/index.html
+          grep -q 'Module 1: Foundations' workshop/index.html
+          grep -q 'Module 7: Challenge' workshop/index.html
           python3 -c "import re,pathlib; html=pathlib.Path('workshop/index.html').read_text(encoding='utf-8'); pathlib.Path('/tmp/workshop.js').write_text(re.search(r'<script>(.*?)</script>', html, re.DOTALL).group(1), encoding='utf-8')"
           node --check /tmp/workshop.js
-          - name: Documentation link validation
-                uses: lycheeverse/lychee-action@v2
+      - name: Documentation link validation
+        uses: lycheeverse/lychee-action@v2
         with:
           args: >-
             --no-progress
