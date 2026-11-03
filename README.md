@@ -273,6 +273,10 @@ OpenShift tools at the versions required by your target release; see the
 [Day-0 installation guide](docs/day0-bare-metal-installation.md) and the
 [OpenShift CLI downloads](https://mirror.openshift.com/pub/openshift-v4/clients/ocp/).
 
+Reference documentation: [Podman installation](https://podman.io/docs/installation),
+[Podman Compose provider behavior](https://docs.podman.io/en/latest/markdown/podman-compose.1.html),
+and [Ansible installation](https://docs.ansible.com/projects/ansible/latest/installation_guide/intro_installation.html).
+
 ## Inventory model
 
 The sample inventory separates required values, optional API defaults, networking, disconnected mirroring, BMC settings, runtime controls, and encrypted secrets:
