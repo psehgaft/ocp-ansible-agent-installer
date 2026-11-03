@@ -1,20 +1,22 @@
 # syntax=docker/dockerfile:1
 FROM registry.access.redhat.com/ubi9/go-toolset:1.23 AS ui-builder
 USER 0
-WORKDIR /opt/build
+WORKDIR /opt/build/ui
 COPY go.mod ./
 COPY cmd ./cmd
 COPY internal ./internal
-RUN set -eux; \
-    mkdir -p /opt/bin /tmp/tool-downloads; \
-    target_arch="${TARGETARCH:-$(uname -m)}"; \
-    casRUN CGO_ENABLED=0 go build -trimpath -ldflags='-s -w' -o /opt/bin/installer-ui ./cmd/installer-ui
+RUN CGO_ENABLED=0 go build -trimpath -ldflags='-s -w' -o /opt/bin/installer-ui ./cmd/installer-ui
 
 WORKDIR /opt/build/tools
 COPY build-tools/go.mod ./go.mod
 COPY build-tools/go.sum ./go.sum
 RUN GOBIN=/opt/bin go install sigs.k8s.io/kustomize/kustomize/v5 && \
-    GOBIN=/opt/bin go install helm.sh/helm/v3/cmd/helmtes curl-minimal findutils git gzip jq openssh-clients podman \
+    GOBIN=/opt/bin go install helm.sh/helm/v3/cmd/helm
+
+FROM registry.access.redhat.com/ubi9/ubi:9.6
+ARG OPENSHIFT_VERSION=4.18.41
+RUN dnf install -y \
+      ca-certificates curl-minimal findutils git gzip jq openssh-clients podman \
       python3.12 python3.12-pip shadow-utils tar && \
     dnf clean all
 
