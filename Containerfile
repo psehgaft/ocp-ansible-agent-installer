@@ -1,13 +1,32 @@
 # syntax=docker/dockerfile:1
 FROM registry.access.redhat.com/ubi9/go-toolset:1.23 AS ui-builder
 USER 0
+ARG KUSTOMIZE_VERSION=5.7.1
+ARG HELM_VERSION=3.17.3
+ARG TARGETARCH=amd64
+RUN dnf install -y curl-minimal && dnf clean all
 WORKDIR /opt/build
 COPY go.mod ./
 COPY cmd ./cmd
 COPY internal ./internal
-RUN CGO_ENABLED=0 go build -trimpath -ldflags='-s -w' -o /opt/bin/installer-ui ./cmd/installer-ui && \
-    GOBIN=/opt/bin go install sigs.k8s.io/kustomize/kustomize/v5@v5.7.1 && \
-    GOBIN=/opt/bin go install helm.sh/helm/v3/cmd/helm@v3.17.3
+RUN set -eux; \
+    mkdir -p /opt/bin /tmp/tool-downloads; \
+    CGO_ENABLED=0 go build -trimpath -ldflags='-s -w' -o /opt/bin/installer-ui ./cmd/installer-ui; \
+    kustomize_archive="kustomize_v${KUSTOMIZE_VERSION}_linux_${TARGETARCH}.tar.gz"; \
+    kustomize_url="https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize/v${KUSTOMIZE_VERSION}"; \
+    curl --proto '=https' --tlsv1.2 -fsSL "${kustomize_url}/${kustomize_archive}" -o "/tmp/tool-downloads/${kustomize_archive}"; \
+    curl --proto '=https' --tlsv1.2 -fsSL "${kustomize_url}/checksums.txt" -o /tmp/tool-downloads/kustomize-checksums.txt; \
+    cd /tmp/tool-downloads; \
+    grep "  ${kustomize_archive}$" kustomize-checksums.txt | sha256sum -c -; \
+    tar -xzf "${kustomize_archive}" -C /opt/bin kustomize; \
+    helm_archive="helm-v${HELM_VERSION}-linux-${TARGETARCH}.tar.gz"; \
+    helm_url="https://get.helm.sh/${helm_archive}"; \
+    curl --proto '=https' --tlsv1.2 -fsSL "${helm_url}" -o "/tmp/tool-downloads/${helm_archive}"; \
+    curl --proto '=https' --tlsv1.2 -fsSL "${helm_url}.sha256" -o "/tmp/tool-downloads/${helm_archive}.sha256"; \
+    printf '%s  %s\n' "$(cat "/tmp/tool-downloads/${helm_archive}.sha256")" "${helm_archive}" | sha256sum -c -; \
+    mkdir -p /tmp/tool-downloads/helm; \
+    tar -xzf "/tmp/tool-downloads/${helm_archive}" -C /tmp/tool-downloads/helm; \
+    install -m 0755 "/tmp/tool-downloads/helm/linux-${TARGETARCH}/helm" /opt/bin/helm
 
 FROM registry.access.redhat.com/ubi9/ubi:9.6
 ARG OPENSHIFT_VERSION=4.18.41
