@@ -52,5 +52,14 @@ jobs:
           done
           curl -fsS http://127.0.0.1:18080/healthz | jq -e '.status == "ok"'
           curl -fsS http://127.0.0.1:18080/api/schema | jq -e '.operators | length >= 52'
-      - name: Build complete runtime container
-        run: docker build -f Containerfile -t ocp-installer-ui:test .
+      - name: Linux Compose build and health smoke test
+        env:
+          INSTALLER_UI_AUTH_TOKENS: ci-smoke-token-000000000000000000000000=admin
+        run: |
+          set -eu
+          trap 'docker compose down --volumes --remove-orphans || true' EXIT
+          docker compose config --quiet
+          docker compose build --no-cache installer-ui
+          docker compose up -d installer-ui
+          curl --fail --retry 10 --retry-connrefused --retry-delay 2 \
+            http://127.0.0.1:8080/healthz | jq -e '.status == "ok"'
