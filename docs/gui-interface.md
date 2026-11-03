@@ -79,7 +79,10 @@ file under the same variable name so later sessions can reload it:
 export INSTALLER_UI_AUTH_TOKENS="$(openssl rand -hex 24)=admin"
 printf 'INSTALLER_UI_AUTH_TOKENS=%s\n' "$INSTALLER_UI_AUTH_TOKENS" > .installer-ui.vault
 chmod 600 .installer-ui.vault
-# Later sessions: set -a; . ./.installer-ui.vault; set +a
+# For later terminal sessions, reload the saved token before Compose:
+set -a
+. ./.installer-ui.vault
+set +a
 podman compose build --no-cache installer-ui
 podman compose up -d
 ```
@@ -140,6 +143,17 @@ podman compose up -d
 Use `docker compose` in place of `podman compose` when running Docker. The
 Compose Bake/BuildKit warning is informational and is not itself a build
 failure.
+
+The Containerfile allows longer download times and retries transient failures
+from DNF, PyPI, Ansible Galaxy, and the Go module proxy. If Compose reports
+that `INSTALLER_UI_AUTH_TOKENS` is missing, load the saved token in the current
+shell before running either build or up:
+
+```bash
+set -a
+. ./.installer-ui.vault
+set +a
+```
 
 On macOS, if a retry fails while mounting an overlay with `input/output
 error`, inspect Podman Machine storage and restart the VM before rebuilding:

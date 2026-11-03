@@ -10,20 +10,30 @@ RUN CGO_ENABLED=0 go build -trimpath -ldflags='-s -w' -o /opt/bin/installer-ui .
 WORKDIR /opt/build/tools
 COPY build-tools/go.mod ./go.mod
 COPY build-tools/go.sum ./go.sum
-RUN GOBIN=/opt/bin go install sigs.k8s.io/kustomize/kustomize/v5 && \
-    GOBIN=/opt/bin go install helm.sh/helm/v3/cmd/helm
+RUN set -eu; \
+    install_with_retry() { \
+      attempts=0; \
+      until GOBIN=/opt/bin go install "$@"; do \
+        attempts=$((attempts + 1)); \
+        if [ "$attempts" -ge 5 ]; then return 1; fi; \
+        echo "Go tool download failed; retrying ($attempts/5)..." >&2; \
+        sleep $((attempts * 5)); \
+      done; \
+    }; \
+    install_with_retry sigs.k8s.io/kustomize/kustomize/v5; \
+    install_with_retry helm.sh/helm/v3/cmd/helm
 
 FROM registry.access.redhat.com/ubi9/ubi:9.6
 ARG OPENSHIFT_VERSION=4.18.41
-RUN dnf install -y \
+RUN dnf --setopt=retries=10 --setopt=timeout=120 install -y \
       ca-certificates curl-minimal findutils git gzip jq openssh-clients podman \
       python3.12 python3.12-pip shadow-utils tar && \
     dnf clean all
 
 WORKDIR /workspace
 COPY requirements.txt requirements.yml ansible.cfg ./
-RUN python3.12 -m pip install --no-cache-dir -r requirements.txt && \
-    ansible-galaxy collection install -r requirements.yml -p /workspace/.collections
+RUN python3.12 -m pip install --no-cache-dir --retries 10 --timeout 120 -r requirements.txt && \
+    ansible-galaxy collection install --timeout 120 -r requirements.yml -p /workspace/.collections
 
 ARG TARGETARCH
 RUN set -eux; \
