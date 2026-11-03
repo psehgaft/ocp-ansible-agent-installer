@@ -47,12 +47,12 @@ RUN set -eux; \
     curl --proto '=https' --tlsv1.2 -fsSL \
       "https://mirror.openshift.com/pub/openshift-v4/clients/ocp/${OPENSHIFT_VERSION}/${client_archive}" \
       -o /tmp/oc.tar.gz; \
-    tar -xzf /tmp/oc.tar.gz -C /usr/local/bin oc kubectl; \
+    tar --no-same-owner -xzf /tmp/oc.tar.gz -C /usr/local/bin oc kubectl; \
     oc_mirror_archive="oc-mirror-rhel9-linux-${target_arch}.tar.gz"; \
     curl --proto '=https' --tlsv1.2 -fsSL \
       "https://mirror.openshift.com/pub/cgw/oc-mirror/latest/${oc_mirror_archive}" \
       -o /tmp/oc-mirror.tar.gz; \
-    tar -xzf /tmp/oc-mirror.tar.gz -C /usr/local/bin oc-mirror; \
+    tar --no-same-owner -xzf /tmp/oc-mirror.tar.gz -C /usr/local/bin oc-mirror; \
     chmod 0755 /usr/local/bin/oc /usr/local/bin/kubectl /usr/local/bin/oc-mirror; \
     rm -f /tmp/oc.tar.gz /tmp/oc-mirror.tar.gz
 

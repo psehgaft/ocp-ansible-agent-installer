@@ -64,7 +64,7 @@ podman system connection list
 podman system connection default <connection-name>
 ```
 
-For current details on provider support, use the [Podman Machine documentation](https://docs.podman.io/en/stable/markdown/podman-machine.1.html) and the [upstream Podman report](https://github.com/containers/podman/issues/28312).
+For current details on provider support, use the [official Podman Machine documentation](https://docs.podman.io/en/stable/markdown/podman-machine.1.html).
 
 ## Configure a proxy
 
