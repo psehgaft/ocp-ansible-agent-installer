@@ -3,8 +3,9 @@
 The published workshop — **OpenShift Automation Framework Workshop** — is a
 single static page, `workshop/index.html`, built on the
 [Open Demo Days workshop template](https://github.com/OpenDemoDays/open-demo-day-template).
-It needs no build step, dependencies, or compilation: the page is bilingual
-(ES/EN via `?lang=`), and its sections, cards, navigation, table of contents,
+It needs no build step, dependencies, or compilation: the page is available
+in four languages (English by default, plus Spanish, Portuguese, and German
+via `?lang=`), and its sections, cards, navigation, table of contents,
 and previous/next buttons are generated from the `steps` and `cards` arrays in
 that file.
 
@@ -39,8 +40,9 @@ python3 -m http.server 8080 --directory workshop
 1. Edit `workshop/index.html`.
 2. Add or change sections in the `steps` array; add a matching entry to
    `cards` for every section that must appear on the home page.
-3. Keep visible text bilingual: titles and summaries use the template's
-   `lang` expressions, and each step carries its Spanish and English HTML.
+3. Keep visible text complete in every language: titles and summaries use
+   the template's `lang` expressions, and each step carries its English,
+   Spanish, Portuguese, and German HTML.
 4. Push to `main`; GitHub Pages deploys the page automatically.
 
 ## OpenShift
