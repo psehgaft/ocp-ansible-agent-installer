@@ -56,6 +56,23 @@ OpenShift version the Assisted Installer and `oc-mirror` v2 support:
   # open http://127.0.0.1:8080
   ```
 
+  On Windows, use the PowerShell equivalent instead of `make`:
+  `scripts/gui-run.ps1` (requires Podman or Docker Desktop).
+
+### Platform support
+
+| Capability | Linux | macOS | Windows |
+| --- | --- | --- | --- |
+| GUI container (canonical GUI deployment) | Native with Podman/Docker | Podman Machine or Docker Desktop | Podman or Docker Desktop; start it with `scripts/gui-run.ps1` |
+| Ansible playbooks (control node) | Native | Native (via `pip`) | Only under WSL2 — Ansible does not support a native Windows control node |
+| Repository validation (`scripts/validate.sh`, `scripts/preflight.sh`) | Native (bash) | Native (bash) | WSL2 or Git Bash |
+| GUI binary (`installer-ui`, Go) | Native binary | Native binary | Native binary, but its actions shell out to Ansible and the bash validation script, so the container is the supported Windows path |
+
+The container image is the portable execution path: it is identical on all
+three platforms and bundles Ansible, `oc`, `oc-mirror` v2, Kustomize, and
+Helm. The GUI binary cross-compiles cleanly for linux/amd64, linux/arm64,
+darwin/amd64, darwin/arm64, and windows/amd64.
+
 ### Day 2: GitOps or Ansible direct
 
 After installation, choose per component or for the whole baseline:
