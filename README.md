@@ -64,10 +64,16 @@ flowchart LR
   output:
 
   ```bash
-  export INSTALLER_UI_AUTH_TOKENS="$(openssl rand -hex 24)=admin"
+  # Generate a token on the first run; reuse the saved token later.
+  if [ ! -f .installer-ui.vault ]; then
+    export INSTALLER_UI_AUTH_TOKENS="${INSTALLER_UI_AUTH_TOKENS:-$(openssl rand -hex 24)=admin}"
+  fi
   set -a
-  . ./.installer-ui.vault
+  if [ -f .installer-ui.vault ]; then
+    . ./.installer-ui.vault
+  fi
   set +a
+  : "${INSTALLER_UI_AUTH_TOKENS:=$(openssl rand -hex 24)=admin}"
   printf 'INSTALLER_UI_AUTH_TOKENS=%s\n' "$INSTALLER_UI_AUTH_TOKENS" > .installer-ui.vault
   chmod 600 .installer-ui.vault
   podman compose config --quiet
@@ -200,12 +206,72 @@ workshop/                    Workshop site (Open Demo Days template) and AsciiDo
 - `oc-mirror` v2 and a registry for disconnected installation
 - Ansible Vault or an external secret manager
 
-Install dependencies:
+### Install Linux prerequisites
+
+The GUI runs inside the container; the Linux host needs Podman, a Compose
+provider, OpenSSL, and the tools used by the native Ansible control node.
+Choose the matching package manager.
+
+Ubuntu or Debian:
 
 ```bash
-python3 -m pip install -r requirements.txt
-ansible-galaxy collection install -r requirements.yml
+sudo apt-get update
+sudo apt-get install -y git curl jq openssl podman python3 python3-venv python3-pip python3-dev build-essential
 ```
+
+Fedora, RHEL 9, Rocky Linux, or AlmaLinux 9:
+
+```bash
+sudo dnf install -y git curl jq openssl podman python3 python3-pip python3-devel gcc
+```
+
+`podman compose` needs an external Compose provider. If neither
+`podman-compose` nor `docker-compose` is already installed, install
+`podman-compose` into an isolated Python environment and add it to the
+current shell's PATH:
+
+```bash
+python3 -m venv "$HOME/.local/share/podman-compose"
+"$HOME/.local/share/podman-compose/bin/python" -m pip install --upgrade pip podman-compose
+mkdir -p "$HOME/.local/bin"
+ln -sf "$HOME/.local/share/podman-compose/bin/podman-compose" "$HOME/.local/bin/podman-compose"
+export PATH="$HOME/.local/bin:$PATH"
+podman compose version
+```
+
+To keep the provider available in later Bash sessions, add
+`export PATH="$HOME/.local/bin:$PATH"` to `~/.bashrc`; for Zsh, add it to
+`~/.zshrc`. The existing macOS setup remains supported with Podman Machine or
+Docker Desktop; see the [GUI guide](docs/gui-interface.md) for those steps.
+
+### Install native Ansible prerequisites
+
+From the repository root, create an isolated Python environment, install the
+pinned project dependencies, and install the required collections:
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
+ansible-galaxy collection install -r requirements.yml -p .collections
+```
+
+Verify that Ansible Core is at least 2.18 and that the collection path is
+configured by this repository's `ansible.cfg`:
+
+```bash
+ansible --version
+ansible-galaxy collection list
+podman --version
+podman compose version
+```
+
+The GUI container includes the OpenShift CLI, `oc-mirror` v2, Kustomize,
+Helm, Ansible, and the collections. For native playbook execution, install the
+OpenShift tools at the versions required by your target release; see the
+[Day-0 installation guide](docs/day0-bare-metal-installation.md) and the
+[OpenShift CLI downloads](https://mirror.openshift.com/pub/openshift-v4/clients/ocp/).
 
 ## Inventory model
 
