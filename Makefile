@@ -49,9 +49,9 @@ gui-build:
 	podman build -f Containerfile -t ocp-ansible-agent-installer-ui:gui .
 
 gui-run:
-	@test -n "$(INSTALLER_UI_ADMIN_TOKEN)" || (echo "Set INSTALLER_UI_ADMIN_TOKEN to a random token of at least 16 characters"; exit 1)
+	@test -n "$(INSTALLER_UI_AUTH_TOKENS)$(INSTALLER_UI_ADMIN_TOKEN)" || (echo "Set INSTALLER_UI_AUTH_TOKENS (for example export INSTALLER_UI_AUTH_TOKENS=\"$$(openssl rand -hex 24)=admin\") or INSTALLER_UI_ADMIN_TOKEN"; exit 1)
 	podman run --rm --name ocp-installer-ui -p 127.0.0.1:8080:8080 \
-		-e INSTALLER_UI_AUTH_TOKENS="$(INSTALLER_UI_ADMIN_TOKEN)=admin" \
+		-e INSTALLER_UI_AUTH_TOKENS="$(if $(INSTALLER_UI_AUTH_TOKENS),$(INSTALLER_UI_AUTH_TOKENS),$(INSTALLER_UI_ADMIN_TOKEN)=admin)" \
 		-v ocp-installer-ui-data:/data:Z ocp-ansible-agent-installer-ui:gui
 
 workshop:

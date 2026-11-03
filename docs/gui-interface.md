@@ -53,23 +53,52 @@ variable appears automatically in the UI even when it has no custom metadata.
 
 ## Build and start
 
-Generate an unpredictable token of at least 16 characters:
+The GUI runs in a Linux container, so the host can be Linux or macOS.
+Compose builds the image for the architecture of the container engine. The
+Containerfile detects `amd64` or `arm64` and installs matching Kustomize,
+Helm, OpenShift CLI, and `oc-mirror` binaries. Intel Macs and x86_64 Linux use
+`amd64`; Apple Silicon Macs and ARM64 Linux use `arm64`.
+
+Install one container runtime:
+
+- Linux: Podman with Compose support, or Docker Engine and the Compose plugin.
+- macOS: Podman Desktop with a running Podman machine, or Docker Desktop.
+
+For Podman on macOS, initialize and start its Linux VM once:
 
 ```bash
-export INSTALLER_UI_ADMIN_TOKEN="$(openssl rand -hex 24)"
-make gui-build
-make gui-run
+podman machine init
+podman machine start
 ```
 
-Open `http://127.0.0.1:8080`, select **Access token**, and enter the generated
-token. The `make gui-run` target stores profiles and run history in the named
-volume `ocp-installer-ui-data`.
-
-Podman Compose is also supported:
+Generate an unpredictable admin token and export it in canonical form
+(the random token has 48 characters; the minimum is 16). Save it in a vault
+file under the same variable name so later sessions can reload it:
 
 ```bash
 export INSTALLER_UI_AUTH_TOKENS="$(openssl rand -hex 24)=admin"
-podman compose up --build
+printf 'INSTALLER_UI_AUTH_TOKENS=%s\n' "$INSTALLER_UI_AUTH_TOKENS" > .installer-ui.vault
+chmod 600 .installer-ui.vault
+# For later terminal sessions, reload the saved token before Compose:
+set -a
+. ./.installer-ui.vault
+set +a
+podman compose build --no-cache installer-ui
+podman compose up -d
+```
+
+Open `http://127.0.0.1:8080`, select **Access token**, and enter the token —
+the part before the `=` in `INSTALLER_UI_AUTH_TOKENS`. The `make gui-run`
+target stores profiles and run history in the named volume
+`ocp-installer-ui-data`. (The legacy `INSTALLER_UI_ADMIN_TOKEN` variable is
+still accepted by `make gui-run` and is mapped to an `=admin` token.)
+
+Make is also supported as a launcher:
+
+```bash
+export INSTALLER_UI_AUTH_TOKENS="$(openssl rand -hex 24)=admin"
+make gui-build
+make gui-run
 ```
 
 On Windows, `scripts/gui-run.ps1` is the PowerShell equivalent of
@@ -99,9 +128,12 @@ checksums. It no longer downloads Kustomize or Helm release archives from
 GitHub Releases, which avoids the curl TLS error (exit code 35) seen on some
 Mac container-engine networks.
 
+The Containerfile uses UBI's existing `sha256sum` utility and does not
+install `coreutils`, avoiding conflicts with `coreutils-single` on UBI 9.
+
 If your environment requires an HTTP(S) proxy or a custom trusted CA, configure
-it in the container engine's build environment. After pulling the updated
-checkout, rebuild the image:
+it in the container engine's build environment. After updating the checkout,
+rebuild the GUI image:
 
 ```bash
 podman compose build --no-cache installer-ui
@@ -133,6 +165,83 @@ python -m pip install -r requirements.txt
 
 The `/workspace/.collections` path is for the container image. On the host,
 use `.collections` as shown above.
+The Containerfile allows longer download times and retries transient failures
+from DNF, PyPI, Ansible Galaxy, and the Go module proxy. If Compose reports
+that `INSTALLER_UI_AUTH_TOKENS` is missing, load the saved token in the current
+shell before running either build or up:
+
+```bash
+set -a
+. ./.installer-ui.vault
+set +a
+```
+
+On macOS, if a retry fails while mounting an overlay with `input/output
+error`, inspect Podman Machine storage and restart the VM before rebuilding:
+
+```bash
+podman machine ssh df -h
+podman machine stop
+podman machine start
+podman compose build --no-cache installer-ui
+```
+
+This error is raised by the Podman VM's container storage layer. The build log
+should also be checked for the original package-download failure; the overlay
+error by itself does not identify why an earlier DNF transaction stopped.
+
+## Variables: groups, filling rules, and token origins
+
+The GUI never asks you to edit YAML by hand. Its forms are generated from
+the defaults in `inventories/sample/group_vars/all/*.yml` and presented
+preloaded; change only what differs in your environment. Required fields
+are marked, conditional fields appear from your choices (the Disconnected
+group only with `deployment_mode: disconnected`, the offline token only
+with `assisted_auth_mode: saas`), and list fields such as the networks are
+edited as YAML in place. Saving asks for a Vault password, writes the
+profile inventory under `/data`, and encrypts every secret; saved secrets
+are never displayed again — the GUI only reports whether they are set.
+
+Groups and the variables that matter in each:
+
+- **Cluster** (00-required): `deployment_mode`, `cluster_name`,
+  `base_dns_domain`, `openshift_version`, `control_plane_count`,
+  `compute_count`, `machine_networks`, `cluster_networks`,
+  `service_networks`, `vip_allocation_mode`, `api_vips`, `ingress_vips`.
+- **Assisted Installer API** (10-assisted-installer): `assisted_api_url`
+  and `assisted_auth_mode` (`saas` or `onprem`).
+- **Networking** (20-network): `node_network_config_mode` (static or
+  dhcp), `node_dns_servers`, and the install-network mode (single or
+  bond, with its bond ports).
+- **Disconnected** (30-disconnected): `disconnected_environment`,
+  `oc_mirror_workflow`, `oc_mirror_registry` — only in disconnected mode.
+- **BMC / Redfish** (40-bmc): `bmc_validate_certs`, timeouts, and
+  `bmc_boot_device`, plus one card per host carrying `bmc_type` (auto,
+  ilo, idrac, generic), `bmc_endpoint`, `node_role`, `node_hostname`,
+  `node_ipv4_address`, the optional `installation_disk_id`, and static or
+  DHCP node networking.
+- **Runtime** (50-runtime): `artifacts_dir` and the ISO delivery mode
+  (`iso_delivery_mode`, `iso_http_advertise_address`).
+- **Day-2 GitOps** (60-day2-gitops): the desired-state Git repository and
+  branch, bootstrap profiles, and the operator selection.
+- **Secrets** (Vault): `vault_pull_secret`, `vault_ssh_public_key`,
+  `vault_assisted_offline_token` (or `vault_assisted_access_token`
+  on-prem), and `vault_bmc_credentials` keyed by inventory hostname.
+
+Where each token comes from:
+
+- **GUI access token** — self-generated; it does not come from Red Hat or
+  any service. Canonical form:
+  `export INSTALLER_UI_AUTH_TOKENS="$(openssl rand -hex 24)=admin"`,
+  persisted in the `.installer-ui.vault` file under the same variable name
+  (see Build and start). Format `token=role`; roles are `viewer`,
+  `operator`, and `admin`.
+- **Assisted Installer offline token** — created in your Red Hat account
+  at cloud.redhat.com (the OpenShift API token page); SaaS mode only. On
+  premises, the local Assisted service access token is used instead.
+- **Pull secret** — downloaded from the Red Hat console. **BMC
+  credentials** — the administrator user and password of each server's
+  iLO or iDRAC.
 
 ## Container runtime contents
 
@@ -187,6 +296,13 @@ Never place the persistent data volume in Git. Back it up and protect it using
 the same controls as other deployment credentials.
 
 ## Roles and actions
+
+The assisted run follows this order:
+
+```mermaid
+flowchart LR
+  A["validate<br/>Validation & preflight"] --> B["assisted_preflight<br/>Assisted Installer preflight"] --> C["assisted_mirror<br/>Mirror the release (disconnected)"] --> D["assisted_sync<br/>Sync content to the mirror"] --> E["assisted_boot<br/>Boot nodes via Redfish"] --> F["assisted_install<br/>Install the cluster"] --> G["day2<br/>Day-2: GitOps & Ansible"]
+```
 
 | Action | Minimum role | Confirmation |
 |---|---:|---:|

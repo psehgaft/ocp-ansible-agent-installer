@@ -334,7 +334,8 @@ and root Application. Argo CD owns everything after that boundary.
 
 ```bash
 export INSTALLER_UI_AUTH_TOKENS="$(openssl rand -hex 24)=admin"
-podman compose up --build
+podman compose build --no-cache installer-ui
+podman compose up -d
 ```
 
 Open `http://127.0.0.1:8080` through an SSH tunnel or approved TLS reverse
