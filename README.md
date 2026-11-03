@@ -512,7 +512,8 @@ OpenShift installation, Day-2 platform configuration, health validation, and
 managed-cluster deployment. The site is a single static page
 (`workshop/index.html`) built on the
 [Open Demo Days workshop template](https://github.com/OpenDemoDays/open-demo-day-template)
-— bilingual (ES/EN), with no build step; see
+— in four languages (English by default, plus Spanish, Portuguese, and
+German), with no build step; see
 [Deploying the workshop](docs/workshop-deployment.md). The complete AsciiDoc
 sources remain under `workshop/documentation/` as reference material.
 
