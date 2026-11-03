@@ -52,5 +52,20 @@ jobs:
           done
           curl -fsS http://127.0.0.1:18080/healthz | jq -e '.status == "ok"'
           curl -fsS http://127.0.0.1:18080/api/schema | jq -e '.operators | length >= 52'
-      - name: Build complete runtime container
-        run: docker build -f Containerfile -t ocp-installer-ui:test .
+      - name: Linux Podman Compose build and health smoke test
+        env:
+          INSTALLER_UI_AUTH_TOKENS: ci-smoke-token-000000000000000000000000=admin
+        run: |
+          set -eu
+          sudo apt-get update
+          sudo apt-get install -y podman python3-venv
+          python3 -m venv "$RUNNER_TEMP/podman-compose"
+          "$RUNNER_TEMP/podman-compose/bin/python" -m pip install --upgrade pip 'podman-compose>=1.4.0'
+          export PODMAN_COMPOSE_PROVIDER="$RUNNER_TEMP/podman-compose/bin/podman-compose"
+          podman info
+          trap 'podman compose down --volumes --remove-orphans || true' EXIT
+          podman compose config --quiet
+          podman compose build --no-cache installer-ui
+          podman compose up -d installer-ui
+          curl --fail --retry 10 --retry-connrefused --retry-delay 2 \
+            http://127.0.0.1:8080/healthz | jq -e '.status == "ok"'

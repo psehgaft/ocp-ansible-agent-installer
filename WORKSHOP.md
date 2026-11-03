@@ -22,6 +22,36 @@
 
 ### 2. Deployment with the GUI interface
 
+Start from the repository root after installing the Linux host prerequisites
+in Module 1. This sequence works on Linux and macOS (Podman Machine or Docker
+Desktop on macOS). It creates the token vault on first run and reloads the
+saved token on later runs:
+
+```bash
+if [ ! -f .installer-ui.vault ]; then
+  export INSTALLER_UI_AUTH_TOKENS="${INSTALLER_UI_AUTH_TOKENS:-$(openssl rand -hex 24)=admin}"
+fi
+set -a
+if [ -f .installer-ui.vault ]; then
+  . ./.installer-ui.vault
+fi
+set +a
+: "${INSTALLER_UI_AUTH_TOKENS:=$(openssl rand -hex 24)=admin}"
+printf 'INSTALLER_UI_AUTH_TOKENS=%s\n' "$INSTALLER_UI_AUTH_TOKENS" > .installer-ui.vault
+chmod 600 .installer-ui.vault
+podman compose config --quiet
+podman compose build --no-cache installer-ui
+podman compose up -d installer-ui
+curl --fail --retry 10 --retry-connrefused --retry-delay 2 \
+  http://127.0.0.1:8080/healthz
+```
+
+The first run generates an admin token; later runs reuse the token stored in
+the ignored, mode-600 `.installer-ui.vault` file. Sign in using the token
+before the `=`. On macOS, initialize and start Podman Machine once with
+`podman machine init` and `podman machine start`. For the full procedure,
+see the [connected GUI lab](workshop/documentation/modules/ROOT/pages/17-connected-gui.adoc).
+
 1. [Install connected OpenShift](workshop/documentation/modules/ROOT/pages/17-connected-gui.adoc)
 2. [Install disconnected OpenShift](workshop/documentation/modules/ROOT/pages/18-disconnected-gui.adoc)
 3. [Perform Day-2 activities](workshop/documentation/modules/ROOT/pages/20-day2-gui.adoc)
@@ -93,17 +123,40 @@ After completing this lab, you will be able to:
 - Verify Redfish and Assisted Installer connectivity.
 - Run the repository validation tests.
 
-## 1. Install control-node packages
+## 1. Install Linux host packages
 
-On RHEL 9:
+Choose the commands for your distribution. Ubuntu/Debian:
 
 ```bash
-sudo dnf install -y python3 python3-pip git curl jq podman
-python3 -m venv ~/venvs/ocp-redfish
-source ~/venvs/ocp-redfish/bin/activate
-python3 -m pip install --upgrade pip
-python3 -m pip install -r requirements.txt
+sudo apt-get update
+sudo apt-get install -y git curl jq openssl podman python3 python3-venv python3-pip python3-dev build-essential
 ```
+
+Fedora, RHEL 9, Rocky Linux, or AlmaLinux 9:
+
+```bash
+sudo dnf install -y git curl jq openssl podman python3 python3-pip python3-devel gcc
+```
+
+The GUI image supplies Ansible, collections, `oc`, `oc-mirror` v2,
+Kustomize, and Helm. The host needs a container runtime and Compose provider.
+`podman compose` delegates Compose commands to an external provider. If you
+do not already have `podman-compose` or `docker-compose`, install the
+Podman provider in an isolated environment:
+
+```bash
+python3 -m venv "$HOME/.local/share/podman-compose"
+"$HOME/.local/share/podman-compose/bin/python" -m pip install --upgrade pip podman-compose
+mkdir -p "$HOME/.local/bin"
+ln -sf "$HOME/.local/share/podman-compose/bin/podman-compose" "$HOME/.local/bin/podman-compose"
+export PATH="$HOME/.local/bin:$PATH"
+podman --version
+podman compose version
+```
+
+To keep this provider available in later Bash sessions, add
+`export PATH="$HOME/.local/bin:$PATH"` to `~/.bashrc`; for Zsh, add it to
+`~/.zshrc`.
 
 ## 2. Extract or clone the repository
 
@@ -121,12 +174,27 @@ git clone <YOUR_REPOSITORY_URL>
 cd ocp-ansible-agent-installer-redfish
 ```
 
-## 3. Install Ansible collections
+## 3. Install native Ansible dependencies
+
+From the repository root, use the project-pinned Ansible Core version and
+install collections into the path declared by `ansible.cfg`:
 
 ```bash
-ansible-galaxy collection install -r requirements.yml
+python3 -m venv .venv
+source .venv/bin/activate
+python3 -m pip install --upgrade pip
+python3 -m pip install -r requirements.txt
+ansible-galaxy collection install -r requirements.yml -p .collections
 ansible-galaxy collection list community.general
 ```
+
+The project requires `ansible-core` 2.18 or later. Using the system Ansible
+2.17 (or older) causes the collection compatibility error shown in the
+troubleshooting report.
+
+Official references: [Podman installation](https://podman.io/docs/installation),
+[Podman Compose provider](https://docs.podman.io/en/latest/markdown/podman-compose.1.html),
+and [Ansible installation](https://docs.ansible.com/projects/ansible/latest/installation_guide/intro_installation.html).
 
 ## 4. Verify CLI tools
 
@@ -136,7 +204,9 @@ ansible --version
 ansible-playbook --version
 curl --version
 jq --version
+openssl version
 podman --version
+podman compose version
 ```
 
 ## 5. Test Redfish connectivity

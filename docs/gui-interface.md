@@ -61,25 +61,70 @@ Helm, OpenShift CLI, and `oc-mirror` binaries. Intel Macs and x86_64 Linux use
 
 Install one container runtime:
 
-- Linux: Podman with Compose support, or Docker Engine and the Compose plugin.
+- Linux: Podman with a Compose provider, or Docker Engine and the Compose
+  plugin.
 - macOS: Podman Desktop with a running Podman machine, or Docker Desktop.
 
-For Podman on macOS, initialize and start its Linux VM once:
+### Linux host prerequisites
+
+Ubuntu/Debian:
+
+```bash
+sudo apt-get update
+sudo apt-get install -y git curl jq openssl podman python3 python3-venv python3-pip python3-dev build-essential
+```
+
+Fedora, RHEL 9, Rocky Linux, or AlmaLinux 9:
+
+```bash
+sudo dnf install -y git curl jq openssl podman python3 python3-pip python3-devel gcc
+```
+
+Podman Compose is a wrapper and requires an external provider. If the host
+does not already have `podman-compose` or `docker-compose`, install
+`podman-compose` in its own virtual environment:
+
+```bash
+python3 -m venv "$HOME/.local/share/podman-compose"
+"$HOME/.local/share/podman-compose/bin/python" -m pip install --upgrade pip podman-compose
+mkdir -p "$HOME/.local/bin"
+ln -sf "$HOME/.local/share/podman-compose/bin/podman-compose" "$HOME/.local/bin/podman-compose"
+export PATH="$HOME/.local/bin:$PATH"
+podman --version
+podman compose version
+```
+
+The `--quiet` option for `podman compose config` requires a recent provider;
+the documented install pins the minimum supported `podman-compose` version.
+See the official [Podman installation guide](https://podman.io/docs/installation)
+and [Compose provider documentation](https://docs.podman.io/en/latest/markdown/podman-compose.1.html).
+
+Persist `$HOME/.local/bin` in `PATH` by adding
+`export PATH="$HOME/.local/bin:$PATH"` to `~/.bashrc` or `~/.zshrc`.
+On macOS, keep using Podman Machine or Docker Desktop. With Podman, initialize
+and start the VM once:
 
 ```bash
 podman machine init
 podman machine start
 ```
 
-Generate an unpredictable admin token and export it in canonical form
-(the random token has 48 characters; the minimum is 16). Save it in a vault
-file under the same variable name so later sessions can reload it:
+### Initialize the GUI
+
+Run this from the repository root using Bash or Zsh. The conditional creates
+a random admin token on first run and loads the protected vault on subsequent
+runs. The vault file is ignored by Git:
 
 ```bash
-export INSTALLER_UI_AUTH_TOKENS="$(openssl rand -hex 24)=admin"
+if [ ! -f .installer-ui.vault ]; then
+  export INSTALLER_UI_AUTH_TOKENS="${INSTALLER_UI_AUTH_TOKENS:-$(openssl rand -hex 24)=admin}"
+fi
 set -a
-. ./.installer-ui.vault
+if [ -f .installer-ui.vault ]; then
+  . ./.installer-ui.vault
+fi
 set +a
+: "${INSTALLER_UI_AUTH_TOKENS:=$(openssl rand -hex 24)=admin}"
 printf 'INSTALLER_UI_AUTH_TOKENS=%s\n' "$INSTALLER_UI_AUTH_TOKENS" > .installer-ui.vault
 chmod 600 .installer-ui.vault
 podman compose config --quiet

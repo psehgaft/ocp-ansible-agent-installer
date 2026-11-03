@@ -23,24 +23,67 @@ After completing this lab, you will be able to:
 * Verify Redfish connectivity.
 * Run repository tests.
 
-== 1. Create a Python environment
+== 1. Install Linux host prerequisites
+
+Choose one package command for the Linux distribution.
+
+Ubuntu or Debian:
 
 [source,bash]
 ----
-python3 -m venv ~/venvs/ocp-redfish
-source ~/venvs/ocp-redfish/bin/activate
+sudo apt-get update
+sudo apt-get install -y git curl jq openssl podman python3 python3-venv python3-pip python3-dev build-essential
+----
+
+Fedora, RHEL 9, Rocky Linux, or AlmaLinux 9:
+
+[source,bash]
+----
+sudo dnf install -y git curl jq openssl podman python3 python3-pip python3-devel gcc
+----
+
+For the GUI, `podman compose` also needs an external Compose provider. If
+neither `podman-compose` nor `docker-compose` is installed, install
+`podman-compose` in an isolated Python environment:
+
+[source,bash]
+----
+python3 -m venv "$HOME/.local/share/podman-compose"
+"$HOME/.local/share/podman-compose/bin/python" -m pip install --upgrade pip podman-compose
+mkdir -p "$HOME/.local/bin"
+ln -sf "$HOME/.local/share/podman-compose/bin/podman-compose" "$HOME/.local/bin/podman-compose"
+export PATH="$HOME/.local/bin:$PATH"
+podman --version
+podman compose version
+----
+
+Persist `$HOME/.local/bin` in the shell's `PATH` by adding the export
+command to `~/.bashrc` or `~/.zshrc`. On macOS, continue to use Podman
+Machine or Docker Desktop; see the link:https://github.com/psehgaft/ocp-ansible-agent-installer/blob/main/docs/gui-interface.md[GUI guide].
+
+Official references: link:https://podman.io/docs/installation[Podman installation],
+link:https://docs.podman.io/en/latest/markdown/podman-compose.1.html[Podman Compose],
+and link:https://docs.ansible.com/projects/ansible/latest/installation_guide/intro_installation.html[Ansible installation].
+
+== 2. Create a Python environment
+
+
+[source,bash]
+----
+python3 -m venv .venv
+source .venv/bin/activate
 python3 -m pip install --upgrade pip
 python3 -m pip install -r requirements.txt
 ----
 
-== 2. Install the collection
+== 3. Install the collection
 
 [source,bash]
 ----
 ansible-galaxy collection install -r requirements.yml
 ----
 
-== 3. Validate tools
+== 4. Validate tools
 
 [source,bash]
 ----
@@ -51,7 +94,7 @@ jq --version
 podman --version
 ----
 
-== 4. Validate the repository
+== 5. Validate the repository
 
 [source,bash]
 ----
