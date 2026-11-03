@@ -29,7 +29,9 @@ only approved playbooks with RBAC, confirmation gates, redacted live output,
 and persistent history. See the [GUI interface guide](docs/gui-interface.md).
 
 For complete procedures, use the
-[executive deployment runbook](docs/deployment-scenarios.md). It is organized
+[executive deployment runbook](docs/deployment-scenarios.md) and the
+[playbooks, GUI, and Helm reference](docs/playbooks-reference.md), which
+explains what every playbook, role, and GUI action does. It is organized
 into three operating paths:
 
 1. **Playbooks** — connected installation, disconnected installation, Day-2
