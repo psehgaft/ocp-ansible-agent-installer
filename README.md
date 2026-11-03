@@ -50,14 +50,68 @@ OpenShift version the Assisted Installer and `oc-mirror` v2 support:
   output:
 
   ```bash
-  export INSTALLER_UI_ADMIN_TOKEN=<random-token-of-16+-characters>
+  export INSTALLER_UI_AUTH_TOKENS="$(openssl rand -hex 24)=admin"
+  printf 'INSTALLER_UI_AUTH_TOKENS=%s\n' "$INSTALLER_UI_AUTH_TOKENS" > .installer-ui.vault
+  chmod 600 .installer-ui.vault
   make gui-build
   make gui-run    # or: podman compose up --build
-  # open http://127.0.0.1:8080
+  # open http://127.0.0.1:8080 and sign in with the token before the "=" above
   ```
 
   On Windows, use the PowerShell equivalent instead of `make`:
   `scripts/gui-run.ps1` (requires Podman or Docker Desktop).
+
+#### Filling in the variables (GUI)
+
+You do not edit YAML by hand. The GUI builds its forms from the defaults in
+`inventories/sample/group_vars/all/*.yml` and presents them preloaded —
+change only what differs in your environment. Required fields are marked,
+and conditional fields appear from your choices (the Disconnected group only
+shows with `deployment_mode: disconnected`; the offline token only with
+`assisted_auth_mode: saas`). On save, the GUI asks for a Vault password,
+writes the profile inventory under `/data`, and encrypts every secret; the
+**Validate** action then runs the same contracts as the playbooks and lists
+errors per field. Saved secrets are never shown again — the GUI only reports
+whether they are set. The groups you must use:
+
+- **Cluster** (00-required): `deployment_mode`, `cluster_name`,
+  `base_dns_domain`, `openshift_version`, `control_plane_count`,
+  `compute_count`, machine/cluster/service networks, API and ingress VIPs.
+- **Assisted Installer API** (10-assisted-installer): `assisted_api_url`,
+  `assisted_auth_mode` (`saas` or `onprem`).
+- **Networking** (20-network): `node_network_config_mode` (static or dhcp),
+  DNS servers, interface mode (single or bond).
+- **Disconnected** (30-disconnected): `disconnected_environment`,
+  `oc_mirror_workflow`, mirror registry — disconnected mode only.
+- **BMC / Redfish** (40-bmc): certificate validation, timeouts, boot device,
+  plus one card per host: name, role, BMC type (auto, iLO, iDRAC, generic),
+  HTTPS endpoint, MAC, installation disk, static or DHCP networking.
+- **Runtime** (50-runtime): artifacts directory, ISO delivery mode.
+- **Day-2 GitOps** (60-day2-gitops): desired-state repository and branch,
+  profiles, and the Day-2 operator selection.
+- **Secrets** (Vault): pull secret, SSH public key, Assisted Installer
+  offline token, and each host's BMC credentials — stored only encrypted in
+  `vault.yml`.
+
+Where each token comes from:
+
+- **GUI access token** — you generate it yourself; it does not come from
+  Red Hat or any service. Always export it as
+  `export INSTALLER_UI_AUTH_TOKENS="$(openssl rand -hex 24)=admin"` and save
+  it in a vault file under the same variable name (`.installer-ui.vault`,
+  mode 600) to reuse across sessions. The format is `token=role` with roles
+  `viewer` (read-only), `operator`, and `admin`; several comma-separated
+  tokens can be declared for different people. The part before the `=` is
+  what you type on the GUI login screen.
+- **Assisted Installer offline token** (SaaS only) — created in your Red Hat
+  account at cloud.redhat.com (the OpenShift API token page) and pasted into
+  the Secrets group as `vault_assisted_offline_token`. In `onprem` mode the
+  access token of the local Assisted service is used instead
+  (`vault_assisted_access_token`).
+- **Pull secret** — downloaded from the same Red Hat console
+  (`vault_pull_secret`). **BMC credentials** come from each physical server:
+  the administrator user and password of its iLO or iDRAC, one entry per
+  host card.
 
 ### Platform support
 
@@ -169,6 +223,50 @@ Recommended precedence is global defaults, environment group variables, environm
 cp -a inventories/sample inventories/lab-cluster
 # Use playbooks/day0/create-vault.yml as documented in the Day-0 guide.
 ```
+
+#### What to edit and fill in
+
+Never run against the sample unedited: fill in your copy. Preflight fails
+while any `CHANGE_ME` placeholder remains.
+
+1. **`hosts.yml`** — one block per server under `control_plane` or
+   `workers`: `bmc_type` (`ilo`, `idrac`, `generic`, or `auto`),
+   `bmc_endpoint` with the real BMC address (`https://<iLO/iDRAC-IP>`),
+   `node_role` (`master` or `worker`), the final `node_hostname`, and a
+   static `node_ipv4_address` without prefix. Optional:
+   `installation_disk_id` (a stable `/dev/disk/by-id/…` path) and
+   `mac_interface_map_override` when NIC ordering is ambiguous. Do not edit
+   `bmc_username`/`bmc_password`: they resolve from the Vault by inventory
+   hostname (see below).
+2. **`group_vars/all/00-required.yml`** — `cluster_name` (replace
+   `CHANGE_ME_CLUSTER_NAME`), `base_dns_domain`, `openshift_version`,
+   `deployment_mode` (`connected` or `disconnected`), node counts matching
+   your host list, `machine_networks`, `cluster_networks`,
+   `service_networks`, `vip_allocation_mode`, `api_vips`, `ingress_vips`.
+3. **`group_vars/all/10-assisted-installer.yml`** — `assisted_auth_mode`:
+   `saas` (default public URL) or `onprem` (point `assisted_api_url` at
+   your local service).
+4. **`group_vars/all/20-network.yml`** — real `node_dns_servers`, `static`
+   or `dhcp` node config mode, and bond ports when bonding.
+5. **`group_vars/all/30-disconnected.yml`** — only for
+   `deployment_mode: disconnected`: `disconnected_environment`,
+   `oc_mirror_workflow`, and your `oc_mirror_registry`.
+6. **`group_vars/all/50-runtime.yml`** — `iso_http_advertise_address`:
+   replace `CHANGE_ME_CONTROL_NODE_IP` with the bastion's reachable IP.
+7. **`group_vars/vault.yml`** — copy `vault.yml.example` and fill in
+   `vault_pull_secret` (downloaded from the Red Hat console),
+   `vault_ssh_public_key`, `vault_assisted_offline_token` (the API token
+   from your cloud.redhat.com account; SaaS only — on-prem uses
+   `vault_assisted_access_token`), and `vault_bmc_credentials` with one
+   entry per inventory hostname holding that server's iLO/iDRAC
+   administrator user and password. Then encrypt it:
+   `ansible-vault encrypt inventories/lab-cluster/group_vars/vault.yml`.
+8. **Vault password** — export `ANSIBLE_VAULT_PASSWORD_FILE` or pass
+   `--ask-vault-pass` so the playbooks can read the secrets.
+
+Preflight (`./scripts/preflight.sh`) checks the required tools (python3,
+ansible, curl, jq, oc, podman), that no `CHANGE_ME` remains, and that the
+Vault is encrypted.
 
 Use generic Redfish host variables:
 
