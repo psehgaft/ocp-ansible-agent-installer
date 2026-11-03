@@ -94,6 +94,11 @@ podman --version
 podman compose version
 ```
 
+The `--quiet` option for `podman compose config` requires a recent provider;
+the documented install pins the minimum supported `podman-compose` version.
+See the official [Podman installation guide](https://podman.io/docs/installation)
+and [Compose provider documentation](https://docs.podman.io/en/latest/markdown/podman-compose.1.html).
+
 Persist `$HOME/.local/bin` in `PATH` by adding
 `export PATH="$HOME/.local/bin:$PATH"` to `~/.bashrc` or `~/.zshrc`.
 On macOS, keep using Podman Machine or Docker Desktop. With Podman, initialize
