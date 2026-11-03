@@ -1,6 +1,5 @@
 services:
   installer-ui:
-    platform: linux/amd64
     build:
       context: .
       dockerfile: Containerfile

@@ -53,17 +53,16 @@ variable appears automatically in the UI even when it has no custom metadata.
 
 ## Build and start on Linux and macOS
 
-The GUI runs in a Linux container, so the host can be Linux or macOS. The
-Compose service targets `linux/amd64` because the bundled OpenShift client and
-`oc-mirror` artifacts are currently downloaded for amd64. Intel Macs and
-x86_64 Linux run natively. Apple Silicon Macs need Docker Desktop or a Podman
-machine configured to run amd64 containers through emulation.
+The GUI runs in a Linux container, so the host can be Linux or macOS.
+Compose builds the image for the architecture of the container engine. The
+Containerfile detects `amd64` or `arm64` and installs matching Kustomize,
+Helm, OpenShift CLI, and `oc-mirror` binaries. Intel Macs and x86_64 Linux use
+`amd64`; Apple Silicon Macs and ARM64 Linux use `arm64`.
 
 Install one container runtime:
 
 - Linux: Podman with Compose support, or Docker Engine and the Compose plugin.
-- macOS: Podman Desktop with a running Podman machine, or Docker Desktop with
-  amd64 emulation enabled.
+- macOS: Podman Desktop with a running Podman machine, or Docker Desktop.
 
 For Podman on macOS, initialize and start its Linux VM once:
 
@@ -116,6 +115,10 @@ comes from the former version-suffixed `go install` step. That form resolves
 the requested tool in a separate module context and does not use this
 repository's `go.mod` or `go.sum`. The current Containerfile instead downloads
 pinned upstream release archives and verifies their SHA-256 digests.
+
+If DNF reports a conflict between `coreutils` and `coreutils-single`, update
+to the corrected Containerfile: UBI already includes `sha256sum`, so the build
+does not need to replace that package.
 
 After updating the checkout, rebuild the GUI image:
 
