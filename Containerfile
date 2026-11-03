@@ -17,7 +17,8 @@ RUN set -eux; \
     curl --proto '=https' --tlsv1.2 -fsSL "${kustomize_url}/${kustomize_archive}" -o "/tmp/tool-downloads/${kustomize_archive}"; \
     curl --proto '=https' --tlsv1.2 -fsSL "${kustomize_url}/checksums.txt" -o /tmp/tool-downloads/kustomize-checksums.txt; \
     cd /tmp/tool-downloads; \
-    grep "  ${kustomize_archive}$" kustomize-checksums.txt | sha256sum -c -; \
+    checksum_line="$(grep "  ${kustomize_archive}$" kustomize-checksums.txt)"; \
+    printf '%s\n' "$checksum_line" | sha256sum -c -; \
     tar -xzf "${kustomize_archive}" -C /opt/bin kustomize; \
     helm_archive="helm-v${HELM_VERSION}-linux-${TARGETARCH}.tar.gz"; \
     helm_url="https://get.helm.sh/${helm_archive}"; \
