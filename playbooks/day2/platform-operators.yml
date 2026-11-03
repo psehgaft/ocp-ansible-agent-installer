@@ -1,1 +1,72 @@
-LS0tCi0gbmFtZTogSW5zdGFsbCBBQ00KICBpbXBvcnRfcGxheWJvb2s6IGFjbS55bWwKICB3aGVuOiBwbGF0Zm9ybV9lbmFibGVfYWNtIHwgZGVmYXVsdChmYWxzZSkgfCBib29sCgotIG5hbWU6IEluc3RhbGwgQUNTCiAgaW1wb3J0X3BsYXlib29rOiBhY3MueW1sCiAgd2hlbjogcGxhdGZvcm1fZW5hYmxlX2FjcyB8IGRlZmF1bHQoZmFsc2UpIHwgYm9vbAoKLSBuYW1lOiBJbnN0YWxsIHN0b3JhZ2Ugc2VydmljZXMKICBpbXBvcnRfcGxheWJvb2s6IHN0b3JhZ2UueW1sCiAgd2hlbjogcGxhdGZvcm1fZW5hYmxlX29kZiB8IGRlZmF1bHQoZmFsc2UpIHwgYm9vbAoKLSBuYW1lOiBJbnN0YWxsIE9wZW5TaGlmdCBWaXJ0dWFsaXphdGlvbgogIGltcG9ydF9wbGF5Ym9vazogdmlydHVhbGl6YXRpb24ueW1sCiAgd2hlbjogcGxhdGZvcm1fZW5hYmxlX3ZpcnR1YWxpemF0aW9uIHwgZGVmYXVsdChmYWxzZSkgfCBib29sCgotIG5hbWU6IEluc3RhbGwgTVRWCiAgaW1wb3J0X3BsYXlib29rOiBtdHYueW1sCiAgd2hlbjogcGxhdGZvcm1fZW5hYmxlX210diB8IGRlZmF1bHQoZmFsc2UpIHwgYm9vbAoKLSBuYW1lOiBJbnN0YWxsIEFBUAogIGltcG9ydF9wbGF5Ym9vazogYWFwLnltbAogIHdoZW46IHBsYXRmb3JtX2VuYWJsZV9hYXAgfCBkZWZhdWx0KGZhbHNlKSB8IGJvb2wKCi0gbmFtZTogSW5zdGFsbCBjZXJ0LW1hbmFnZXIKICBpbXBvcnRfcGxheWJvb2s6IHBsYXRmb3JtLWNlcnQtbWFuYWdlci55bWwKICB3aGVuOiBwbGF0Zm9ybV9lbmFibGVfY2VydF9tYW5hZ2VyIHwgZGVmYXVsdChmYWxzZSkgfCBib29sCgotIG5hbWU6IENvbmZpZ3VyZSBQS0kKICBpbXBvcnRfcGxheWJvb2s6IHBsYXRmb3JtLXBraS55bWwKICB3aGVuOiBwbGF0Zm9ybV9lbmFibGVfcGtpIHwgZGVmYXVsdChmYWxzZSkgfCBib29sCgotIG5hbWU6IEluc3RhbGwgUXVheQogIGltcG9ydF9wbGF5Ym9vazogcGxhdGZvcm0tcXVheS55bWwKICB3aGVuOiBwbGF0Zm9ybV9lbmFibGVfcXVheSB8IGRlZmF1bHQoZmFsc2UpIHwgYm9vbAoKLSBuYW1lOiBDb25maWd1cmUgbmV0d29ya2luZyBvcGVyYXRvcnMKICBpbXBvcnRfcGxheWJvb2s6IHBsYXRmb3JtLW5ldHdvcmtpbmcueW1sCiAgd2hlbjogcGxhdGZvcm1fZW5hYmxlX25ldHdvcmtpbmcgfCBkZWZhdWx0KGZhbHNlKSB8IGJvb2wKCi0gbmFtZTogQ29uZmlndXJlIG1vbml0b3JpbmcKICBpbXBvcnRfcGxheWJvb2s6IHBsYXRmb3JtLW1vbml0b3JpbmcueW1sCiAgd2hlbjogcGxhdGZvcm1fZW5hYmxlX21vbml0b3JpbmcgfCBkZWZhdWx0KGZhbHNlKSB8IGJvb2wKCi0gbmFtZTogSW5zdGFsbCBsb2dnaW5nCiAgaW1wb3J0X3BsYXlib29rOiBwbGF0Zm9ybS1sb2dnaW5nLnltbAogIHdoZW46IHBsYXRmb3JtX2VuYWJsZV9sb2dnaW5nIHwgZGVmYXVsdChmYWxzZSkgfCBib29sCgotIG5hbWU6IEluc3RhbGwgT0FEUAogIGltcG9ydF9wbGF5Ym9vazogcGxhdGZvcm0tb2FkcC55bWwKICB3aGVuOiBwbGF0Zm9ybV9lbmFibGVfb2FkcCB8IGRlZmF1bHQoZmFsc2UpIHwgYm9vbAoKLSBuYW1lOiBJbnN0YWxsIENsdXN0ZXIgT2JzZXJ2YWJpbGl0eSBPcGVyYXRvcgogIGltcG9ydF9wbGF5Ym9vazogcGxhdGZvcm0tY2x1c3Rlci1vYnNlcnZhYmlsaXR5LnltbAogIHdoZW46IHBsYXRmb3JtX2VuYWJsZV9jbHVzdGVyX29ic2VydmFiaWxpdHkgfCBkZWZhdWx0KGZhbHNlKSB8IGJvb2wKCi0gbmFtZTogSW5zdGFsbCBOZXR3b3JrIE9ic2VydmFiaWxpdHkgT3BlcmF0b3IKICBpbXBvcnRfcGxheWJvb2s6IHBsYXRmb3JtLW5ldHdvcmstb2JzZXJ2YWJpbGl0eS55bWwKICB3aGVuOiBwbGF0Zm9ybV9lbmFibGVfbmV0d29ya19vYnNlcnZhYmlsaXR5IHwgZGVmYXVsdChmYWxzZSkgfCBib29sCgotIG5hbWU6IENvbmZpZ3VyZSBCYXJlIE1ldGFsIE9wZXJhdG9yCiAgaW1wb3J0X3BsYXlib29rOiBwbGF0Zm9ybS1iYXJlbWV0YWwueW1sCiAgd2hlbjogcGxhdGZvcm1fZW5hYmxlX2JhcmVtZXRhbCB8IGRlZmF1bHQoZmFsc2UpIHwgYm9vbAoKLSBuYW1lOiBJbnN0YWxsIE1ldGFsTEIKICBpbXBvcnRfcGxheWJvb2s6IHBsYXRmb3JtLWxvYWQtYmFsYW5jZXIueW1sCiAgd2hlbjogcGxhdGZvcm1fZW5hYmxlX2xvYWRfYmFsYW5jZXIgfCBkZWZhdWx0KGZhbHNlKSB8IGJvb2wKCi0gbmFtZTogSW5zdGFsbCBSSE9TTwogIGltcG9ydF9wbGF5Ym9vazogcGxhdGZvcm0tcmhvc28ueW1sCiAgd2hlbjogcGxhdGZvcm1fZW5hYmxlX3Job3NvIHwgZGVmYXVsdChmYWxzZSkgfCBib29sCg==
+---
+- name: Install ACM
+  import_playbook: acm.yml
+  when: platform_enable_acm | default(false) | bool
+
+- name: Install ACS
+  import_playbook: acs.yml
+  when: platform_enable_acs | default(false) | bool
+
+- name: Install storage services
+  import_playbook: storage.yml
+  when: platform_enable_odf | default(false) | bool
+
+- name: Install OpenShift Virtualization
+  import_playbook: virtualization.yml
+  when: platform_enable_virtualization | default(false) | bool
+
+- name: Install MTV
+  import_playbook: mtv.yml
+  when: platform_enable_mtv | default(false) | bool
+
+- name: Install AAP
+  import_playbook: aap.yml
+  when: platform_enable_aap | default(false) | bool
+
+- name: Install cert-manager
+  import_playbook: platform-cert-manager.yml
+  when: platform_enable_cert_manager | default(false) | bool
+
+- name: Configure PKI
+  import_playbook: platform-pki.yml
+  when: platform_enable_pki | default(false) | bool
+
+- name: Install Quay
+  import_playbook: platform-quay.yml
+  when: platform_enable_quay | default(false) | bool
+
+- name: Configure networking operators
+  import_playbook: platform-networking.yml
+  when: platform_enable_networking | default(false) | bool
+
+- name: Configure monitoring
+  import_playbook: platform-monitoring.yml
+  when: platform_enable_monitoring | default(false) | bool
+
+- name: Install logging
+  import_playbook: platform-logging.yml
+  when: platform_enable_logging | default(false) | bool
+
+- name: Install OADP
+  import_playbook: platform-oadp.yml
+  when: platform_enable_oadp | default(false) | bool
+
+- name: Install Cluster Observability Operator
+  import_playbook: platform-cluster-observability.yml
+  when: platform_enable_cluster_observability | default(false) | bool
+
+- name: Install Network Observability Operator
+  import_playbook: platform-network-observability.yml
+  when: platform_enable_network_observability | default(false) | bool
+
+- name: Configure Bare Metal Operator
+  import_playbook: platform-baremetal.yml
+  when: platform_enable_baremetal | default(false) | bool
+
+- name: Install MetalLB
+  import_playbook: platform-load-balancer.yml
+  when: platform_enable_load_balancer | default(false) | bool
+
+- name: Install RHOSO
+  import_playbook: platform-rhoso.yml
+  when: platform_enable_rhoso | default(false) | bool
