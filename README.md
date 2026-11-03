@@ -41,6 +41,11 @@ Assisted Installer) over the same inventory and Vault contracts, in connected,
 partially disconnected, or fully air-gapped environments and for any
 OpenShift version the Assisted Installer and `oc-mirror` v2 support:
 
+```mermaid
+flowchart LR
+  A["validate<br/>Validation & preflight"] --> B["assisted_preflight<br/>Assisted Installer preflight"] --> C["assisted_mirror<br/>Mirror the release (disconnected)"] --> D["assisted_sync<br/>Sync content to the mirror"] --> E["assisted_boot<br/>Boot nodes via Redfish"] --> F["assisted_install<br/>Install the cluster"] --> G["day2<br/>Day-2: GitOps & Ansible"]
+```
+
 - **Option A — Ansible playbooks.** Run the canonical entry points directly
   (`playbooks/day0/discover-bmc.yml`, `playbooks/03-test-virtual-media.yml`,
   `playbooks/day0/prepare-mirror.yml`, `playbooks/day0/install.yml`). See
