@@ -141,6 +141,20 @@ Use `docker compose` in place of `podman compose` when running Docker. The
 Compose Bake/BuildKit warning is informational and is not itself a build
 failure.
 
+On macOS, if a retry fails while mounting an overlay with `input/output
+error`, inspect Podman Machine storage and restart the VM before rebuilding:
+
+```bash
+podman machine ssh df -h
+podman machine stop
+podman machine start
+podman compose build --no-cache installer-ui
+```
+
+This error is raised by the Podman VM's container storage layer. The build log
+should also be checked for the original package-download failure; the overlay
+error by itself does not identify why an earlier DNF transaction stopped.
+
 ## Variables: groups, filling rules, and token origins
 
 The GUI never asks you to edit YAML by hand. Its forms are generated from
