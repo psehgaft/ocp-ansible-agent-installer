@@ -178,6 +178,11 @@ Mac container-engine networks.
 The Containerfile uses UBI's existing `sha256sum` utility and does not
 install `coreutils`, avoiding conflicts with `coreutils-single` on UBI 9.
 
+The OpenShift CLI archives are extracted with `tar --no-same-owner`. This
+keeps rootless Podman builds from failing when the archive's recorded UID/GID
+cannot be mapped into the build container; the files are still owned by the
+container build user.
+
 If your environment requires an HTTP(S) proxy or a custom trusted CA, configure
 it in the container engine's build environment. After updating the checkout,
 rebuild the GUI image:
