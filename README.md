@@ -65,13 +65,20 @@ flowchart LR
 
   ```bash
   export INSTALLER_UI_AUTH_TOKENS="$(openssl rand -hex 24)=admin"
+  set -a
+  . ./.installer-ui.vault
+  set +a
   printf 'INSTALLER_UI_AUTH_TOKENS=%s\n' "$INSTALLER_UI_AUTH_TOKENS" > .installer-ui.vault
   chmod 600 .installer-ui.vault
+  podman compose config --quiet
   podman compose build --no-cache installer-ui
-  podman compose up -d
-  # open http://127.0.0.1:8080 and sign in with the token before the "=" above
-  # (make gui-build + make gui-run remains as an alternative launcher)
+  podman compose up -d installer-ui
+  curl --fail --retry 10 --retry-connrefused --retry-delay 2 \
+    http://127.0.0.1:8080/healthz
   ```
+
+  Open http://127.0.0.1:8080 and sign in with the token before the `=`
+  (`make gui-build` + `make gui-run` remains as an alternative launcher).
 
   On Windows, use the PowerShell equivalent instead of `make`:
   `scripts/gui-run.ps1` (requires Podman or Docker Desktop).
