@@ -87,7 +87,8 @@ jobs:
                                                             grep -q 'Module 1: Foundations' workshop/index.html
                                                                       grep -q 'Module 7: Challenge' workshop/index.html
           python3 -c "import re,pathlib; html=pathlib.Path('workshop/index.html').read_text(encoding='utf-8'); pathlib.Path('/tmp/workshop.js').write_text(re.search(r'<script>(.*?)</script>', html, re.DOTALL).group(1), encoding='utf-8')"
-                - name: Documentation link validation
+          node --check /tmp/workshop.js
+          - name: Documentation link validation
                 uses: lycheeverse/lychee-action@v2
         with:
           args: >-
