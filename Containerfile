@@ -4,7 +4,7 @@ USER 0
 ARG KUSTOMIZE_VERSION=5.7.1
 ARG HELM_VERSION=3.17.3
 ARG TARGETARCH=amd64
-RUN dnf install -y curl-minimal && dnf clean all
+RUN dnf install -y coreutils curl-minimal && dnf clean all
 WORKDIR /opt/build
 COPY go.mod ./
 COPY cmd ./cmd
