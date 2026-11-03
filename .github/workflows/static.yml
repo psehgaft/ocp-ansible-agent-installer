@@ -6,6 +6,7 @@ on:
     branches: [main]
     paths:
       - "workshop/index.html"
+      - "workshop/open-demo-days-logo.png"
       - ".github/workflows/static.yml"
 
 permissions:
@@ -29,6 +30,7 @@ jobs:
         run: |
           mkdir -p www/ocp-redfish-installer/main
           cp workshop/index.html www/index.html
+          cp workshop/open-demo-days-logo.png www/open-demo-days-logo.png
           cat > www/ocp-redfish-installer/main/index.html <<'REDIRECT'
           <!DOCTYPE html>
           <html lang="en">
