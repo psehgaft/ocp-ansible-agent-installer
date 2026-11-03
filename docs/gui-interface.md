@@ -109,6 +109,27 @@ INSTALLER_UI_AUTH_TOKENS="viewer-token-at-least-16=viewer,operator-token-at-leas
 Use TLS at the ingress or reverse proxy. Bearer tokens must not traverse an
 unencrypted external network.
 
+## Troubleshooting the container build
+
+An error beginning with `verifying module: sigs.k8s.io/kustomize/kustomize/v5`
+comes from the former version-suffixed `go install` step. That form resolves
+the requested tool in a separate module context and does not use this
+repository's `go.mod` or `go.sum`. The current Containerfile instead downloads
+pinned upstream release archives and verifies their SHA-256 digests.
+
+After updating the checkout, rebuild the GUI image:
+
+```bash
+podman compose build --no-cache installer-ui
+podman compose up -d
+```
+
+Use `docker compose` in place of `podman compose` when running Docker. The
+Compose Bake/BuildKit warning in Docker's output is separate from the earlier
+module verification failure and is not itself a build failure. Keep checksum
+verification enabled; do not work around this error by disabling Go's checksum
+database.
+
 ## Container runtime contents
 
 The image builds and tests the Go application, installs the repository's
