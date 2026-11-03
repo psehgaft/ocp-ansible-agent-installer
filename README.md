@@ -16,6 +16,13 @@ Argo CD resources, creates an oc-mirror v2 operator image set, and can publish
 the result to a configurable Git repository. See
 [Day-2 GitOps operator deployment](docs/day2-gitops-operator-deployment.md).
 
+The ordered Day-2 foundation applies the platform components in this order:
+
+```mermaid
+flowchart TB
+  A["<b>observability</b><br/>Metrics, dashboards & alerts"] --> B["<b>security-compliance</b><br/>Compliance & policy enforcement"] --> C["<b>logging</b><br/>Log aggregation & forwarding"] --> D["<b>service-mesh</b><br/>Traffic & mTLS between services"] --> E["<b>connectivity</b><br/>Cluster & application connectivity"] --> F["<b>virtualization-storage</b><br/>VMs & persistent storage"] --> G["<b>gitops</b><br/>GitOps engine & sync"] --> H["<b>identity</b><br/>Authentication & SSO"] --> I["<b>backup</b><br/>Backup & restore"] --> J["<b>developer-hub</b><br/>Developer portal & catalog"] --> K["<b>pipelines</b><br/>CI/CD pipelines"] --> L["<b>ai</b><br/>AI/ML platform services"]
+```
+
 The optional containerized GUI interface discovers the same
 inventory defaults and operator catalog, creates encrypted profiles, and runs
 only approved playbooks with RBAC, confirmation gates, redacted live output,
