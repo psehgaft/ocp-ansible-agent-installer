@@ -262,6 +262,13 @@ the same controls as other deployment credentials.
 
 ## Roles and actions
 
+The assisted run follows this order:
+
+```mermaid
+flowchart LR
+  A["validate<br/>Validation & preflight"] --> B["assisted_preflight<br/>Assisted Installer preflight"] --> C["assisted_mirror<br/>Mirror the release (disconnected)"] --> D["assisted_sync<br/>Sync content to the mirror"] --> E["assisted_boot<br/>Boot nodes via Redfish"] --> F["assisted_install<br/>Install the cluster"] --> G["day2<br/>Day-2: GitOps & Ansible"]
+```
+
 | Action | Minimum role | Confirmation |
 |---|---:|---:|
 | Validate configuration | viewer | None |
