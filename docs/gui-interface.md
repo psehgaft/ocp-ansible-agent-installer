@@ -208,3 +208,12 @@ repository validation workflows continue to run unchanged.
 Use the canonical [OpenShift deployment scenarios](deployment-scenarios.md) for
 complete, ordered procedures for connected and disconnected installation with
 the CLI or GUI, followed by Day-2 GitOps through either interface.
+
+
+## References
+
+- [Kustomize v5.7.1 release artifacts and checksums](https://github.com/kubernetes-sigs/kustomize/releases/tag/kustomize/v5.7.1)
+- [Helm installation and binary verification](https://helm.sh/docs/intro/install/)
+- [Podman machine on macOS](https://docs.podman.io/en/latest/markdown/podman-machine.1.html)
+- [Docker Compose build specification](https://docs.docker.com/compose/compose-file/build/)
+- [OpenShift CLI downloads and supported architectures](https://docs.openshift.com/container-platform/latest/cli_reference/openshift_cli/getting-started-cli.html)
