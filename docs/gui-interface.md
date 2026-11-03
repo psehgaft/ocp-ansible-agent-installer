@@ -77,14 +77,16 @@ file under the same variable name so later sessions can reload it:
 
 ```bash
 export INSTALLER_UI_AUTH_TOKENS="$(openssl rand -hex 24)=admin"
-printf 'INSTALLER_UI_AUTH_TOKENS=%s\n' "$INSTALLER_UI_AUTH_TOKENS" > .installer-ui.vault
-chmod 600 .installer-ui.vault
-# For later terminal sessions, reload the saved token before Compose:
 set -a
 . ./.installer-ui.vault
 set +a
+printf 'INSTALLER_UI_AUTH_TOKENS=%s\n' "$INSTALLER_UI_AUTH_TOKENS" > .installer-ui.vault
+chmod 600 .installer-ui.vault
+podman compose config --quiet
 podman compose build --no-cache installer-ui
-podman compose up -d
+podman compose up -d installer-ui
+curl --fail --retry 10 --retry-connrefused --retry-delay 2 \
+  http://127.0.0.1:8080/healthz
 ```
 
 Open `http://127.0.0.1:8080`, select **Access token**, and enter the token —
@@ -143,38 +145,6 @@ podman compose up -d
 Use `docker compose` in place of `podman compose` when running Docker. The
 Compose Bake/BuildKit warning is informational and is not itself a build
 failure.
-
-### Native Ansible control node on Linux and macOS
-
-If you run Ansible directly on the host instead of using the GUI container, use
-the Ansible Core version range in `requirements.txt`. The Homebrew Ansible
-10.4.0 installation provides Ansible Core 2.17.4, which is too old for the
-`community.general` collection declared in `requirements.yml`.
-
-Create an isolated environment from the repository root so the system or
-Homebrew Ansible executable is not selected:
-
-```bash
-python3 -m venv .venv
-. .venv/bin/activate
-python -m pip install --upgrade pip
-python -m pip install -r requirements.txt
-./.venv/bin/ansible-galaxy --version
-./.venv/bin/ansible-galaxy collection install -r requirements.yml -p .collections
-```
-
-The `/workspace/.collections` path is for the container image. On the host,
-use `.collections` as shown above.
-The Containerfile allows longer download times and retries transient failures
-from DNF, PyPI, Ansible Galaxy, and the Go module proxy. If Compose reports
-that `INSTALLER_UI_AUTH_TOKENS` is missing, load the saved token in the current
-shell before running either build or up:
-
-```bash
-set -a
-. ./.installer-ui.vault
-set +a
-```
 
 On macOS, if a retry fails while mounting an overlay with `input/output
 error`, inspect Podman Machine storage and restart the VM before rebuilding:
