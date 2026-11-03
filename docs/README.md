@@ -14,6 +14,7 @@ GitOps only after the new cluster is healthy.
 | 1.4 GitOps initialization | Render, publish, and bootstrap OpenShift GitOps | `playbooks/day2/render-gitops.yml`, `playbooks/day2/bootstrap-gitops.yml` |
 
 - [Executive deployment runbook](deployment-scenarios.md)
+- [Playbooks, GUI, and Helm reference](playbooks-reference.md) — what every playbook, role, and GUI action does
 - [Day-0 bare-metal installation](day0-bare-metal-installation.md)
 - [Complete variable reference](variable-reference.md)
 - [Day-2 implementation catalog](day2-implementation-catalog.md)
