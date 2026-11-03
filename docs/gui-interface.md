@@ -51,51 +51,33 @@ variable appears automatically in the UI even when it has no custom metadata.
 - downloadable non-sensitive configuration previews and execution reports;
 - liveness health check and persistent `/data` volume.
 
-## Build and start on Linux and macOS
+## Build and start
 
-The GUI runs in a Linux container, so the host can be Linux or macOS.
-Compose builds the image for the architecture of the container engine. The
-Containerfile detects `amd64` or `arm64` and installs matching Kustomize,
-Helm, OpenShift CLI, and `oc-mirror` binaries. Intel Macs and x86_64 Linux use
-`amd64`; Apple Silicon Macs and ARM64 Linux use `arm64`.
-
-Install one container runtime:
-
-- Linux: Podman with Compose support, or Docker Engine and the Compose plugin.
-- macOS: Podman Desktop with a running Podman machine, or Docker Desktop.
-
-For Podman on macOS, initialize and start its Linux VM once:
+Generate an unpredictable token of at least 16 characters:
 
 ```bash
-podman machine init
-podman machine start
+export INSTALLER_UI_ADMIN_TOKEN="$(openssl rand -hex 24)"
+make gui-build
+make gui-run
 ```
 
-Generate an unpredictable admin token and start the GUI with Podman Compose:
+Open `http://127.0.0.1:8080`, select **Access token**, and enter the generated
+token. The `make gui-run` target stores profiles and run history in the named
+volume `ocp-installer-ui-data`.
+
+Podman Compose is also supported:
 
 ```bash
 export INSTALLER_UI_AUTH_TOKENS="$(openssl rand -hex 24)=admin"
-podman compose up --build -d
+podman compose up --build
 ```
 
-For Docker Compose, use the same token variable:
-
-```bash
-export INSTALLER_UI_AUTH_TOKENS="$(openssl rand -hex 24)=admin"
-docker compose up --build -d
-```
-
-Open `http://127.0.0.1:8080`, select **Access token**, and enter the token.
-The named volume `installer-ui-data` retains profiles and run history across
-container restarts. Stop the GUI with `podman compose down` or
-`docker compose down`; this keeps the volume. Use `down --volumes` only when
-you intend to delete the stored profiles and history.
-
-The first build downloads pinned Kustomize and Helm release archives and checks
-their SHA-256 digests. This avoids resolving their full Go module graphs during
-the image build. If Compose prints a Docker Compose Bake/BuildKit warning, it
-is informational; the build can continue. The auth token must be set in the
-same shell that runs Compose.
+On Windows, `scripts/gui-run.ps1` is the PowerShell equivalent of
+`make gui-build` + `make gui-run` (it uses Podman or Docker Desktop, which
+run the same Linux container). On macOS, use Podman Machine or Docker
+Desktop. The container is the supported GUI path on every platform; the
+Ansible control node itself runs natively on Linux and macOS and under
+WSL2 on Windows.
 
 The container fails closed when it listens on a non-loopback address without
 `INSTALLER_UI_AUTH_TOKENS`. The variable accepts comma-separated `token=role`
@@ -107,31 +89,6 @@ INSTALLER_UI_AUTH_TOKENS="viewer-token-at-least-16=viewer,operator-token-at-leas
 
 Use TLS at the ingress or reverse proxy. Bearer tokens must not traverse an
 unencrypted external network.
-
-## Troubleshooting the container build
-
-An error beginning with `verifying module: sigs.k8s.io/kustomize/kustomize/v5`
-comes from the former version-suffixed `go install` step. That form resolves
-the requested tool in a separate module context and does not use this
-repository's `go.mod` or `go.sum`. The current Containerfile instead downloads
-pinned upstream release archives and verifies their SHA-256 digests.
-
-If DNF reports a conflict between `coreutils` and `coreutils-single`, update
-to the corrected Containerfile: UBI already includes `sha256sum`, so the build
-does not need to replace that package.
-
-After updating the checkout, rebuild the GUI image:
-
-```bash
-podman compose build --no-cache installer-ui
-podman compose up -d
-```
-
-Use `docker compose` in place of `podman compose` when running Docker. The
-Compose Bake/BuildKit warning in Docker's output is separate from the earlier
-module verification failure and is not itself a build failure. Keep checksum
-verification enabled; do not work around this error by disabling Go's checksum
-database.
 
 ## Container runtime contents
 
@@ -232,12 +189,3 @@ repository validation workflows continue to run unchanged.
 Use the canonical [OpenShift deployment scenarios](deployment-scenarios.md) for
 complete, ordered procedures for connected and disconnected installation with
 the CLI or GUI, followed by Day-2 GitOps through either interface.
-
-
-## References
-
-- [Kustomize v5.7.1 release artifacts and checksums](https://github.com/kubernetes-sigs/kustomize/releases/tag/kustomize/v5.7.1)
-- [Helm installation and binary verification](https://helm.sh/docs/intro/install/)
-- [Podman machine on macOS](https://docs.podman.io/en/latest/markdown/podman-machine.1.html)
-- [Docker Compose build specification](https://docs.docker.com/compose/compose-file/build/)
-- [OpenShift CLI downloads and supported architectures](https://docs.openshift.com/container-platform/latest/cli_reference/openshift_cli/getting-started-cli.html)
