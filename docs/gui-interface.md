@@ -91,11 +91,12 @@ container restarts. Stop the GUI with `podman compose down` or
 `docker compose down`; this keeps the volume. Use `down --volumes` only when
 you intend to delete the stored profiles and history.
 
-The first build downloads pinned Kustomize and Helm release archives and checks
-their SHA-256 digests. This avoids resolving their full Go module graphs during
-the image build. If Compose prints a Docker Compose Bake/BuildKit warning, it
-is informational; the build can continue. The auth token must be set in the
-same shell that runs Compose.
+The Go tools are pinned in `build-tools/go.mod` and their module checksums are
+committed in `build-tools/go.sum`. The image retrieves them through the Go
+module proxy and verifies them against this lockfile; it does not need to
+download tool release archives from GitHub during the build. If Compose prints
+a Docker Compose Bake/BuildKit warning, it is informational; the build can
+continue. The auth token must be set in the same shell that runs Compose.
 
 The container fails closed when it listens on a non-loopback address without
 `INSTALLER_UI_AUTH_TOKENS`. The variable accepts comma-separated `token=role`
@@ -110,15 +111,12 @@ unencrypted external network.
 
 ## Troubleshooting the container build
 
-An error beginning with `verifying module: sigs.k8s.io/kustomize/kustomize/v5`
-comes from the former version-suffixed `go install` step. That form resolves
-the requested tool in a separate module context and does not use this
-repository's `go.mod` or `go.sum`. The current Containerfile instead downloads
-pinned upstream release archives and verifies their SHA-256 digests.
-
-If DNF reports a conflict between `coreutils` and `coreutils-single`, update
-to the corrected Containerfile: UBI already includes `sha256sum`, so the build
-does not need to replace that package.
+A TLS error while downloading Kustomize or Helm from GitHub Releases is avoided
+by installing the pinned Go modules through the configured Go module proxy.
+Their checksums are locked in `build-tools/go.sum`, so Go verifies the module
+content without depending on a live checksum database lookup. If your network
+requires an HTTP(S) proxy or an additional trusted CA certificate, configure
+that for the container engine before building.
 
 After updating the checkout, rebuild the GUI image:
 
@@ -236,8 +234,9 @@ the CLI or GUI, followed by Day-2 GitOps through either interface.
 
 ## References
 
-- [Kustomize v5.7.1 release artifacts and checksums](https://github.com/kubernetes-sigs/kustomize/releases/tag/kustomize/v5.7.1)
-- [Helm installation and binary verification](https://helm.sh/docs/intro/install/)
+- [Kustomize v5.7.1 module definition](https://github.com/kubernetes-sigs/kustomize/blob/kustomize/v5.7.1/kustomize/go.mod)
+- [Helm v3.17.3 module definition](https://github.com/helm/helm/blob/v3.17.3/go.mod)
+- [Go module reference: checksum files](https://go.dev/ref/mod#go-sum-files)
 - [Podman machine on macOS](https://docs.podman.io/en/latest/markdown/podman-machine.1.html)
 - [Docker Compose build specification](https://docs.docker.com/compose/compose-file/build/)
 - [OpenShift CLI downloads and supported architectures](https://docs.openshift.com/container-platform/latest/cli_reference/openshift_cli/getting-started-cli.html)
