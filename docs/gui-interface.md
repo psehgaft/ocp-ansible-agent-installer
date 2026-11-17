@@ -80,16 +80,19 @@ Fedora, RHEL 9, Rocky Linux, or AlmaLinux 9:
 sudo dnf install -y git curl jq openssl podman python3 python3-pip python3-devel gcc
 ```
 
-Podman Compose is a wrapper and requires an external provider. If the host
-does not already have `podman-compose` or `docker-compose`, install
-`podman-compose` in its own virtual environment:
+Podman Engine does not include a Compose implementation. `podman compose`
+is a wrapper around an external provider. If the host does not already have
+`podman-compose` or `docker-compose`, install `podman-compose` 1.4.0 or
+later in its own virtual environment:
 
 ```bash
 python3 -m venv "$HOME/.local/share/podman-compose"
-"$HOME/.local/share/podman-compose/bin/python" -m pip install --upgrade pip podman-compose
+"$HOME/.local/share/podman-compose/bin/python" -m pip install --upgrade pip "podman-compose>=1.4.0"
 mkdir -p "$HOME/.local/bin"
 ln -sf "$HOME/.local/share/podman-compose/bin/podman-compose" "$HOME/.local/bin/podman-compose"
 export PATH="$HOME/.local/bin:$PATH"
+command -v podman-compose
+podman-compose --version
 podman --version
 podman compose version
 ```
