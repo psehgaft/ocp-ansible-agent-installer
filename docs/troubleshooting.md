@@ -2,16 +2,18 @@
 
 ## GUI image build fails resolving Podman dependencies
 
-A build error such as:
+An error such as:
 
 ```text
 podman requires netavark
 nothing provides aardvark-dns ...
 ```
 
-means DNF cannot resolve a mutually compatible Podman, Netavark, and Aardvark DNS package set from the enabled UBI repositories. The GUI will not start; any subsequent connection-refused messages from `curl` are a consequence of the failed image build.
+means the package repositories used by the image build cannot provide a compatible Podman/Netavark/Aardvark package set. The GUI container does not start, so later `curl: connection refused` messages are a consequence of the failed build.
 
-The GUI runtime uses the rolling UBI 9 image tag and asks DNF to select the best compatible Podman package set. Retry the build with a fresh base image:
+The Fedora host's registration status is unrelated: package installation happens inside the build image. The `subscription-manager` warning in this log comes from the UBI-based image and does not mean the Fedora host needs registration. The GUI runtime image now uses Fedora's rolling container image and installs Podman and Python from Fedora repositories.
+
+Pull the current base image and rebuild:
 
 ```bash
 podman compose build --pull --no-cache installer-ui
@@ -19,8 +21,6 @@ podman compose up -d installer-ui
 curl --fail --retry 10 --retry-connrefused --retry-delay 2 \
   http://127.0.0.1:8080/healthz
 ```
-
-Do not use `--skip-broken`: it can produce an image without Podman, which the installer requires. If the same dependency error persists, check whether the UBI BaseOS/AppStream repositories are reachable and synchronized, then retry after repository synchronization.
 
 ## Redfish authentication fails
 
