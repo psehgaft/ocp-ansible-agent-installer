@@ -24,17 +24,16 @@ RUN set -eu; \
     install_with_retry helm.sh/helm/v3/cmd/helm
 
 # Use the rolling UBI 9 image so the base image and UBI repositories stay aligned.
-FROM registry.access.redhat.com/ubi9/ubi:latest
+FROM registry.fedoraproject.org/fedora:latest
 ARG OPENSHIFT_VERSION=4.18.41
 RUN dnf --setopt=retries=10 --setopt=timeout=120 install -y \
-      ca-certificates curl-minimal findutils git gzip jq openssh-clients \
-      python3.12 python3.12-pip shadow-utils tar && \
-    dnf --nobest --setopt=retries=10 --setopt=timeout=120 install -y podman && \
+      ca-certificates curl findutils git gzip jq openssh-clients podman \
+      python3 python3-pip shadow-utils tar && \
     dnf clean all
 
 WORKDIR /workspace
 COPY requirements.txt requirements.yml ansible.cfg ./
-RUN python3.12 -m pip install --no-cache-dir --retries 10 --timeout 120 -r requirements.txt && \
+RUN python3 -m pip install --no-cache-dir --retries 10 --timeout 120 -r requirements.txt && \
     ansible-galaxy collection install --timeout 120 -r requirements.yml -p /workspace/.collections
 
 ARG TARGETARCH
@@ -74,7 +73,7 @@ ENV INSTALLER_UI_REPOSITORY_ROOT=/workspace \
     INSTALLER_UI_DATA_ROOT=/data \
     INSTALLER_UI_HOME=/data/home \
     INSTALLER_UI_LISTEN=0.0.0.0:8080 \
-    INSTALLER_UI_PYTHON=python3.12 \
+    INSTALLER_UI_PYTHON=python3 \
     ANSIBLE_HOME=/data/home/.ansible \
     ANSIBLE_COLLECTIONS_PATH=/workspace/.collections:/usr/share/ansible/collections \
     GIT_CONFIG_GLOBAL=/data/home/.gitconfig \
