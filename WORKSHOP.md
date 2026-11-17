@@ -118,7 +118,7 @@ After completing the workshop, you will be able to:
 
 After completing this lab, you will be able to:
 
-- Install the required control-node packages.
+- Install the required control-node packages and a Compose provider for the GUI.
 - Install the Ansible collection.
 - Verify Redfish and Assisted Installer connectivity.
 - Run the repository validation tests.
@@ -139,20 +139,25 @@ sudo dnf install -y git curl jq openssl podman python3 python3-pip python3-devel
 ```
 
 The GUI image supplies Ansible, collections, `oc`, `oc-mirror` v2,
-Kustomize, and Helm. The host needs a container runtime and Compose provider.
-`podman compose` delegates Compose commands to an external provider. If you
-do not already have `podman-compose` or `docker-compose`, install the
-Podman provider in an isolated environment:
+Kustomize, and Helm. The host needs a container runtime and a Compose provider.
+Podman Engine alone does not implement Compose: `podman compose` delegates to
+an external provider. If neither `podman-compose` nor `docker-compose` is
+installed, install `podman-compose` 1.4.0 or later in an isolated environment:
 
 ```bash
 python3 -m venv "$HOME/.local/share/podman-compose"
-"$HOME/.local/share/podman-compose/bin/python" -m pip install --upgrade pip podman-compose
+"$HOME/.local/share/podman-compose/bin/python" -m pip install --upgrade pip "podman-compose>=1.4.0"
 mkdir -p "$HOME/.local/bin"
 ln -sf "$HOME/.local/share/podman-compose/bin/podman-compose" "$HOME/.local/bin/podman-compose"
 export PATH="$HOME/.local/bin:$PATH"
+command -v podman-compose
+podman-compose --version
 podman --version
 podman compose version
 ```
+
+If `podman compose config --quiet` reports `looking up compose provider failed`,
+the Compose provider is missing or not on `PATH`.
 
 To keep this provider available in later Bash sessions, add
 `export PATH="$HOME/.local/bin:$PATH"` to `~/.bashrc`; for Zsh, add it to
