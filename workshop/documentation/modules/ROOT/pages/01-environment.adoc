@@ -42,20 +42,26 @@ Fedora, RHEL 9, Rocky Linux, or AlmaLinux 9:
 sudo dnf install -y git curl jq openssl podman python3 python3-pip python3-devel gcc
 ----
 
-For the GUI, `podman compose` also needs an external Compose provider. If
-neither `podman-compose` nor `docker-compose` is installed, install
-`podman-compose` in an isolated Python environment:
+For the GUI, Podman Engine alone is not enough: `podman compose` delegates
+to an external Compose provider. If neither `podman-compose` nor
+`docker-compose` is installed, install `podman-compose` 1.4.0 or later in an
+isolated Python environment:
 
 [source,bash]
 ----
 python3 -m venv "$HOME/.local/share/podman-compose"
-"$HOME/.local/share/podman-compose/bin/python" -m pip install --upgrade pip podman-compose
+"$HOME/.local/share/podman-compose/bin/python" -m pip install --upgrade pip "podman-compose>=1.4.0"
 mkdir -p "$HOME/.local/bin"
 ln -sf "$HOME/.local/share/podman-compose/bin/podman-compose" "$HOME/.local/bin/podman-compose"
 export PATH="$HOME/.local/bin:$PATH"
+command -v podman-compose
+podman-compose --version
 podman --version
 podman compose version
 ----
+
+If `podman compose config --quiet` reports `looking up compose provider failed`,
+install the missing provider or put its executable on `PATH`.
 
 Persist `$HOME/.local/bin` in the shell's `PATH` by adding the export
 command to `~/.bashrc` or `~/.zshrc`. On macOS, continue to use Podman
