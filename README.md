@@ -205,6 +205,7 @@ workshop/                    Workshop site (Open Demo Days template) and AsciiDo
 - Access to the target BMCs and the selected Assisted Installer service
 - `oc-mirror` v2 and a registry for disconnected installation
 - Ansible Vault or an external secret manager
+- GUI Compose prerequisite: `podman-compose` 1.4.0 or later, or a Docker Compose provider; Podman Engine alone does not implement Compose.
 
 ### Install Linux prerequisites
 
@@ -225,19 +226,24 @@ Fedora, RHEL 9, Rocky Linux, or AlmaLinux 9:
 sudo dnf install -y git curl jq openssl podman python3 python3-pip python3-devel gcc
 ```
 
-`podman compose` needs an external Compose provider. If neither
-`podman-compose` nor `docker-compose` is already installed, install
-`podman-compose` into an isolated Python environment and add it to the
-current shell's PATH:
+`podman compose` is a wrapper and requires an external Compose provider.
+Podman Engine alone does not provide one. If neither `podman-compose` nor
+`docker-compose` is installed, install `podman-compose` 1.4.0 or later in an
+isolated Python environment and add it to the current shell's PATH:
 
 ```bash
 python3 -m venv "$HOME/.local/share/podman-compose"
-"$HOME/.local/share/podman-compose/bin/python" -m pip install --upgrade pip podman-compose
+"$HOME/.local/share/podman-compose/bin/python" -m pip install --upgrade pip "podman-compose>=1.4.0"
 mkdir -p "$HOME/.local/bin"
 ln -sf "$HOME/.local/share/podman-compose/bin/podman-compose" "$HOME/.local/bin/podman-compose"
 export PATH="$HOME/.local/bin:$PATH"
+command -v podman-compose
+podman-compose --version
 podman compose version
 ```
+
+If `podman compose config --quiet` reports `looking up compose provider failed`,
+the provider is missing or its executable is not on `PATH`.
 
 To keep the provider available in later Bash sessions, add
 `export PATH="$HOME/.local/bin:$PATH"` to `~/.bashrc`; for Zsh, add it to
