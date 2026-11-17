@@ -1,5 +1,27 @@
 # Troubleshooting
 
+## GUI image build fails resolving Podman dependencies
+
+A build error such as:
+
+```text
+podman requires netavark
+nothing provides aardvark-dns ...
+```
+
+means DNF cannot resolve a mutually compatible Podman, Netavark, and Aardvark DNS package set from the enabled UBI repositories. The GUI will not start; any subsequent connection-refused messages from `curl` are a consequence of the failed image build.
+
+The GUI runtime uses the rolling UBI 9 image tag and asks DNF to select the best compatible Podman package set. Retry the build with a fresh base image:
+
+```bash
+podman compose build --pull --no-cache installer-ui
+podman compose up -d installer-ui
+curl --fail --retry 10 --retry-connrefused --retry-delay 2 \
+  http://127.0.0.1:8080/healthz
+```
+
+Do not use `--skip-broken`: it can produce an image without Podman, which the installer requires. If the same dependency error persists, check whether the UBI BaseOS/AppStream repositories are reachable and synchronized, then retry after repository synchronization.
+
 ## Redfish authentication fails
 
 Symptoms:

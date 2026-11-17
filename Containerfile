@@ -23,11 +23,13 @@ RUN set -eu; \
     install_with_retry sigs.k8s.io/kustomize/kustomize/v5; \
     install_with_retry helm.sh/helm/v3/cmd/helm
 
-FROM registry.access.redhat.com/ubi9/ubi:9.6
+# Use the rolling UBI 9 image so the base image and UBI repositories stay aligned.
+FROM registry.access.redhat.com/ubi9/ubi:latest
 ARG OPENSHIFT_VERSION=4.18.41
 RUN dnf --setopt=retries=10 --setopt=timeout=120 install -y \
-      ca-certificates curl-minimal findutils git gzip jq openssh-clients podman \
+      ca-certificates curl-minimal findutils git gzip jq openssh-clients \
       python3.12 python3.12-pip shadow-utils tar && \
+    dnf --nobest --setopt=retries=10 --setopt=timeout=120 install -y podman && \
     dnf clean all
 
 WORKDIR /workspace
